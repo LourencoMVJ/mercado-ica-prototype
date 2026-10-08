@@ -1,0 +1,17 @@
+/* Mercado ICA — complementos mínimos do protótipo (só o que o CSS compilado do projeto não traz) */
+.box-shadow { box-shadow: 0 2px 6px rgba(0, 0, 0, .10); }
+.star-pick { display: inline-flex; gap: 4px; }
+.star-pick button { background: none; border: 0; color: #d1d5db; padding: 0; cursor: pointer; }
+.star-pick button.on { color: #f59e0b; }
+.custom-select { appearance: auto; }
+#toasts .toast { transition: opacity .3s; }
+.crumbs a { color: #2563eb; }
+.crumbs span::before { content: '/'; margin-right: 6px; color: #9ca3af; }
+.required::after { content: ''; }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; }
+.form-grid .sm\:col-span-2, .form-grid .span-2 { grid-column: 1 / -1; }
+@media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
+/* cabeçalho: garante largura útil da pesquisa (a classe max-w-[620px] não está no CSS compilado) */
+header .relative.w-full.max-w-\[620px\] { flex: 1 1 auto; min-width: 200px; max-width: 620px; }
+header a.flex.items-center.gap-2 { white-space: nowrap; }
+header .group a { white-space: nowrap; font-size: 13px; }

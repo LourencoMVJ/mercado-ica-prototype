@@ -1,0 +1,266 @@
+/* extraído de partials/ica-scope-styles.blade.php */
+
+        /* Mercado ICA – identidade escopada (somente dentro de .ica-scope) */
+        .ica-scope {
+            --imali-green: #4CAF50;
+            --imali-green-dark: #388E3C;
+            --imali-bg: #f3f4f6;
+            --imali-card-bg: #ffffff;
+            --imali-border-soft: #e5e7eb;
+            --imali-text-main: #333333;
+            --imali-text-muted: #666666;
+            --produtos-red: #D9534F;
+            --produtos-star: #FFD700;
+
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: var(--imali-text-main);
+        }
+
+        .ica-scope a {
+            text-decoration: none;
+        }
+
+        .ica-scope a:hover {
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        /* Container/sections */
+        .ica-scope.ica-page {
+            background: var(--imali-bg);
+        }
+
+        .ica-scope .ica-card {
+            background: var(--imali-card-bg);
+            border: 1px solid var(--imali-border-soft);
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Buttons */
+        .ica-scope .primary-button,
+        .ica-scope button.primary-button {
+            background-color: #40ad53 !important;
+            border-color: #40ad53 !important;
+            color: #ffffff !important;
+            border-radius: 12px !important;
+            font-weight: 600 !important;
+        }
+
+        .ica-scope .primary-button:hover:not(:disabled),
+        .ica-scope button.primary-button:hover:not(:disabled) {
+            filter: brightness(1.02);
+        }
+
+        .ica-scope .secondary-button,
+        .ica-scope button.secondary-button {
+            background: #ffffff !important;
+            color: var(--imali-text-main) !important;
+            border: 1px solid var(--imali-border-soft) !important;
+            border-radius: 12px !important;
+            font-weight: 600 !important;
+        }
+
+        .ica-scope .secondary-button.font-normal,
+        .ica-scope button.secondary-button.font-normal {
+            font-weight: 600 !important;
+        }
+
+        .ica-scope .secondary-button:hover:not(:disabled),
+        .ica-scope button.secondary-button:hover:not(:disabled) {
+            border-color: #c4cad3 !important;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+        }
+
+        /* Convert theme blue links to brand green (scoped) */
+        .ica-scope .text-blue-600,
+        .ica-scope .text-blue-700,
+        .ica-scope a.text-blue-600,
+        .ica-scope a.text-blue-700 {
+            color: #16a34a !important;
+        }
+
+        .ica-scope .text-blue-600:hover,
+        .ica-scope .text-blue-700:hover,
+        .ica-scope a.text-blue-600:hover,
+        .ica-scope a.text-blue-700:hover {
+            opacity: 0.92;
+        }
+
+        /* Borders/cards used across listing pages */
+        .ica-scope .border-zinc-200 {
+            border-color: var(--imali-border-soft) !important;
+        }
+
+        .ica-scope .bg-gray-100 {
+            background-color: #f3f4f6 !important;
+        }
+
+        /* Inputs/selects */
+        .ica-scope input[type="text"],
+        .ica-scope input[type="email"],
+        .ica-scope input[type="tel"],
+        .ica-scope input[type="password"],
+        .ica-scope select,
+        .ica-scope textarea {
+            border-color: var(--imali-border-soft) !important;
+            border-radius: 12px !important;
+        }
+
+        .ica-scope input:focus,
+        .ica-scope select:focus,
+        .ica-scope textarea:focus {
+            outline: none;
+            border-color: var(--imali-green) !important;
+            box-shadow: 0 0 0 2px rgba(25, 181, 31, 0.16);
+        }
+
+        /* Category filters – checkbox accent to green */
+        .ica-scope .text-navyBlue {
+            color: var(--imali-text-main) !important;
+        }
+
+        .ica-scope .auth-checkbox-accent,
+        .ica-scope .peer-checked\:text-navyBlue {
+            color: var(--imali-green-dark) !important;
+        }
+
+        /* Mobile drawers (filters/sort) use bg-white; keep but soften border */
+        .ica-scope .border-t.border-zinc-200 {
+            border-top-color: var(--imali-border-soft) !important;
+        }
+
+        /* Dropdown toggles and filter inputs */
+        .ica-scope button.border-zinc-200.bg-white,
+        .ica-scope .border.border-zinc-200.bg-white {
+            border-color: var(--imali-border-soft) !important;
+        }
+
+        .ica-scope button.border-zinc-200.bg-white:hover,
+        .ica-scope .border.border-zinc-200.bg-white:hover {
+            border-color: #c4cad3 !important;
+        }
+
+        /* Compare table headers */
+        .ica-scope.ica-page--compare .bg-gray-200 {
+            background-color: #f1f5f9 !important;
+        }
+
+        /* Error CTA (page scoped) */
+        .ica-scope.ica-page--error .bg-navyBlue {
+            background-color: #40ad53 !important;
+        }
+
+        /* Listing page: inline-style equivalents so design is always visible */
+        .ica-scope.ica-page--category,
+        .ica-scope.ica-page--search {
+            background-color: #ffffff !important;
+            color: #333333 !important;
+            font-family: Inter, system-ui, sans-serif !important;
+        }
+        .ica-scope.ica-page--category .panel-side,
+        .ica-scope.ica-page--search .panel-side {
+            background-color: #ffffff !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 8px !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
+        }
+        .ica-scope.ica-page--category .primary-button,
+        .ica-scope.ica-page--category button.primary-button,
+        .ica-scope.ica-page--search .primary-button,
+        .ica-scope.ica-page--search button.primary-button {
+            background-color: #4CAF50 !important;
+            border-color: #4CAF50 !important;
+            color: #ffffff !important;
+        }
+        .ica-scope.ica-page--category a[href].text-blue-600,
+        .ica-scope.ica-page--category a[href].text-blue-700,
+        .ica-scope.ica-page--category .cursor-pointer.text-sm.font-medium {
+            color: #4CAF50 !important;
+        }
+        .ica-scope.ica-page--category .bg-red-600,
+        .ica-scope.ica-page--category .bg-red-500,
+        .ica-scope.ica-page--search .bg-red-600,
+        .ica-scope.ica-page--search .bg-red-500 {
+            background-color: #D9534F !important;
+        }
+        .ica-scope.ica-page--category .bg-navyBlue,
+        .ica-scope.ica-page--search .bg-navyBlue {
+            background-color: #4CAF50 !important;
+        }
+        .ica-scope.ica-page--category [class*="text-zinc-500"] .icon-star,
+        .ica-scope.ica-page--search [class*="text-zinc-500"] .icon-star {
+            color: #FFD700 !important;
+        }
+
+        /* Product card prototype: border, shadow, rounded */
+        .ica-scope.ica-page--category .overflow-hidden.rounded-md,
+        .ica-scope.ica-page--search .overflow-hidden.rounded-md {
+            border-radius: 8px !important;
+            border: 1px solid #e5e7eb !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
+        }
+
+        /* Pagination active (if numbered pagination is used) */
+        .ica-scope.ica-page--category .pagination-active,
+        .ica-scope.ica-page--search .pagination-active {
+            background-color: #4CAF50 !important;
+            color: #ffffff !important;
+            border-color: #4CAF50 !important;
+        }
+
+        /* Range slider accent in listing */
+        .ica-scope.ica-page--category input[type="range"],
+        .ica-scope.ica-page--search input[type="range"] {
+            accent-color: #4CAF50;
+        }
+
+        /* Range slider estilo protótipo produtos.html: track cinza, barra e thumbs verde */
+        .ica-range-slider {
+            font-family: Inter, system-ui, sans-serif;
+        }
+        .ica-range-slider input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            accent-color: #4CAF50;
+        }
+        .ica-range-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid #4CAF50;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        .ica-range-slider input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid #4CAF50;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+
+        /* Grid produtos: 4 por linha (categoria e pesquisa) – aplica a .ica-product-grid em qualquer contexto */
+        .ica-product-grid {
+            display: grid !important;
+            gap: 0.5rem !important;
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+        @media (min-width: 640px) {
+            .ica-product-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 0.75rem !important;
+            }
+        }
+        @media (min-width: 768px) {
+            .ica-product-grid {
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: 0.75rem !important;
+            }
+        }
+    

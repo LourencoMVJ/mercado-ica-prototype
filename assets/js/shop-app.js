@@ -1,7 +1,9 @@
 /* Mercado ICA — Comprador: arranque e rotas */
 (function () {
   const ICA = window.ICA, sh = ICA.shop;
+  ICA.theme = 'shop';
   ICA.seedOnce();
+  if (/[?&]demo/.test(location.search)) ICA.S.set('buyer', { name: 'Ana Machava', email: 'ana.machava@exemplo.co.mz', phone: '+258 84 000 1111' }); // ?demo inicia a sessão de demonstração
   sh.layout();
   ICA.createRouter(document.getElementById('view'), [
     ['/', sh.home],
@@ -34,9 +36,7 @@
     notFound: sh.notFound,
     after: (path) => {
       sh.updateHeader();
-      const slug = path.startsWith('/categoria/') ? path.split('/')[2] : '';
-      document.querySelectorAll('#catnav a[data-cat]').forEach((a) => a.classList.toggle('active', a.dataset.cat === slug));
-      const nav = document.getElementById('catnav'); if (nav) nav.classList.remove('show');
+      const authCss = document.getElementById('imali-auth'); if (authCss) authCss.disabled = !['/entrar', '/registar', '/recuperar'].includes(path);
     },
   });
 })();

@@ -1,0 +1,1146 @@
+:root {
+    --imali-green: #19b51f;
+    --imali-green-dark: #0e8f17;
+    --imali-bg: #f5f7f9;
+    --imali-card-bg: #ffffff;
+    --imali-border-soft: #e2e6ea;
+    --imali-text-main: #1d2433;
+    --imali-text-muted: #6c7480;
+    --imali-shadow-soft: 0 24px 60px rgba(15, 23, 42, 0.16);
+    --imali-radius-card: 18px;
+    --imali-radius-pill: 999px;
+    --imali-transition-fast: 0.18s ease-out;
+}
+
+/* Wrapper da página de checkout: fundo único em toda a área */
+.checkout-page-wrapper {
+    min-height: 100vh;
+    background: #f3f4f6;
+}
+
+.checkout-header-bar {
+    background: #f3f4f6;
+}
+
+.checkout-back-link {
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity var(--imali-transition-fast);
+}
+.checkout-back-link:hover {
+    opacity: 0.85;
+}
+
+/* Escopo: aplica fonte e cores apenas dentro do checkout (não exige body class) */
+.checkout-page {
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+        "SF Pro Text", "Segoe UI", sans-serif;
+    color: var(--imali-text-main);
+}
+
+.imali-primary-btn {
+    margin-top: 10px;
+    width: 100%;
+    border-radius: 12px;
+    border: none;
+    padding: 11px 16px;
+    background-color: #40ad53;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    box-shadow: none;
+    transition: transform var(--imali-transition-fast),
+        box-shadow var(--imali-transition-fast),
+        filter var(--imali-transition-fast);
+}
+
+.imali-primary-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    filter: brightness(1.02);
+    box-shadow: none;
+}
+
+.imali-primary-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.imali-btn-arrow {
+    font-size: 16px;
+}
+
+/* =========================================================
+   CHECKOUT – LAYOUT DE FINALIZAÇÃO DE COMPRA (resumo)
+   ========================================================= */
+
+.checkout-main {
+    flex: 1;
+    background: #f3f4f6;
+    padding: 20px 12px 28px;
+}
+
+.checkout-shell {
+    max-width: 1120px;
+    margin: 0 auto;
+}
+
+.checkout-title-block {
+    margin-bottom: 18px;
+}
+
+.checkout-title {
+    margin: 4px 0 6px;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.checkout-subtitle {
+    margin: 0;
+    font-size: 13px;
+    color: var(--imali-text-muted);
+}
+
+.checkout-subtitle-pill {
+    display: inline-block;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    border: none;
+    color: #555d6d;
+}
+
+.checkout-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.checkout-col-main,
+.checkout-col-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.checkout-card {
+    background: #ffffff;
+    border-radius: 10px;
+    border: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    padding: 18px 18px 16px;
+}
+
+.checkout-card-header--static {
+    margin-bottom: 14px;
+}
+
+.checkout-card-body--address,
+.checkout-card-body--payment {
+    padding: 0;
+}
+
+/* Card de endereço: alinhado ao design da página */
+.checkout-card-billing .checkout-card-header--static {
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 16px;
+}
+
+.checkout-card-billing .checkout-address-form-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.checkout-card-billing .checkout-shipping-block {
+    padding-top: 14px;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* =========================================================
+   CARD DE ENDEREÇO – design coerente com o checkout
+   ========================================================= */
+
+/* Cards de localização (endereços guardados / adicionar novo) */
+.checkout-address-cards {
+    display: grid;
+    gap: 12px;
+}
+
+.checkout-address-card {
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    transition: border-color var(--imali-transition-fast), box-shadow var(--imali-transition-fast);
+}
+
+.checkout-address-card:hover {
+    border-color: #c4cad3;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+
+.checkout-address-card-inner {
+    display: block;
+}
+
+.checkout-address-card-icon {
+    color: var(--imali-green);
+}
+
+.checkout-address-card-name {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--imali-text-main);
+}
+
+.checkout-address-card-meta {
+    margin: 0;
+    font-size: 12px;
+    color: var(--imali-text-muted);
+    line-height: 1.4;
+}
+
+.checkout-address-card--add {
+    border-style: dashed;
+    background: #f9fafb;
+}
+
+.checkout-address-card--add:hover {
+    background: #f3f4f6;
+    border-color: var(--imali-green);
+}
+
+.checkout-address-card-add-icon {
+    border: 1px solid var(--imali-text-main);
+    color: var(--imali-text-main);
+}
+
+.checkout-address-card-add-text {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--imali-text-muted);
+}
+
+/* Campos do formulário de endereço – mesmo estilo que o resto do checkout */
+.checkout-card-billing .checkout-address-fields .mb-4 {
+    margin-bottom: 14px;
+}
+
+.checkout-card-billing .checkout-address-fields > div:first-child .mb-4 {
+    margin-bottom: 14px;
+}
+
+.checkout-card-billing .checkout-address-fields label:not(.checkout-address-card-name):not(.checkout-address-card-meta):not(.checkout-address-card-add-text):not([class*="icon-"]) {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
+    color: var(--imali-text-muted) !important;
+    margin-bottom: 4px !important;
+    display: block !important;
+}
+
+.checkout-card-billing .checkout-address-fields input[type="text"],
+.checkout-card-billing .checkout-address-fields input[type="email"],
+.checkout-card-billing .checkout-address-fields input[type="tel"],
+.checkout-card-billing .checkout-address-fields select,
+.checkout-card-billing .checkout-address-fields textarea {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--imali-text-main);
+    background: #ffffff;
+    transition: border-color var(--imali-transition-fast), box-shadow var(--imali-transition-fast);
+}
+
+.checkout-card-billing .checkout-address-fields input:focus,
+.checkout-card-billing .checkout-address-fields select:focus,
+.checkout-card-billing .checkout-address-fields textarea:focus {
+    outline: none;
+    border-color: var(--imali-green);
+    box-shadow: 0 0 0 1px rgba(25, 181, 31, 0.18);
+}
+
+.checkout-card-billing .checkout-address-fields .grid {
+    gap: 14px;
+}
+
+/* Checkbox "Usar para envio" / "Mesmo que faturação" */
+.checkout-card-billing .checkout-address-form-body [class*="control-group"] label[for="use_for_shipping"],
+.checkout-card-billing .checkout-address-form-body label.cursor-pointer.select-none {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--imali-text-muted);
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.checkout-card-body--shipping {
+    padding: 0;
+}
+
+.checkout-summary-card {
+    border-top: 3px solid var(--imali-green);
+    padding-top: 0;
+}
+
+.checkout-summary-header {
+    margin: 0 -18px 12px;
+    padding: 12px 18px;
+    background-color: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.checkout-summary-body {
+    gap: 16px;
+}
+
+.checkout-card-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.checkout-summary-count {
+    margin: 0;
+    font-size: 12px;
+    color: var(--imali-green-dark);
+}
+
+.summary-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.summary-item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+}
+
+.summary-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.summary-item-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #e5e7eb, #f9fafb);
+    overflow: hidden;
+}
+
+.summary-item-name {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.summary-item-meta {
+    margin: 0;
+    font-size: 11px;
+    color: var(--imali-text-muted);
+}
+
+.summary-item-price {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.summary-totals {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    color: var(--imali-text-muted);
+}
+
+.summary-total-main {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.summary-total-label {
+    margin: 0;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--imali-text-muted);
+}
+
+.summary-total-value {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.summary-primary-btn {
+    margin-top: 12px;
+    width: 100%;
+}
+
+.summary-secondary-btn {
+    margin-top: 8px;
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid var(--imali-border-soft);
+    padding: 10px 12px;
+    background: #ffffff;
+    color: #1d2433;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+}
+.summary-secondary-btn:hover {
+    background: #f9fafb;
+    color: #1d2433;
+}
+
+.checkout-footnote {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--imali-text-muted);
+}
+
+/* =========================================================
+   CHECKOUT – PILLS DE PAGAMENTO (refinamento visual)
+   ========================================================= */
+
+.checkout-payment-methods-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+}
+
+.checkout-payment-methods-grid .checkout-payment-method {
+    flex: 1 1 0;
+    min-width: 90px;
+}
+
+/* Pill em coluna: logo em cima, nome embaixo – preenche o espaço do card */
+.payment-pill--col {
+    min-height: 72px;
+}
+
+.payment-pill--col .payment-pill-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.payment-pill--col .payment-pill-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.payment-pill--col .payment-pill-name {
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.checkout-payment-methods-grid .payment-pill {
+    min-width: 0;
+    width: 100%;
+    border-radius: 12px;
+    padding: 10px 8px;
+    border: 1px solid #e2e8f0;
+    background: #f9fafb;
+    transition: border-color var(--imali-transition-fast),
+        box-shadow var(--imali-transition-fast),
+        background-color var(--imali-transition-fast),
+        transform var(--imali-transition-fast);
+}
+
+.checkout-payment-methods-grid .payment-pill:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+/* Estado selecionado: pill iMali/BNPL (verde) – input e label são irmãos no DOM */
+.checkout-payment-methods-grid input:checked ~ label.payment-pill-imali {
+    border-color: var(--imali-green);
+    background: #ecfdf3;
+    box-shadow: 0 10px 20px rgba(22, 163, 74, 0.18);
+}
+
+/* Estado selecionado: demais métodos (borda mais forte) */
+.checkout-payment-methods-grid input:checked ~ label.payment-pill:not(.payment-pill-imali) {
+    border-color: #c4cad3;
+    background: #f0f1f3;
+}
+
+/* Card de informação do método de pagamento (como no protótipo) */
+.checkout-info-banner {
+    margin-top: 12px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: #f9fafb;
+    padding: 10px 12px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.checkout-info-icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    border-radius: 999px;
+    background: #e0f2fe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #0369a1;
+}
+
+.checkout-info-text {
+    font-size: 12px;
+    min-width: 0;
+}
+
+.checkout-info-title {
+    margin: 0 0 2px;
+    font-weight: 600;
+}
+
+.checkout-info-body {
+    margin: 0;
+    color: var(--imali-text-muted);
+}
+
+/* =========================================================
+   MODAL iMaliWay/BNPL – design “Aguardar pagamento”
+   ========================================================= */
+
+.checkout-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(15, 23, 42, 0.4);
+}
+
+.checkout-modal-box {
+    width: 100%;
+    max-width: 520px;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: var(--imali-shadow-soft);
+    padding: 20px;
+}
+
+.checkout-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.checkout-modal-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--imali-text-main);
+}
+
+.checkout-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    padding: 0 4px;
+    color: #64748b;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.checkout-modal-close:hover {
+    color: var(--imali-text-main);
+}
+
+.checkout-modal-text {
+    margin: 0 0 14px;
+    font-size: 13px;
+    color: var(--imali-text-muted);
+}
+
+.checkout-modal-field {
+    margin-bottom: 12px;
+}
+
+.checkout-modal-label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--imali-text-muted);
+}
+
+.checkout-modal-input {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--imali-text-main);
+    background: #ffffff;
+    transition: border-color var(--imali-transition-fast),
+        box-shadow var(--imali-transition-fast);
+}
+
+.checkout-modal-input:focus {
+    outline: none;
+    border-color: var(--imali-green);
+    box-shadow: 0 0 0 1px rgba(25, 181, 31, 0.18);
+}
+
+.checkout-modal-input--readonly {
+    background: #f9fafb;
+    color: var(--imali-text-muted);
+}
+
+.checkout-modal-details {
+    margin-bottom: 14px;
+    font-size: 12px;
+    color: var(--imali-text-main);
+}
+
+.checkout-modal-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 4px 0;
+}
+
+.checkout-modal-row--total {
+    font-weight: 600;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 6px;
+    padding-top: 8px;
+}
+
+.checkout-modal-separator {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 10px 0;
+}
+
+.checkout-modal-slider-wrap {
+    margin: 10px 0 14px;
+}
+
+.checkout-modal-slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #64748b;
+    margin-bottom: 4px;
+}
+
+.checkout-modal-slider {
+    width: 100%;
+    height: 8px;
+    accent-color: #40ad53;
+    cursor: pointer;
+}
+
+.checkout-modal-info-box {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: 14px 0;
+}
+
+.checkout-modal-info-box-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #475569;
+    margin: 0 0 10px;
+}
+
+.checkout-modal-error {
+    margin: 0 0 12px;
+    font-size: 12px;
+    color: #dc2626;
+}
+
+.checkout-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.checkout-modal-btn {
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity var(--imali-transition-fast),
+        transform var(--imali-transition-fast);
+}
+
+.checkout-modal-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.checkout-modal-btn--primary {
+    border: none;
+    background: #40ad53;
+    color: #ffffff;
+}
+
+.checkout-modal-btn--primary:hover:not(:disabled) {
+    filter: brightness(1.02);
+}
+
+.checkout-modal-btn--secondary {
+    border: 1px solid #dc2626;
+    background: #ffffff;
+    color: #dc2626;
+}
+
+.checkout-modal-btn--secondary:hover:not(:disabled) {
+    background: #fef2f2;
+}
+
+/* =========================================================
+   CHECKOUT – BARRA FIXA MOBILE E AJUSTES RESPONSIVOS
+   ========================================================= */
+
+.checkout-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.checkout-mobile-bar {
+    display: none;
+}
+
+.checkout-mobile-bar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 10px 20px 14px;
+}
+
+.checkout-mobile-bar-total {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.checkout-mobile-bar-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--imali-text-muted);
+}
+
+.checkout-mobile-bar-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--imali-text-main);
+}
+
+.checkout-mobile-bar-btn {
+    flex: 0 0 170px;
+    margin-top: 0;
+}
+
+@media (min-width: 768px) {
+    .checkout-main {
+        padding: 24px 24px 32px;
+    }
+
+    .checkout-title {
+        font-size: 24px;
+    }
+
+    .checkout-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .checkout-card {
+        padding: 20px 20px 18px;
+    }
+
+    .summary-actions--desktop {
+        display: block;
+    }
+
+    .checkout-footnote--desktop {
+        display: block;
+    }
+
+    .checkout-mobile-bar {
+        display: none;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .checkout-page {
+        padding-bottom: 0;
+    }
+
+    .checkout-main {
+        padding-bottom: 96px;
+    }
+
+    .summary-actions--desktop {
+        display: none;
+    }
+
+    .checkout-footnote--desktop {
+        display: none;
+    }
+
+    .checkout-mobile-bar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 40;
+        display: block;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border-top: 1px solid #e5e7eb;
+        box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.1);
+    }
+
+    .checkout-mobile-bar-inner {
+        padding: 10px 12px 12px;
+    }
+}
+
+/* =========================================================
+   CARRINHO – mesma lógica de design do checkout Mercado ICA
+   ========================================================= */
+
+.cart-page-wrapper {
+    min-height: 100vh;
+    background: #f3f4f6;
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+        "SF Pro Text", "Segoe UI", sans-serif;
+    color: var(--imali-text-main);
+}
+
+.cart-header-bar {
+    background: #f3f4f6;
+}
+
+.cart-back-link {
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity var(--imali-transition-fast);
+}
+.cart-back-link:hover {
+    opacity: 0.85;
+}
+
+.cart-container {
+    padding-bottom: 24px;
+}
+
+/* Cards do carrinho (itens + resumo) usam .checkout-card */
+.cart-items-card {
+    padding: 20px 20px 18px;
+}
+
+.cart-summary-card {
+    padding: 20px 20px 18px;
+    height: fit-content;
+}
+
+.cart-summary-title {
+    margin: 0 0 6px;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--imali-text-main);
+}
+
+/* Botão secundário do carrinho: branco, texto preto, borda */
+.cart-page-wrapper .cart-secondary-btn,
+.cart-page-wrapper .secondary-button.cart-secondary-btn {
+    background: #ffffff !important;
+    color: #1d2433 !important;
+    border: 1px solid var(--imali-border-soft) !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    transition: border-color var(--imali-transition-fast), box-shadow var(--imali-transition-fast);
+}
+.cart-page-wrapper .cart-secondary-btn:hover:not(:disabled),
+.cart-page-wrapper .secondary-button.cart-secondary-btn:hover:not(:disabled) {
+    border-color: #c4cad3 !important;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+
+.cart-proceed-btn {
+    width: 100%;
+}
+
+/* Links de ação (Remover, Mover para wishlist) no carrinho */
+.cart-page-wrapper .cart-items-card .cursor-pointer.text-blue-700,
+.cart-page-wrapper .cart-items-card [class*="text-blue-700"] {
+    color: var(--imali-green) !important;
+}
+.cart-page-wrapper .cart-items-card .cursor-pointer.text-blue-700:hover,
+.cart-page-wrapper .cart-items-card [class*="text-blue-700"]:hover {
+    opacity: 0.9;
+}
+
+/* Separadores e bordas no carrinho */
+.cart-page-wrapper .border-zinc-200 {
+    border-color: var(--imali-border-soft) !important;
+}
+
+/* Quantity changer no carrinho */
+.cart-page-wrapper .cart-items-card .rounded-\[54px\] {
+    border-color: var(--imali-border-soft) !important;
+    border-radius: 12px !important;
+}
+
+/* Título "X itens selecionados" */
+.cart-page-wrapper .cart-items-card [role="heading"] {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--imali-text-main);
+}
+
+@media (max-width: 767.98px) {
+    .cart-summary-card {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+   MEU PERFIL (conta do cliente) – identidade Mercado ICA
+   ========================================================= */
+
+.account-page-wrapper {
+    width: 100%;
+    min-height: 50vh;
+    background: #f3f4f6;
+    padding: 24px 0 48px;
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+        "SF Pro Text", "Segoe UI", sans-serif;
+    color: var(--imali-text-main);
+}
+
+.account-container {
+    padding-bottom: 0;
+}
+
+/* Navegação lateral */
+.account-nav-hero {
+    padding: 20px 18px;
+}
+
+.account-nav-hero-title {
+    color: var(--imali-text-main);
+    margin: 0 0 2px;
+}
+
+.account-nav-hero-email {
+    margin: 0;
+}
+
+.account-nav-section-title {
+    letter-spacing: 0.06em;
+}
+
+.account-nav-menu {
+    border-radius: 10px;
+    padding: 0 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+}
+
+.account-nav-link--active {
+    border-left: 4px solid var(--imali-green);
+}
+[dir="rtl"] .account-nav-link--active {
+    border-left: 0;
+    border-right: 4px solid var(--imali-green);
+}
+
+/* Conteúdo principal: cards e títulos */
+.account-page-wrapper .account-content-card,
+.account-page-wrapper .checkout-card.account-content-card {
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    padding: 24px 28px;
+}
+
+.account-page-wrapper h2.text-2xl,
+.account-page-wrapper .text-2xl.font-medium {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--imali-text-main);
+    margin: 0;
+}
+
+/* Botões na área da conta */
+.account-page-wrapper .secondary-button:not(.cart-secondary-btn) {
+    background: #ffffff !important;
+    color: #1d2433 !important;
+    border: 1px solid var(--imali-border-soft) !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    padding: 10px 18px !important;
+    transition: border-color var(--imali-transition-fast), box-shadow var(--imali-transition-fast);
+}
+.account-page-wrapper .secondary-button:hover:not(:disabled):not(.cart-secondary-btn) {
+    border-color: #c4cad3 !important;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+
+.account-page-wrapper .primary-button,
+.account-page-wrapper button[type="submit"].primary-button {
+    background-color: #40ad53 !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    padding: 11px 18px !important;
+    transition: transform var(--imali-transition-fast), filter var(--imali-transition-fast);
+}
+.account-page-wrapper .primary-button:hover:not(:disabled),
+.account-page-wrapper button[type="submit"].primary-button:hover:not(:disabled) {
+    filter: brightness(1.02);
+}
+
+/* Campos de formulário (perfil, endereços) */
+.account-page-wrapper .form-group label,
+.account-page-wrapper [class*="control-group"] label {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
+    color: var(--imali-text-muted) !important;
+    margin-bottom: 6px !important;
+}
+
+.account-page-wrapper input[type="text"],
+.account-page-wrapper input[type="email"],
+.account-page-wrapper input[type="tel"],
+.account-page-wrapper input[type="password"],
+.account-page-wrapper select,
+.account-page-wrapper textarea {
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    padding: 10px 12px !important;
+    font-size: 14px !important;
+    color: var(--imali-text-main) !important;
+}
+.account-page-wrapper input:focus,
+.account-page-wrapper select:focus,
+.account-page-wrapper textarea:focus {
+    outline: none;
+    border-color: var(--imali-green) !important;
+    box-shadow: 0 0 0 2px rgba(64, 173, 83, 0.15);
+}
+
+/* Linhas de dados (perfil: nome, email, etc.) */
+.account-page-wrapper .border-zinc-200 {
+    border-color: var(--imali-border-soft) !important;
+}
+
+.account-page-wrapper .grid.grid-cols-\[2fr_3fr\].border-b {
+    border-radius: 0;
+    border-bottom: 1px solid var(--imali-border-soft) !important;
+}
+
+/* Cards de endereço na listagem */
+.account-page-wrapper .rounded-xl.border.border-zinc-200 {
+    border-color: #e2e8f0 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    background: #ffffff;
+}
+
+/* Logout box */
+.account-page-wrapper .border-navyBlue.rounded-lg {
+    border-color: var(--imali-border-soft) !important;
+    border-radius: 10px !important;
+    background: #ffffff;
+}
+
+.account-page-wrapper .border-t.border-zinc-300 {
+    border-color: var(--imali-border-soft) !important;
+}
+
+@media (max-width: 767.98px) {
+    .account-page-wrapper {
+        padding: 16px 0 32px;
+    }
+}
+

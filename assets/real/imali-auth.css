@@ -1,0 +1,573 @@
+::root {
+    --imali-green: #19b51f;
+    --imali-green-dark: #0e8f17;
+    --imali-bg: #f5f7f9;
+    --imali-card-bg: #ffffff;
+    --imali-border-soft: #e2e6ea;
+    --imali-text-main: #1d2433;
+    --imali-text-muted: #6c7480;
+    --imali-shadow-soft: 0 24px 60px rgba(15, 23, 42, 0.16);
+    --imali-radius-card: 18px;
+    --imali-radius-pill: 999px;
+    --imali-transition-fast: 0.18s ease-out;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.imali-body {
+    min-height: 100vh;
+    display: flex;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+    background-color: var(--imali-bg);
+    color: var(--imali-text-main);
+}
+
+.imali-page {
+    flex: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* TOPBAR – aparece apenas em telas médias e grandes */
+.imali-topbar {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 56px;
+    position: relative;
+    z-index: 3;
+}
+
+.imali-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.imali-topbar-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: none;
+    background: transparent;
+    color: var(--imali-text-muted);
+    font-size: 13px;
+    cursor: pointer;
+    transition: color var(--imali-transition-fast),
+        background-color var(--imali-transition-fast);
+}
+
+.imali-topbar-link:hover {
+    background-color: rgba(255, 255, 255, 0.55);
+    color: var(--imali-text-main);
+}
+
+.imali-topbar-icon {
+    font-size: 14px;
+}
+
+/* BACKGROUND E LAYOUT PRINCIPAL */
+.imali-main {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    overflow: hidden;
+}
+
+/* Em telas muito baixas, evitar corte do card permitindo scroll vertical */
+@media (max-height: 700px) {
+    .imali-main {
+        align-items: flex-start;
+        padding-top: 16px;
+        padding-bottom: 32px;
+    }
+}
+
+.imali-background {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(
+            to bottom,
+            rgba(245, 247, 249, 0.4),
+            rgba(15, 23, 42, 0.45)
+        ),
+        url("/bagisto/Assets/Fundo de login.png");
+    background-size: cover;
+    background-position: center;
+    filter: blur(1.5px);
+    transform: scale(1.02);
+    transform-origin: center;
+    opacity: 0.95;
+    z-index: 1;
+}
+
+.imali-login-card {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 440px;
+    margin: auto;
+    border-radius: 16px;
+    background: #f3f4f6ed;
+    border: 1px solid #bcc1caff;
+    box-shadow: 0px 17px 35px #171a1f3d, 0px 0px 2px #171a1f1f;
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    padding: 18px 28px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.imali-logo-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 4px;
+    background: radial-gradient(circle at center, rgba(25, 181, 31, 0.22) 0, #ffffff 55%, #e3ffe4 100%);
+    box-shadow: 0 24px 60px rgba(24, 171, 26, 0.42);
+}
+
+.imali-logo-diamond {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    border: 3px solid var(--imali-green);
+    transform: rotate(45deg);
+    display: inline-block;
+    background: #e8ffe9;
+}
+
+.imali-logo-diamond.kecil {
+    width: 14px;
+    height: 14px;
+    border-width: 2px;
+}
+
+.imali-card-header {
+    text-align: center;
+}
+
+/* Barra de marca no topo do card */
+.imali-brand-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    align-self: stretch;
+    margin: -4px -4px 10px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: #16a34a;
+    color: #ecfdf5;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.imali-brand-logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.imali-brand-logo .imali-logo-diamond {
+    border-color: #ecfdf5;
+    background: transparent;
+}
+
+.imali-brand-name {
+    text-transform: none;
+    letter-spacing: 0.04em;
+}
+
+.imali-card-header h1 {
+    margin: 2px 0 2px;
+    font-size: 22px;
+    letter-spacing: 0.01em;
+}
+
+.imali-card-subtitle {
+    margin: 0 0 4px;
+    font-size: 13px;
+    color: var(--imali-text-muted);
+}
+
+.imali-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.imali-field-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.imali-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.imali-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--imali-text-muted);
+}
+
+.imali-input-wrapper {
+    display: flex;
+    align-items: stretch;
+    position: relative;
+    border-radius: 10px;
+    border: 1px solid #e0e2e6ff;
+    background-color: #ffffff80;
+    overflow: hidden;
+    transition: border-color var(--imali-transition-fast),
+        box-shadow var(--imali-transition-fast),
+        background-color var(--imali-transition-fast);
+}
+
+.imali-input-wrapper:focus-within {
+    border-color: #e0e2e6ff;
+    background-color: #ffffff80;
+    box-shadow: none;
+}
+
+.imali-input-icon,
+.imali-input-addon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    color: #585e6a99;
+    background: transparent;
+    border: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.imali-input-addon {
+    cursor: pointer;
+    right: 12px;
+}
+
+.imali-input-icon {
+    left: 12px;
+}
+
+.imali-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    height: 40px;
+    padding-left: 44px;
+    padding-right: 26px;
+    font-size: 12.5px;
+    color: var(--imali-text-main);
+}
+
+.imali-input::placeholder {
+    color: #a0a7b3;
+}
+
+.imali-icon-svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+.imali-field-actions {
+    margin-top: 4px;
+    text-align: right;
+}
+
+.imali-link,
+.imi-link-small {
+    font-size: 12px;
+    color: #14a71a;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.imali-link:hover,
+.imi-link-small:hover {
+    text-decoration: underline;
+}
+
+.imali-remember-row {
+    margin-top: 2px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.imali-checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--imali-text-muted);
+}
+
+.imali-checkbox input {
+    display: none;
+}
+
+.imali-checkbox-custom {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1.5px solid #c4cad3;
+    display: inline-block;
+    position: relative;
+    background-color: #ffffff;
+    transition: all var(--imali-transition-fast);
+}
+
+.imali-checkbox input:checked + .imali-checkbox-custom {
+    background-color: var(--imali-green);
+    border-color: var(--imali-green);
+}
+
+.imali-checkbox input:checked + .imali-checkbox-custom::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-radius: 2px;
+    border: 2px solid #ffffff;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg);
+}
+
+.imali-checkbox-label {
+    user-select: none;
+}
+
+.imali-primary-btn {
+    margin-top: 12px;
+    width: 100%;
+    height: 44px;
+    padding: 0 12px;
+    border-radius: 22px;
+    border: 0;
+    background: #4db800ff;
+    color: #ffffffff;
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    font-size: 16px;
+    line-height: 26px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0px 2px 4px #00000012, 0px 0px 0px #171a1f00;
+    transition: transform var(--imali-transition-fast),
+        box-shadow var(--imali-transition-fast),
+        filter var(--imali-transition-fast);
+}
+
+.imali-primary-btn:hover {
+    background: #4db800ff;
+}
+
+.imali-btn-arrow {
+    font-size: 16px;
+}
+
+.imali-card-footer {
+    margin-top: 10px;
+    border-top: 1px solid var(--imali-border-soft);
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.imali-secondary-text {
+    margin: 0;
+    font-size: 13px;
+    color: var(--imali-text-muted);
+    text-align: center;
+}
+
+.imali-chip {
+    align-self: center;
+    border-radius: var(--imali-radius-pill);
+    border: 1px solid rgba(16, 185, 32, 0.35);
+    background: rgba(232, 255, 233, 0.85);
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--imali-green-dark);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: default;
+}
+
+/* FOOTER */
+.imali-footer {
+    position: relative;
+    z-index: 2;
+    padding: 14px 18px 20px;
+    background: radial-gradient(circle at top, rgba(15, 23, 42, 0.72), #101827);
+    color: #e8edf5;
+}
+
+.imali-footer-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.imali-footer-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border-radius: var(--imali-radius-pill);
+    background: rgba(15, 23, 42, 0.72);
+    font-size: 11px;
+    color: #e2f7e4;
+}
+
+.imali-footer-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: #10b981;
+}
+
+.imali-footer-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.imali-footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+}
+
+.imali-footer-brand-name {
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.imali-footer-copy {
+    font-size: 11px;
+    color: #a8b2c3;
+}
+
+.imali-footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 18px;
+    font-size: 11px;
+}
+
+.imali-footer-link {
+    color: #e5edf7;
+    text-decoration: none;
+}
+
+.imali-footer-link:hover {
+    text-decoration: underline;
+}
+
+/* ============================================
+   RESPONSIVIDADE
+   - Mobile first
+   - Ajustes progressivos para telas maiores
+   ============================================ */
+
+/* Telas médias (tablets e desktops menores) */
+@media (min-width: 768px) {
+    .imali-topbar {
+        display: flex;
+    }
+
+    .imali-main {
+        padding: 32px 56px 40px;
+        align-items: center;
+    }
+
+    .imali-login-card {
+        max-width: 460px;
+        padding: 28px 30px 26px;
+    }
+
+    .imali-card-header h1 {
+        font-size: 24px;
+    }
+
+    .imali-card-subtitle {
+        font-size: 14px;
+    }
+
+    .imali-footer {
+        padding-inline: 56px;
+        padding-block: 18px 22px;
+    }
+
+    .imali-footer-bottom {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .imali-field-row {
+        flex-direction: row;
+    }
+
+    .imali-field-row .imali-field-group {
+        flex: 1;
+    }
+}
+
+/* Telas grandes – manter o comportamento responsivo
+   centralizando o cartão para qualquer largura */
+@media (min-width: 1200px) {
+    .imali-main {
+        justify-content: center;
+    }
+
+    .imali-login-card {
+        max-width: 480px;
+    }
+}
+

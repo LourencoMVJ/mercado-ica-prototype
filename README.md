@@ -1,11 +1,10 @@
 # Mercado ICA — Protótipo de interface
 
-Protótipo ilustrativo só de UI (HTML/CSS/JS), sem controllers nem base de dados.
-Abrir `index.html` (via XAMPP: http://localhost/mercado-ica-prototype/ ou diretamente no browser).
+Protótipo só de UI (HTML/CSS/JS), sem controllers nem base de dados. Usa o **CSS, as fontes de ícones e as imagens compiladas do projeto real** (copiados de `public/themes` e `public/Assets`) e reproduz a estrutura das views Blade reais (loja, painel do vendedor e administração).
 
 - `comprador/` — loja pública (Ana Machava)
 - `cliente/`   — painel do vendedor (TechMoz Solutions)
 - `admin/`     — administração (Admin ICA)
 
-Dados fictícios em `assets/js/data.js`. A sessão, carrinho, lista de desejos e pedidos novos
-vivem apenas em sessionStorage; as restantes ações mostram feedback mas não gravam nada.
+Atalho para testes: acrescentar `?demo` ao URL de cada perfil inicia a sessão de demonstração.
+Dados fictícios em `assets/js/data.js`; sessão, carrinho e pedidos novos só existem em sessionStorage.

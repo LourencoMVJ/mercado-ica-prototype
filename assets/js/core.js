@@ -87,30 +87,34 @@
   }
   const pimg = (p, cls = '', n = 0) => '<img class="' + cls + '" loading="lazy" alt="' + esc(p.name) + '" src="' + art(n ? ['🔍', '📐', '📦', '🧰'][n % 4] : p.emoji, n ? shade(p.color, n * -18) : p.color) + '">';
 
-  /* ---------- UI: toast, modal, confirm ---------- */
+  /* ---------- UI: toast (flash real), modal real, confirmação ---------- */
+  const FLASH = { success: ['#D4EDDA', '#155721', 'icon-toast-done'], error: ['#F8D7DA', '#721C24', 'icon-toast-error'], warning: ['#FFF3CD', '#856404', 'icon-toast-exclamation-mark'], info: ['#E2E3E5', '#383D41', 'icon-toast-info'] };
   function toast(msg, type = 'success') {
     let box = $('#toasts');
-    if (!box) { box = document.createElement('div'); box.id = 'toasts'; box.setAttribute('aria-live', 'polite'); document.body.appendChild(box); }
+    if (!box) { box = document.createElement('div'); box.id = 'toasts'; box.className = 'fixed top-5 z-[10003] grid justify-items-end gap-2.5 ltr:right-5'; box.setAttribute('aria-live', 'polite'); document.body.appendChild(box); }
+    const f = FLASH[type] || FLASH.success;
     const t = document.createElement('div');
-    t.className = 'toast toast-' + type;
-    t.innerHTML = icon(type === 'error' ? 'x' : type === 'info' ? 'info' : 'check') + '<span>' + esc(msg) + '</span>';
+    t.className = 'toast flex w-max max-w-[408px] justify-between gap-12 rounded-lg px-5 py-3 max-sm:max-w-80 max-sm:items-center max-sm:gap-2 max-sm:p-3 transition duration-200';
+    t.style.cssText = 'background:' + f[0] + ';color:' + f[1];
+    t.innerHTML = '<p class="flex items-center break-words text-sm"><span class="' + f[2] + ' text-2xl ltr:mr-2.5" style="color:' + f[1] + '"></span>' + esc(msg) + '</p><span class="icon-cancel max-h-4 max-w-4 cursor-pointer" style="color:' + f[1] + '" data-act="toast-close"></span>';
     box.appendChild(t);
-    setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 300); }, 3200);
+    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3200);
   }
   function openModal({ title, body, footer = '', size = '' }) {
     closeModal();
+    const w = size === 'lg' ? 'max-w-[820px]' : size === 'sm' ? 'max-w-[420px]' : 'max-w-[568px]';
     const m = document.createElement('div');
-    m.id = 'modal'; m.className = 'modal-overlay';
-    m.innerHTML = '<div class="modal ' + size + '" role="dialog" aria-modal="true" aria-label="' + esc(title) + '"><header><h3>' + esc(title) + '</h3><button class="icon-btn" data-act="close-modal" aria-label="Fechar">' + icon('x') + '</button></header><div class="modal-body">' + body + '</div>' + (footer ? '<footer>' + footer + '</footer>' : '') + '</div>';
-    m.addEventListener('mousedown', (e) => { if (e.target === m) closeModal(); });
+    m.id = 'modal';
+    m.innerHTML = '<div class="fixed inset-0 z-[10001] bg-gray-500 bg-opacity-50 transition-opacity" data-act="close-modal"></div><div class="fixed inset-0 z-[10002] transform overflow-y-auto transition"><div class="flex min-h-screen items-end justify-center p-4 sm:items-center sm:p-0" data-modal-bg><div class="box-shadow relative z-[999] w-screen ' + w + ' rounded-lg bg-white max-lg:mb-4 max-lg:mt-4 max-md:w-[90%]" role="dialog" aria-modal="true" aria-label="' + esc(title) + '"><div class="flex items-center justify-between gap-2.5 border-b px-4 py-3"><p class="text-lg font-bold text-gray-800">' + esc(title) + '</p><span class="icon-cancel-1 icon-cancel cursor-pointer text-3xl hover:rounded-md hover:bg-gray-100" role="button" tabindex="0" aria-label="Fechar" data-act="close-modal"></span></div><div class="modal-body border-b px-4 py-2.5 max-h-[70vh] overflow-auto">' + body + '</div>' + (footer ? '<div class="flex justify-end gap-2.5 px-4 py-2.5">' + footer + '</div>' : '') + '</div></div></div>';
+    m.querySelector('[data-modal-bg]').addEventListener('mousedown', (e) => { if (e.target === e.currentTarget) closeModal(); });
     document.body.appendChild(m);
-    document.body.classList.add('modal-open');
+    document.body.classList.add('overflow-hidden');
     const f = $('input,select,textarea', m); if (f) f.focus();
   }
-  function closeModal() { const m = $('#modal'); if (m) m.remove(); document.body.classList.remove('modal-open'); }
+  function closeModal() { const m = $('#modal'); if (m) m.remove(); document.body.classList.remove('overflow-hidden'); }
   function confirmBox(msg, onOk, { title = 'Confirmar', okLabel = 'Confirmar', danger = false } = {}) {
     ICA._confirm = onOk;
-    openModal({ title, size: 'sm', body: '<p class="confirm-msg">' + msg + '</p>', footer: '<button class="btn btn-ghost" data-act="close-modal">Cancelar</button><button class="btn ' + (danger ? 'btn-danger' : 'btn-primary') + '" data-act="confirm-ok">' + okLabel + '</button>' });
+    openModal({ title, size: 'sm', body: '<p class="py-2 text-base text-gray-600">' + msg + '</p>', footer: '<button class="secondary-button" data-act="close-modal">Cancelar</button><button class="primary-button" ' + (danger ? 'style="background:#dc2626;border-color:#dc2626"' : '') + ' data-act="confirm-ok">' + okLabel + '</button>' });
   }
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
@@ -122,15 +126,10 @@
   ACT['toast'] = (el) => toast(el.dataset.msg || 'Operação simulada com sucesso.', el.dataset.type || 'success');
   ACT['back'] = () => history.back();
   ACT['toggle-class'] = (el) => { const t = $(el.dataset.target); if (t) t.classList.toggle(el.dataset.cls || 'open'); };
-  ACT['tab'] = (el) => {
-    const wrap = el.closest('[data-tabs]');
-    $$('[data-tab]', wrap).forEach((b) => b.classList.toggle('active', b === el));
-    $$('[data-pane]', wrap).forEach((p) => p.classList.toggle('active', p.dataset.pane === el.dataset.tab));
-  };
   ACT['confirm-toast'] = (el) => confirmBox(el.dataset.q || 'Tem a certeza?', () => { toast(el.dataset.msg || 'Concluído (simulação).'); if (el.dataset.go) location.hash = el.dataset.go; }, { danger: el.dataset.danger === '1', okLabel: el.dataset.ok || 'Confirmar' });
   document.addEventListener('click', (e) => {
     const t = e.target.closest('[data-act]');
-    if (!t) { const dd = $$('.dropdown.open'); dd.forEach((d) => { if (!d.contains(e.target)) d.classList.remove('open'); }); return; }
+    if (!t) { $$('.dd-menu').forEach((d) => { if (!d.parentNode.contains(e.target)) d.classList.add('hidden'); }); return; }
     const fn = ACT[t.dataset.act];
     if (fn) { e.preventDefault(); fn(t, e); }
   });
@@ -143,7 +142,8 @@
     if (h) h(data, f);
     else { toast(f.dataset.msg || 'Guardado com sucesso (simulação).'); if (f.dataset.go) location.hash = f.dataset.go; closeModal(); }
   });
-  ACT['dropdown'] = (el, e) => { e.stopPropagation(); const d = el.closest('.dropdown'); const was = d.classList.contains('open'); $$('.dropdown.open').forEach((x) => x.classList.remove('open')); if (!was) d.classList.add('open'); };
+  ACT['dropdown'] = (el, e) => { e.stopPropagation(); const menu = el.parentNode.querySelector('.dd-menu'); const was = menu && !menu.classList.contains('hidden'); $$('.dd-menu').forEach((x) => x.classList.add('hidden')); if (menu && !was) menu.classList.remove('hidden'); };
+  ACT['toast-close'] = (el) => { const t = el.closest('.toast'); if (t) t.remove(); };
 
   /* ---------- Router por hash ---------- */
   function createRouter(outlet, routes, hooks = {}) {
