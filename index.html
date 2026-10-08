@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mercado ICA — Protótipo de interface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.cdnfonts.com/css/lemonmilk" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/base.css">
+<style>
+  body { background: radial-gradient(circle at 15% 10%, #c3ffdc 0, transparent 40%), radial-gradient(circle at 90% 90%, #93ecb8 0, transparent 38%), #f1f7f3; min-height: 100vh; }
+  .wrap { width: min(1080px, 100% - 32px); margin: 0 auto; padding: 56px 0; }
+  .brandline { display: flex; align-items: center; gap: 12px; margin-bottom: 36px; }
+  .logo { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 13px; background: var(--g500); color: #fff; font-family: var(--display); font-weight: 800; box-shadow: 0 4px 14px rgba(34,197,94,.4); }
+  h1 { font-family: var(--display); text-transform: uppercase; font-size: clamp(28px, 5vw, 48px); line-height: 1.08; letter-spacing: -.01em; max-width: 780px; }
+  h1 span { color: var(--g700); }
+  .lead { font-size: 18px; color: #14532d; max-width: 640px; margin: 16px 0 38px; }
+  .roles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .role { position: relative; display: grid; gap: 12px; align-content: start; padding: 26px; background: #fff; border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--sh); transition: .25s; overflow: hidden; }
+  .role:hover { transform: translateY(-6px); box-shadow: var(--sh-lg); border-color: var(--g500); }
+  .role .ico { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 16px; font-size: 28px; background: var(--g100); }
+  .role h2 { font-size: 22px; } .role p { color: var(--mut); }
+  .role ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 13.5px; color: var(--ink2); }
+  .role li::before { content: '✓'; color: var(--g600); font-weight: 800; margin-right: 8px; }
+  .role .go { margin-top: 8px; }
+  .role .tag { position: absolute; top: 18px; right: 18px; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 99px; background: var(--ink); color: #fff; text-transform: uppercase; letter-spacing: .04em; }
+  .note { margin-top: 34px; padding: 16px 20px; border: 1px dashed var(--g500); border-radius: 14px; background: rgba(255,255,255,.7); color: #14532d; display: flex; gap: 12px; align-items: flex-start; }
+  @media (max-width: 860px) { .roles { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="brandline"><span class="logo">ICA</span><b style="font-size:18px">Mercado ICA</b><span class="badge badge-info" style="margin-left:6px">Protótipo ilustrativo</span></div>
+  <h1>Três perfis, <span>um marketplace</span></h1>
+  <p class="lead">Navegue pelas interfaces completas de cada perfil. Os dados são fictícios e não há base de dados nem controllers: os botões respondem, os fluxos avançam e as ações mostram feedback, mas nada é gravado de facto.</p>
+  <div class="roles">
+    <a class="role" href="comprador/index.html" data-role="buyer"><span class="tag">Loja pública</span><span class="ico">🛒</span><h2>Comprador</h2><p>Quem compra no marketplace.</p>
+      <ul><li>Home, categorias, pesquisa e filtros</li><li>Produto, comparação e lista de desejos</li><li>Carrinho e checkout com M-Pesa, e-Mola, mKesh, iMali</li><li>Conta: pedidos, moradas, devoluções (RMA)</li></ul><span class="btn btn-primary go">Entrar como Ana Machava →</span></a>
+    <a class="role" href="cliente/index.html" data-role="seller"><span class="tag">Painel</span><span class="ico">🏪</span><h2>Cliente (vendedor)</h2><p>Quem vende e gere a sua loja.</p>
+      <ul><li>Dashboard com vendas e stock</li><li>Produtos, atribuição do catálogo e importação</li><li>Pedidos, faturas, envios e devoluções</li><li>Financeiro, relatórios, perfil e definições</li></ul><span class="btn btn-primary go">Entrar como TechMoz Solutions →</span></a>
+    <a class="role" href="admin/index.html" data-role="admin"><span class="tag">Backoffice</span><span class="ico">🛡️</span><h2>Administrador</h2><p>Quem opera a plataforma.</p>
+      <ul><li>Aprovação de vendedores e produtos</li><li>Vendas, catálogo, clientes e CMS</li><li>Marketing, relatórios e comissões</li><li>Definições e configuração de pagamentos</li></ul><span class="btn btn-primary go">Entrar como Admin ICA →</span></a>
+  </div>
+  <div class="note"><span>ℹ️</span><span>Cada perfil inicia sessão automaticamente com uma conta de demonstração. Pode terminar sessão e voltar aqui a qualquer momento através de “Mudar de perfil”.</span></div>
+</main>
+<script>
+  // sessão de demonstração por perfil (guardada só no separador do browser)
+  document.querySelectorAll('.role').forEach(function (a) {
+    a.addEventListener('click', function () {
+      try {
+        var r = a.dataset.role;
+        if (r === 'buyer') sessionStorage.setItem('ica.buyer', JSON.stringify({ name: 'Ana Machava', email: 'ana.machava@exemplo.co.mz', phone: '+258 84 000 1111' }));
+        if (r === 'seller') sessionStorage.setItem('ica.seller', JSON.stringify({ id: 3 }));
+        if (r === 'admin') sessionStorage.setItem('ica.admin', '1');
+      } catch (e) { /* sem sessionStorage: o login manual continua disponível */ }
+    });
+  });
+</script>
+</body>
+</html>
