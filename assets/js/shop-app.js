@@ -35,8 +35,8 @@
   ], {
     notFound: sh.notFound,
     after: (path) => {
-      sh.updateHeader();
-      const authCss = document.getElementById('imali-auth'); if (authCss) authCss.disabled = !['/entrar', '/registar', '/recuperar'].includes(path);
+      sh.updateHeader(); sh.markTab(path); sh.syncCookie(path);
+      document.body.classList.toggle('d-auth', ['/entrar', '/registar', '/recuperar'].includes(path)); // ecrãs de entrada sem cabeçalho/rodapé da loja
     },
   });
 })();

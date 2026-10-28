@@ -17,15 +17,20 @@
   const sellerOf = (p) => byId(D.sellers, p.seller);
   const liveProducts = () => D.products.filter((p) => p.status === 'approved');
   const cartCount = () => cart().reduce((s, l) => s + l.qty, 0);
-  const cartLines = () => cart().map((l) => ({ ...l, p: prod(l.pid) })).filter((l) => l.p);
+  /* preço por volume: 10+ unidades -5%, 50+ unidades -10% (o mesmo em cartões, produto, carrinho e checkout) */
+  const TIERS = [[50, 0.9], [10, 0.95], [1, 1]];
+  const FREE_SHIP = 100000;
+  const unitPrice = (p, qty) => Math.round(p.price * TIERS.find((t) => qty >= t[0])[1]);
+  const cartLines = () => cart().map((l) => { const p = prod(l.pid); return p && { ...l, p, unit: unitPrice(p, l.qty) }; }).filter(Boolean);
   const totals = () => {
-    const lines = cartLines(), sub = lines.reduce((s, l) => s + l.p.price * l.qty, 0), cp = S.get('coupon', null);
+    const lines = cartLines(), sub = lines.reduce((s, l) => s + l.unit * l.qty, 0), cp = S.get('coupon', null);
     const disc = cp ? (cp.type === 'percent' ? Math.round((sub * cp.value) / 100) : Math.min(cp.value, sub)) : 0;
-    const shipOpt = S.get('shipping', 'standard'), shipCost = !lines.length ? 0 : shipOpt === 'pickup' ? 0 : sub - disc >= 100000 ? 0 : shipOpt === 'express' ? 3500 : 1500;
+    // envio: levantamento grátis; expresso 3500 MT sempre; normal 1500 MT, grátis a partir de FREE_SHIP
+    const shipOpt = S.get('shipping', 'standard'), shipCost = !lines.length || shipOpt === 'pickup' ? 0 : shipOpt === 'express' ? 3500 : sub - disc >= FREE_SHIP ? 0 : 1500;
     const tax = Math.round((sub - disc) * 0.16);
     return { sub, disc, ship: shipCost, tax, total: sub - disc + shipCost + tax, coupon: cp };
   };
-  Object.assign(shop, { cart, wish, cmp, buyer, prod, sellerOf, cartLines, cartCount, totals, liveProducts, brand, ic });
+  Object.assign(shop, { cart, wish, cmp, buyer, prod, sellerOf, cartLines, cartCount, totals, liveProducts, brand, ic, TIERS, unitPrice, FREE_SHIP });
 
   /* ---------- Cartão de produto (grelha) ---------- */
   function pcard(p) {
@@ -57,62 +62,106 @@
   const emptyBox = (msg) => '<div class="m-auto grid w-full place-content-center items-center justify-items-center py-32 text-center"><p class="text-xl max-md:text-sm" role="heading">' + msg + '</p></div>';
   Object.assign(shop, { pcard, stars, emptyBox, starsSm });
 
-  /* ---------- Layout (cabeçalho, rodapé, mini-carrinho) ---------- */
+  /* ---------- Layout D (cabeçalho, rodapé, gaveta, barra inferior, mini-carrinho) ---------- */
+  const SPRITE = '<svg width="0" height="0" style="position:absolute" aria-hidden="true">' +
+    '<symbol id="d-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>' +
+    '<symbol id="d-cart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.5L22 7H6"/></symbol>' +
+    '<symbol id="d-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></symbol>' +
+    '<symbol id="d-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>' +
+    '<symbol id="d-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M3 10 12 3l9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>' +
+    '<symbol id="d-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>' +
+    '<symbol id="d-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></symbol>' +
+    '<symbol id="d-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></symbol>' +
+    '<symbol id="d-wallet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M20 7V5a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15v12H5a2 2 0 0 1-2-2V6"/><circle cx="16" cy="14" r="1.3" fill="currentColor"/></symbol>' +
+    '<symbol id="d-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></symbol>' +
+    '<symbol id="d-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol></svg>';
+  const svg = (id, st = '') => '<svg class="d-ic"' + (st ? ' style="' + st + '"' : '') + ' aria-hidden="true"><use href="#d-' + id + '"/></svg>';
+  shop.svg = svg;
+  const logo = (f, alt = 'Mercado ICA') => '<img src="../assets/brand/' + f + '" alt="' + alt + '">';
+  const BALANCE = 125430; // saldo iMali de demonstração
+  shop.BALANCE = BALANCE;
+  const balHidden = () => { try { return localStorage.getItem('ica.balHidden') === '1'; } catch (e) { return false; } };
+  const balBlock = (extra = '') => '<div class="d-bal ' + extra + '" data-d-bal>' + svg('wallet', 'color:var(--d-lime)') + '<span style="flex:1"><small>Saldo iMali</small><b data-d-balval></b></span><button type="button" class="d-eye" data-act="d-bal-eye" aria-label="Esconder saldo">' + svg('eye', 'width:17px;height:17px') + '</button></div>';
+
   function updateHeader() {
-    const c = $('#hdr-cart-count'); if (c) { c.textContent = cartCount(); c.style.display = cartCount() ? '' : 'none'; }
+    const n = cartCount(), w = wish().length, b = buyer(), hid = balHidden();
+    $$('[data-d-cart]').forEach((c) => { c.textContent = n; c.dataset.n = n; });
+    $$('[data-d-wish]').forEach((c) => { c.textContent = w; c.dataset.n = w; });
+    const tot = $('#hdr-cart-total'); if (tot) tot.textContent = n ? money(totals().total) : 'Vazio';
     const u = $('#hdr-auth'); if (u) u.innerHTML = authBlock();
+    $$('[data-d-bal]').forEach((el) => {
+      el.style.display = b ? '' : 'none';
+      el.classList.toggle('is-hidden', hid);
+      $('[data-d-balval]', el).textContent = hid ? '••••• MT' : money(BALANCE);
+      const e = $('.d-eye', el); e.setAttribute('aria-label', hid ? 'Mostrar saldo' : 'Esconder saldo'); e.setAttribute('aria-pressed', hid);
+    });
     const dr = $('#mini-cart-body'); if (dr) dr.innerHTML = miniCart();
   }
   function authBlock() {
     const b = buyer();
-    if (!b) return '<a href="#/entrar" class="text-sm font-medium text-gray-700 hover:text-imali">Entrar</a><a href="#/registar" class="rounded-full bg-imali px-4 py-1.5 text-xs font-semibold text-white shadow hover:bg-imali-dark">Criar-conta</a>';
-    return '<div class="relative"><span class="inline-block text-2xl cursor-pointer icon-users" role="button" aria-label="Perfil" title="Perfil" tabindex="0" data-act="user-menu"></span><div id="user-menu" class="absolute right-0 top-9 z-50 hidden w-[240px] rounded-lg border border-zinc-200 bg-white shadow-lg"><div class="grid gap-2.5 p-5 pb-0"><p class="text-xl font-dmserif">Bem-vinda, ' + esc(b.name.split(' ')[0]) + '</p><p class="text-sm">Gerir conta e pedidos</p></div><p class="w-full mt-3 border border-zinc-200"></p><div class="mt-2.5 grid gap-1 pb-2.5"><a class="px-5 py-2 text-base cursor-pointer hover:bg-gray-100" href="#/conta/perfil">Perfil</a><a class="px-5 py-2 text-base cursor-pointer hover:bg-gray-100" href="#/conta/pedidos">Pedidos</a><a class="px-5 py-2 text-base cursor-pointer hover:bg-gray-100" href="#" data-act="logout">Terminar sessão</a></div></div></div>';
+    if (!b) return '<a href="#/entrar" class="d-auth-btn o">Entrar</a><a href="#/registar" class="d-auth-btn l">Criar conta</a>';
+    return '<div style="position:relative"><div class="d-act" role="button" tabindex="0" aria-haspopup="true" data-act="user-menu"><span class="d-ico">' + svg('user') + '</span><span class="d-lbl"><small>Olá, ' + esc(b.name.split(' ')[0]) + '</small>Conta</span></div>' +
+      '<div id="user-menu" class="d-umenu"><p>' + esc(b.name) + '</p><a href="#/conta">Painel</a><a href="#/conta/pedidos">Pedidos</a><a href="#/conta/desejos">Lista de desejos</a><a href="#/conta/perfil">Perfil</a><a href="#" data-act="logout">Terminar sessão</a></div></div>';
   }
-  ACT['user-menu'] = () => $('#user-menu').classList.toggle('hidden');
+  ACT['user-menu'] = (el, e) => { e.stopPropagation(); $('#user-menu').classList.toggle('open'); };
+  document.addEventListener('click', (e) => { const m = $('#user-menu'); if (m && !e.target.closest('#hdr-auth')) m.classList.remove('open'); });
+  ACT['d-bal-eye'] = () => { try { localStorage.setItem('ica.balHidden', balHidden() ? '0' : '1'); } catch (e) { /* sem armazenamento */ } updateHeader(); };
   function miniCart() {
     const lines = cartLines(), t = totals();
     return '<div class="flex items-start justify-between border-b border-zinc-200 p-6 max-md:p-5"><div><p class="text-2xl font-medium max-md:text-xl" style="color:#1d2433;">Carrinho de compras</p><p class="text-base max-sm:text-xs" style="color:#6c7480;">Entrega grátis acima de 100.000 MT</p></div><span class="icon-cancel cursor-pointer text-3xl" role="button" tabindex="0" data-act="drawer" aria-label="Fechar"></span></div>' +
-      '<div class="flex-1 overflow-auto p-6 max-md:p-5">' + (lines.length ? '<div class="grid gap-12 max-md:gap-5">' + lines.map((l) => '<div class="flex gap-x-5 max-md:gap-x-4"><a href="#/produto/' + l.pid + '" data-act="drawer">' + pimg(l.p, 'max-w-28 max-h-28 rounded-xl max-md:max-h-20 max-md:max-w-[76px]') + '</a><div class="grid flex-1 place-content-start justify-stretch gap-y-2.5"><div class="flex justify-between gap-2"><a href="#/produto/' + l.pid + '" data-act="drawer"><p class="text-base font-medium max-md:font-normal max-sm:text-sm">' + esc(l.p.name) + '</p></a><p class="text-lg max-md:font-semibold max-sm:text-sm">' + money(l.p.price) + '</p></div><div class="flex items-center justify-between"><span class="text-sm text-zinc-500">Qtd.: ' + l.qty + '</span><span class="cursor-pointer text-base" style="color:#19b51f;" role="button" tabindex="0" data-act="rm-cart" data-pid="' + l.pid + '">Remover</span></div></div></div>').join('') + '</div>' : emptyBox('O carrinho está vazio.')) + '</div>' +
+      '<div class="flex-1 overflow-auto p-6 max-md:p-5">' + (lines.length ? '<div class="grid gap-12 max-md:gap-5">' + lines.map((l) => '<div class="flex gap-x-5 max-md:gap-x-4"><a href="#/produto/' + l.pid + '" data-act="drawer">' + pimg(l.p, 'max-w-28 max-h-28 rounded-xl max-md:max-h-20 max-md:max-w-[76px]') + '</a><div class="grid flex-1 place-content-start justify-stretch gap-y-2.5"><div class="flex justify-between gap-2"><a href="#/produto/' + l.pid + '" data-act="drawer"><p class="text-base font-medium max-md:font-normal max-sm:text-sm">' + esc(l.p.name) + '</p></a><p class="text-lg max-md:font-semibold max-sm:text-sm">' + money(l.unit) + '</p></div><div class="flex items-center justify-between"><span class="text-sm text-zinc-500">Qtd.: ' + l.qty + '</span><span class="cursor-pointer text-base" style="color:#19b51f;" role="button" tabindex="0" data-act="rm-cart" data-pid="' + l.pid + '">Remover</span></div></div></div>').join('') + '</div>' : emptyBox('O carrinho está vazio.')) + '</div>' +
       '<div class="border-t border-zinc-200 p-6 max-md:p-5"><div class="mb-5 flex items-center justify-between"><p class="text-sm font-medium text-zinc-500">Subtotal</p><p class="text-3xl font-semibold max-md:text-2xl">' + money(t.sub) + '</p></div><div class="grid gap-2.5"><a href="#/checkout" data-act="drawer" class="imali-primary-btn block rounded-2xl px-11 py-4 text-center text-base font-medium text-white" style="background:#19b51f;">Finalizar compra</a><a href="#/carrinho" data-act="drawer" class="block cursor-pointer text-center text-base font-medium" style="color:#19b51f;">Ver carrinho</a></div></div>';
   }
   function layout() {
     const cats = D.categories;
-    document.getElementById('app').innerHTML =
-      '<header class="shadow-gray sticky top-0 z-10 bg-white shadow-sm max-lg:shadow-none"><div class="flex flex-wrap"><div class="flex min-h-[78px] w-full justify-between border border-b border-l-0 border-r-0 border-t-0 px-[60px] max-1180:px-8 max-sm:px-4">' +
-      '<div class="flex items-center gap-x-10 max-[1180px]:gap-x-5"><button type="button" class="mr-2 flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-700 hover:border-imali hover:text-imali" aria-label="Todas as categorias" data-act="toggle-cats"><span class="text-lg icon-hamburger"></span></button>' +
-      '<a href="#/" aria-label="Mercado ICA" class="flex items-center gap-2"><span class="text-lg font-extrabold text-imali">Mercado ICA</span></a>' +
-      '<div class="flex items-center max-lg:hidden">' + cats.slice(0, 4).map((c) => '<div class="group relative flex h-[77px] items-center border-b-4 border-transparent hover:border-b-4 hover:border-navyBlue"><a href="#/categoria/' + c.slug + '" class="inline-block px-5 uppercase">' + esc(c.name) + '</a></div>').join('') + '</div></div>' +
-      '<div class="flex flex-1 items-center gap-x-9 max-[1100px]:gap-x-6 max-lg:gap-x-8 justify-end"><div class="relative w-full max-w-[620px]"><form data-form="search" class="flex w-full items-center" role="search"><label for="organic-search" class="sr-only">Pesquisar</label><div class="icon-search pointer-events-none absolute top-2.5 flex items-center text-xl text-gray-400 ltr:left-3"></div><input id="organic-search" type="text" name="q" list="sugg" class="block w-full rounded-full border border-transparent bg-zinc-100 px-11 py-2.5 text-sm font-normal text-gray-900 transition-all hover:border-gray-300 focus:border-imali" placeholder="Pesquisar produtos" aria-label="Pesquisar produtos" required><datalist id="sugg">' + D.searchTerms.map((t) => '<option value="' + esc(t.term) + '">').join('') + '</datalist><button type="submit" class="hidden" aria-label="Pesquisar"></button></form></div>' +
-      '<div class="mt-1.5 flex items-center gap-x-8 max-[1100px]:gap-x-6 max-lg:gap-x-8"><a href="#/comparar" class="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-700 hover:border-imali hover:text-imali max-sm:hidden" aria-label="Comparar" title="Comparar"><span class="icon-compare text-lg"></span></a>' +
-      '<a href="#/conta/desejos" class="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-700 hover:border-imali hover:text-imali" aria-label="Lista de desejos" title="Lista de desejos"><span class="icon-heart text-lg"></span></a>' +
-      '<span class="relative"><span class="icon-cart cursor-pointer text-2xl" role="button" aria-label="Carrinho" title="Carrinho" tabindex="0" data-act="drawer"></span><span id="hdr-cart-count" class="absolute -top-4 rounded-[44px] px-2 py-1.5 text-xs font-semibold leading-[9px] text-white ltr:left-5" style="background-color:#19b51f;"></span></span>' +
-      '<div id="hdr-auth" class="flex items-center gap-x-8"></div>' +
-      '<a href="../cliente/index.html" class="ml-4 hidden rounded-full border border-gray-300 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-gray-700 hover:border-imali hover:text-imali lg:inline-flex">DASHBOARD DO COMERCIANTE</a></div></div></div></div>' +
-      '<div id="cat-bar" class="hidden border-b border-gray-100 bg-white"><div class="container flex flex-wrap gap-6 px-[60px] py-3 max-lg:px-8 text-sm"><a class="font-medium hover:text-imali" href="#/categoria/todos">Todos os produtos</a>' + cats.map((c) => '<a class="hover:text-imali" href="#/categoria/' + c.slug + '">' + esc(c.name) + '</a>').join('') + '<a class="hover:text-imali" href="#/vendedores">Vendedores</a></div></div></header>' +
+    document.getElementById('app').innerHTML = SPRITE +
+      '<header class="d-hdr"><div class="d-wrap">' +
+        '<button type="button" class="d-burger" data-act="d-cats" aria-label="Abrir categorias">' + svg('menu') + '</button>' +
+        '<a class="d-logo" href="#/">' + logo('mercado-ica-mark-white.png') + '</a>' +
+        '<form class="d-search" data-form="search" role="search">' + svg('search') + '<label class="d-sr" for="d-q">Pesquisar</label><input id="d-q" name="q" type="search" placeholder="Pesquisar produtos, marcas ou fornecedores…" autocomplete="off" list="sugg"><datalist id="sugg">' + D.searchTerms.map((t) => '<option value="' + esc(t.term) + '">').join('') + '</datalist>' +
+          '<span class="d-scat"><label class="d-sr" for="d-cat">Categoria</label><select id="d-cat" name="cat"><option value="">Todas as categorias</option>' + cats.map((c) => '<option value="' + c.slug + '">' + esc(c.name) + '</option>').join('') + '</select><svg aria-hidden="true"><use href="#d-chev"/></svg></span></form>' +
+        '<nav class="d-acts" aria-label="Conta">' + balBlock() +
+          '<a class="d-act d-hide-m" href="#/conta/desejos"><span class="d-ico">' + svg('heart') + '<span class="d-cnt" data-d-wish></span></span><span class="d-lbl"><small>Guardados</small>Desejos</span></a>' +
+          '<div id="hdr-auth" class="d-acts d-hide-m"></div>' +
+          '<a class="d-act" role="button" tabindex="0" data-act="drawer"><span class="d-ico">' + svg('cart') + '<span class="d-cnt" id="hdr-cart-count" data-d-cart></span></span><span class="d-lbl d-hide-m"><small id="hdr-cart-total"></small>Carrinho</span></a>' +
+        '</nav></div></header>' +
       '<div id="app-flash"></div><main id="main"><div id="view"></div></main>' + footer() +
+      '<nav class="d-tabbar" aria-label="Navegação"><a href="#/" data-tab="/">' + svg('home') + 'Início</a><a data-act="d-cats" role="button" tabindex="0">' + svg('grid') + 'Categorias</a><a href="#/conta/desejos" data-tab="/conta/desejos">' + svg('heart') + 'Desejos</a><a data-act="drawer" role="button" tabindex="0">' + svg('cart') + '<span class="d-cnt" data-d-cart></span>Carrinho</a><a href="#/conta" data-tab="/conta">' + svg('user') + 'Conta</a></nav>' +
+      '<div class="d-drawer" id="d-drawer"><div class="d-scrim" data-act="d-cats-close"></div><div class="d-panel"><a class="d-logo" href="#/" data-act="d-cats-close" style="margin-bottom:12px">' + logo('mercado-ica-mark-white.png') + '</a>' + balBlock() +
+        cats.map((c) => '<details><summary>' + esc(c.name) + '</summary><a href="#/categoria/' + c.slug + '" data-act="d-cats-close">Ver tudo</a>' + c.subs.map((s) => '<a href="#/categoria/' + c.slug + '" data-act="d-cats-close">' + esc(s) + '</a>').join('') + '</details>').join('') +
+        '<details><summary>Fornecedores</summary><a href="#/vendedores" data-act="d-cats-close">Todos os fornecedores</a></details></div></div>' +
       '<div class="fixed inset-0 z-[1000] hidden bg-gray-500 bg-opacity-50" id="drawer-scrim" data-act="drawer"></div><aside id="mini-cart" class="fixed inset-y-0 right-0 z-[1001] flex w-full max-w-[500px] translate-x-full flex-col bg-white shadow-lg transition-transform duration-300" aria-label="Carrinho"><div id="mini-cart-body" class="flex h-full flex-col"></div></aside>';
-    if (!S.get('cookie')) cookieBar();
     updateHeader();
   }
-  ACT['toggle-cats'] = () => $('#cat-bar').classList.toggle('hidden');
+  ACT['d-cats'] = () => $('#d-drawer').classList.add('open');
+  ACT['d-cats-close'] = (el) => { $('#d-drawer').classList.remove('open'); if (el.getAttribute('href')) location.hash = el.getAttribute('href'); };
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { const d = $('#d-drawer'); if (d) d.classList.remove('open'); } });
+  function markTab(path) { $$('.d-tabbar [data-tab]').forEach((a) => a.classList.toggle('on', a.dataset.tab === '/' ? path === '/' : path.startsWith(a.dataset.tab))); }
   function footer() {
-    const link = (h, t) => '<li><a href="' + h + '" class="hover:text-[#16a34a]">' + t + '</a></li>';
-    return '<footer class="footer-bagisto text-sm text-gray-800" style="background-color: #f3f4f6; padding-top: calc(4rem + 5px);"><div class="mx-auto flex max-w-6xl flex-col gap-10 px-4 pb-10 lg:flex-row lg:px-0"><div class="max-w-sm"><div class="flex items-center gap-3"><div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-white p-1 shadow-sm ring-1 ring-[#22c55e]"><img src="' + brand('Imali logo.png') + '" alt="iMali" class="h-full w-full object-contain"></div><div class="flex flex-col leading-tight"><span class="text-sm font-extrabold text-[#16a34a]">Mercado ICA</span><span class="text-[11px] font-medium uppercase tracking-wide text-gray-500">Suprimentos B2B.</span></div></div>' +
-      '<p class="mt-4 text-xs text-gray-600">Facilitamos o comércio entre Empresas com segurança, rapidez e integridade financeira.</p>' +
-      '<div class="mt-5 flex gap-3 text-gray-500"><a href="#/" class="flex h-8 w-8 items-center justify-center rounded-full border border-gray-300 bg-white hover:border-[#22c55e] hover:text-[#16a34a]" aria-label="Website">🏠</a><a href="#/pagina/contactos" class="flex h-8 w-8 items-center justify-center rounded-full border border-gray-300 bg-white hover:border-[#22c55e] hover:text-[#16a34a]" aria-label="Segurança">❤</a><a href="#/pagina/contactos" class="flex h-8 w-8 items-center justify-center rounded-full border border-gray-300 bg-white hover:border-[#22c55e] hover:text-[#16a34a]" aria-label="Suporte">📞</a></div>' +
-      '<div class="mt-6 grid gap-2.5"><p class="text-xs font-medium text-gray-700">Inscreva-se na nossa newsletter para receber novidades e ofertas!</p><form data-form="newsletter" class="rounded"><div class="relative w-full"><input type="email" required class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm" name="email" aria-label="E-mail" placeholder="email@example.com"><button type="submit" class="mt-2 w-full rounded-lg bg-[#16a34a] px-3 py-2 text-xs font-medium text-white hover:bg-[#15803d]">Inscrever-se</button></div></form></div></div>' +
-      '<div class="grid flex-1 gap-10 text-xs sm:grid-cols-2 lg:grid-cols-3"><div><h3 class="text-[11px] font-semibold uppercase tracking-wide text-gray-700">Plataforma</h3><ul class="mt-3 space-y-1.5 text-gray-600">' + link('#/', 'Marketplace') + link('#/categoria/todos', 'Categorias') + link('#/pagina/contactos', 'Contacto') + '</ul></div><div><h3 class="text-[11px] font-semibold uppercase tracking-wide text-gray-700">Suporte</h3><ul class="mt-3 space-y-1.5 text-gray-600">' + link('#/pagina/contactos', 'Central de Ajuda') + link('#/pagina/sobre-nos', 'Sobre Nós') + link('#/pagina/contactos', 'Fale Conosco') + '</ul></div>' +
-      '<div><h3 class="text-[11px] font-semibold uppercase tracking-wide text-gray-700">Formas de pagamento</h3><div class="mt-6 flex flex-wrap items-center gap-3">' + ['M-pesa logo.png', 'emola logo.png', 'mkesh logo.png'].map((f) => '<span class="flex h-12 items-center justify-center rounded-sm bg-white px-3 shadow-sm"><img src="' + brand('Assets/' + f) + '" alt="' + f.split(' ')[0] + '" class="max-h-9 w-auto object-contain"></span>').join('') + '<span class="flex h-12 items-center justify-center rounded-sm bg-white px-3 shadow-sm"><img src="' + brand('logo-imali-small.png') + '" alt="iMali" class="max-h-9 w-auto object-contain"></span><span class="flex h-12 items-center justify-center rounded-sm bg-white px-3 shadow-sm"><img src="' + brand('Assets/BNPL logo.png') + '" alt="BNPL" class="max-h-9 w-auto object-contain"></span></div></div></div></div>' +
-      '<div class="border-t border-gray-300" style="background-color: #e5e7eb;"><div class="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4 text-[11px] text-gray-600 lg:flex-row lg:items-center lg:justify-between lg:px-0"><div><span>© 2026 Paytek . Todos os direitos reservados. </span></div></div></div></footer>';
+    const link = (h, t) => '<li><a href="' + h + '">' + t + '</a></li>';
+    const pay = [['Assets/M-pesa logo.png', 'M-Pesa'], ['Assets/emola logo.png', 'e-Mola'], ['Assets/mkesh logo.png', 'mKesh'], ['logo-imali-small.png', 'iMali'], ['Assets/BNPL logo.png', 'Pagar depois (BNPL)']];
+    return '<footer class="d-foot"><div class="d-wrap">' +
+      '<div><a class="d-logo" href="#/">' + logo('mercado-ica-logo-white.png', 'Mercado ICA — B2B Connectivity Hub') + '</a><p>O marketplace B2B de Moçambique, com pagamentos iMali integrados.</p>' +
+        '<form class="d-news" data-form="newsletter"><label class="d-sr" for="d-nl">Email</label><input id="d-nl" type="email" name="email" required placeholder="O seu email profissional"><button class="d-btn d-btn-lime">Subscrever</button></form></div>' +
+      '<div><h4>Comprar</h4><ul>' + link('#/categoria/todos', 'Catálogo') + link('#/vendedores', 'Fornecedores') + link('#/comparar', 'Comparar produtos') + link('#/conta/pedidos', 'Os meus pedidos') + '</ul></div>' +
+      '<div><h4>Ajuda</h4><ul>' + link('#/pagina/contactos', 'Central de ajuda') + link('#/conta/devolucoes', 'Devoluções') + link('../cliente/index.html', 'Vender no Mercado ICA') + link('#/pagina/sobre-nos', 'Sobre nós') + '</ul></div>' +
+      '<div><h4>Formas de pagamento</h4><div class="d-paylogos">' + pay.map((p) => '<img src="' + brand(p[0]) + '" alt="' + p[1] + '">').join('') + '</div></div>' +
+      '</div><div class="d-legal"><div class="d-wrap"><span>© 2026 Paytek. Todos os direitos reservados.</span><span><a href="#/pagina/termos">Termos</a> · <a href="#/pagina/privacidade">Privacidade</a> · <a href="#/conta/privacidade">Cookies</a></span></div></div></footer>';
+  }
+  // o aviso de cookies só aparece na página inicial (nunca no login nem noutras páginas), até ser aceite ou recusado
+  function syncCookie(path) {
+    const c = $('#cookie');
+    if (path === '/' && !S.get('cookie')) { if (!c) cookieBar(); }
+    else if (c) c.remove();
   }
   function cookieBar() {
-    const c = document.createElement('div'); c.id = 'cookie'; c.className = 'fixed bottom-4 left-4 z-[120] grid max-w-[380px] gap-2.5 rounded-2xl border border-zinc-200 bg-white p-4 shadow-lg';
-    c.innerHTML = '<b>🍪 Utilizamos cookies</b><span class="text-sm text-zinc-500">Para melhorar a sua experiência e analisar o tráfego do site.</span><div class="flex gap-2"><button class="rounded-lg px-4 py-1.5 text-xs font-semibold text-white" style="background:#16a34a" data-act="cookie">Aceitar</button><button class="rounded-lg border border-gray-300 px-4 py-1.5 text-xs font-semibold" data-act="cookie">Recusar</button></div>';
+    const c = document.createElement('div'); c.id = 'cookie'; c.className = 'd-cookie'; c.setAttribute('role', 'dialog'); c.setAttribute('aria-label', 'Cookies');
+    c.innerHTML = '<b>Utilizamos cookies</b><span>Para melhorar a sua experiência e analisar o tráfego do site.</span><div><button class="d-btn d-btn-lime" data-act="cookie">Aceitar</button><button class="d-btn d-btn-o" data-act="cookie">Recusar</button></div>';
     document.body.appendChild(c);
   }
   ACT['cookie'] = () => { S.set('cookie', 1); const c = $('#cookie'); if (c) c.remove(); };
   ACT['drawer'] = () => { const m = $('#mini-cart'), s = $('#drawer-scrim'); const open = m.classList.contains('translate-x-full'); m.classList.toggle('translate-x-full', !open); s.classList.toggle('hidden', !open); };
-  FORMS['search'] = (d) => { location.hash = '#/pesquisa?q=' + encodeURIComponent(d.q || ''); };
+  FORMS['search'] = (d) => { const q = (d.q || '').trim(); location.hash = !q && d.cat ? '#/categoria/' + d.cat : '#/pesquisa?q=' + encodeURIComponent(q); };
   FORMS['newsletter'] = (d, f) => { toast('Subscrição confirmada! Obrigado.'); f.reset(); };
 
   /* ---------- Carrinho / desejos / comparação ---------- */
@@ -133,125 +182,281 @@
   ACT['wish'] = (el) => toggleList('wishlist', +el.dataset.pid, 'Produto adicionado à lista de desejos.', 'Produto removido da lista de desejos.');
   ACT['cmp'] = (el) => toggleList('compare', +el.dataset.pid, 'Produto adicionado à comparação.', 'Produto removido da comparação.', 4);
 
-  /* ---------- Home ---------- */
-  const secHead = (t, sub, link) => '<div class="flex flex-wrap items-end justify-between gap-4"><div><h2 class="text-xl font-bold text-primary">' + t + '</h2>' + (sub ? '<p class="mt-1 text-sm text-muted-foreground">' + sub + '</p>' : '') + '</div><a href="' + link + '" class="text-xs font-semibold uppercase tracking-wide text-imali hover:text-imali-dark">Ver tudo</a></div>';
-  function homeCard(p, kind) {
-    const sale = !!p.oldPrice, badge = kind === 'new' ? ['bg-[#16a34a]', 'Novo'] : sale ? ['bg-[#b91c1c]', 'Promoção'] : ['bg-[#16a34a]', 'Novo'];
-    const border = kind === 'opp' ? (sale ? 'border-[#fee2e2]' : 'border-[#dcfce7]') : 'border-gray-100';
-    return '<article class="flex min-w-[75%] flex-col overflow-hidden rounded-2xl border ' + border + ' bg-white shadow-sm sm:min-w-[55%] lg:min-w-0"><div class="relative overflow-hidden"><span class="absolute left-3 top-3 rounded-full ' + badge[0] + ' px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">' + badge[1] + '</span><a href="#/produto/' + p.id + '">' + pimg(p, 'h-44 w-full object-cover') + '</a></div>' +
-      '<div class="flex flex-1 flex-col px-4 pb-4 pt-3 text-xs"><p class="font-medium uppercase tracking-wide text-gray-400">' + esc(p.catName) + '</p><h3 class="mt-1 line-clamp-2 text-[13px] font-semibold text-primary"><a href="#/produto/' + p.id + '">' + esc(p.name) + '</a></h3>' +
-      '<div class="mt-2 flex items-center gap-1 text-[11px] text-[#facc15]"><span>' + starsSm(p.rating) + '</span><span class="text-[11px] text-gray-400">(' + p.reviews + ')</span></div>' +
-      '<div class="mt-3 space-y-0.5 text-[11px]">' + (sale ? '<p class="text-gray-400 line-through">' + money(p.oldPrice) + '</p>' : '') + '<p class="text-[15px] font-extrabold text-[#16a34a]">' + money(p.price) + '</p><p class="text-[11px] text-gray-400 line-clamp-2">Preço unitário em volume de atacado</p></div>' +
-      '<div class="mt-4 flex items-center gap-2"><a href="#/produto/' + p.id + '" class="btn-comprar-agora inline-flex flex-1 items-center justify-center rounded-md px-3 py-2 text-[11px] font-semibold text-white">Comprar Agora</a><div class="flex gap-1"><button type="button" class="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 text-gray-500 hover:border-imali hover:text-imali" aria-label="Adicionar à lista de desejos" data-act="wish" data-pid="' + p.id + '">❤</button><a href="#" class="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 text-gray-500 hover:border-imali hover:text-imali" aria-label="Adicionar ao carrinho" title="Adicionar ao carrinho" data-act="add-cart" data-pid="' + p.id + '">🛒</a></div></div></div></article>';
+  /* ---------- Cartão de produto D ---------- */
+  function dcard(p) {
+    const s = sellerOf(p), off = p.oldPrice ? Math.round((1 - p.price / p.oldPrice) * 100) : 0, fav = wish().includes(p.id);
+    return '<article class="d-card"><div class="d-im"><a href="#/produto/' + p.id + '" tabindex="-1" aria-hidden="true">' + pimg(p) + '</a>' +
+      (off ? '<span class="d-badge sale">-' + off + '%</span>' : p.tags.includes('novo') ? '<span class="d-badge">Novo</span>' : '') +
+      '<button type="button" class="d-fav' + (fav ? ' on' : '') + '" data-act="d-wish" data-pid="' + p.id + '" aria-pressed="' + fav + '" aria-label="Guardar ' + esc(p.name) + '">' + svg('heart', 'width:17px;height:17px') + '</button></div>' +
+      '<div class="d-bd"><span class="d-ver">' + svg('check') + esc(s.shop) + '</span><h3><a href="#/produto/' + p.id + '">' + esc(p.name) + '</a></h3>' +
+      '<div class="d-pr"><b>' + money(p.price) + '</b>' + (p.oldPrice ? '<s>' + money(p.oldPrice) + '</s>' : '') + '<small>/ un</small></div>' +
+      '<div class="d-vol"><span>10+ un<b>' + money(Math.round(p.price * 0.95)) + '</b></span><span>50+ un<b>' + money(Math.round(p.price * 0.9)) + '</b></span></div>' +
+      '<div class="d-cacts"><button type="button" class="d-btn d-btn-line" data-act="quote" data-pid="' + p.id + '">Pedir cotação</button><button type="button" class="d-btn d-btn-dark d-add" data-act="d-add" data-pid="' + p.id + '" aria-label="Adicionar ' + esc(p.name) + ' ao carrinho">' + svg('cart', 'width:18px;height:18px') + '</button></div></div></article>';
   }
-  const catIcons = {
-    1: 'M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21',
-    2: 'M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a7.627 7.627 0 00-3.228-5.662',
-    3: 'M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25',
-    4: 'M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125',
-    5: 'M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z',
-    6: 'M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827M15 12a3 3 0 11-6 0 3 3 0 016 0z',
+  shop.dcard = dcard;
+  ACT['d-add'] = (el) => {
+    const p = prod(+el.dataset.pid); addToCart(p.id, 1);
+    $$('[data-d-cart]').forEach((c) => { c.classList.remove('bump'); void c.offsetWidth; c.classList.add('bump'); });
+    el.classList.add('done'); el.innerHTML = svg('check', 'width:18px;height:18px');
+    toast(p.name + ' adicionado ao carrinho.');
   };
+  ACT['d-wish'] = (el) => {
+    const pid = +el.dataset.pid; let l = wish(); const on = !l.includes(pid);
+    l = on ? l.concat(pid) : l.filter((x) => x !== pid); S.set('wishlist', l);
+    $$('[data-act="d-wish"][data-pid="' + pid + '"]').forEach((b) => { b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+    updateHeader(); toast(on ? 'Guardado na lista de desejos.' : 'Removido da lista de desejos.', on ? 'success' : 'info');
+  };
+
+  /* ---------- Home D ---------- */
+  const HS = { tab: 0 };
+  const TOP_IDS = [25, 9, 13, 4, 26, 1, 16, 22, 33, 15, 2, 29];
+  const CAT_PHOTO = { 1: 1, 2: 7, 3: 12, 4: 19, 5: 26, 6: 31 };
+  const PROVINCES = ['Maputo Cidade', 'Maputo Província', 'Gaza', 'Inhambane', 'Sofala', 'Manica', 'Tete', 'Zambézia', 'Nampula', 'Cabo Delgado', 'Niassa'];
+  const catCount = (id) => liveProducts().filter((p) => p.cat === id).length;
+  function topGrid() {
+    const L = liveProducts(), cat = HS.tab;
+    const list = TOP_IDS.map(prod).filter((p) => p && p.status === 'approved' && (!cat || p.cat === cat)).concat(cat ? L.filter((p) => p.cat === cat && !TOP_IDS.includes(p.id)) : []);
+    return list.slice(0, 5).map(dcard).join('');
+  }
+  ACT['d-tab'] = (el) => { HS.tab = +el.dataset.cat; $$('#d-tabs button').forEach((b) => b.classList.toggle('on', b === el)); $('#d-top-grid').innerHTML = topGrid(); };
+  ACT['d-scroll'] = (el) => { const t = document.getElementById(el.dataset.to); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+  FORMS['rfq'] = (d, f) => { toast('Pedido de cotação enviado. Os fornecedores respondem em 24 h.'); f.reset(); };
   function home() {
-    const L = liveProducts();
-    const row = (list, kind, cols) => '<div class="mt-6 -mx-4 overflow-x-auto pb-3 products-scroll lg:mx-0 lg:overflow-visible"><div class="flex gap-4 px-4 sm:px-0 lg:grid ' + cols + ' lg:gap-5">' + list.map((p) => homeCard(p, kind)).join('') + '</div></div>';
-    return '<div class="home-ica"><section class="relative overflow-hidden border-b border-gray-100 py-10 lg:py-14" style="background-color: #f1f7f3;"><div class="relative mx-auto flex max-w-6xl flex-col gap-10 px-4 lg:flex-row lg:items-center lg:px-0"><div class="flex-1 max-w-xl"><p class="mb-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-imali shadow-sm"><span class="h-1.5 w-1.5 rounded-full bg-imali"></span>PLATAFORMA B2B PARA EMPRESAS EM MOÇAMBIQUE</p>' +
-      '<h1 class="hero-title text-[32px] font-extrabold leading-tight text-primary sm:text-[36px] lg:text-[40px]">Potencie o seu <span class="text-imali">negócio</span> com os melhores parceiros.</h1><p class="mt-4 text-sm leading-relaxed text-muted-foreground">Ligamos a sua empresa a fornecedores e compradores, com pagamentos integrados, facturação simplificada e acesso a soluções de pagamento diferido.</p>' +
-      '<div class="mt-6 flex flex-wrap items-center gap-3"><a href="#/categoria/todos" class="inline-flex items-center justify-center rounded-md bg-imali px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-imali-dark">Explorar produtos</a><a href="../cliente/index.html" class="inline-flex items-center justify-center rounded-md border border-[#A7D9B5] bg-white px-6 py-2.5 text-sm font-semibold text-primary hover:border-imali hover:text-imali">Comece a vender</a></div>' +
-      '<div class="mt-8 flex flex-wrap gap-10 text-sm"><div><p class="text-2xl font-extrabold text-primary">2.5k+</p><p class="text-[12px] text-muted-foreground">Fornecedores</p></div><div><p class="text-2xl font-extrabold text-primary">100%</p><p class="text-[12px] text-muted-foreground">Seguro B2B</p></div><div><p class="text-2xl font-extrabold text-primary">24/7</p><p class="text-[12px] text-muted-foreground">Suporte</p></div></div></div>' +
-      '<div class="flex-1"><div class="relative mx-auto max-w-md rounded-[28px] bg-white p-3 shadow-xl ring-1 ring-black/5"><div class="relative overflow-hidden rounded-[24px] bg-gray-900">' + pimg(prod(7), 'h-64 w-full object-cover sm:h-72 lg:h-80') + '<div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent p-4 text-xs text-white"><p class="font-semibold uppercase tracking-wide" style="color: #40AD53;">Compras entre empresas, com segurança</p><p class="mt-1 text-sm">Negocie com fornecedores, pague com facilidade e beneficie de pagamento diferido.</p></div></div></div></div></div></section>' +
-      '<section id="novidades" class="py-10 lg:py-12" style="background-color: #ffffff;"><div class="mx-auto max-w-6xl px-4 lg:px-0">' + secHead('Novidades', 'Tecnologias e produtos recém-chegados ao mercado moçambicano.', '#/categoria/todos') + row(L.filter((p) => p.tags.includes('novo')).slice(0, 4), 'new', 'lg:grid-cols-4') + '</div></section>' +
-      '<section class="border-y border-gray-100 py-10 lg:py-12" style="background-color: #f5f7f8;"><div class="mx-auto max-w-6xl px-4 lg:px-0"><div class="flex flex-wrap items-start justify-between gap-4"><div><h2 class="text-xl font-bold text-primary">Categorias em Destaque</h2><p class="mt-1 text-sm text-muted-foreground">Navegue por departamentos especializados e encontre exatamente o que sua operação necessita.</p></div><a href="#/categoria/todos" class="mt-1 text-xs font-semibold uppercase tracking-wide text-imali hover:text-imali-dark">Ver Catalogo Completo &rarr;</a></div>' +
-      '<div class="categorias-destaque mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-6 text-center">' + D.categories.map((c) => '<a href="#/categoria/' + c.slug + '" class="flex min-w-0 flex-col items-center gap-3 rounded-xl p-2 transition hover:opacity-90"><div class="categoria-icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="' + catIcons[c.id] + '"/></svg></div><span class="text-[11px] font-semibold text-primary">' + esc(c.name) + '</span></a>').join('') + '</div></div></section>' +
-      '<section class="py-10 lg:py-12" style="background-color: #ffffff;"><div class="mx-auto max-w-6xl px-4 lg:px-0">' + secHead('Oportunidades da Semana', 'Lotes exclusivos com preços de fábrica para fechamento imediato.', '#/categoria/todos?sort=desconto') + row(L.filter((p) => p.oldPrice).slice(0, 4), 'opp', 'lg:grid-cols-4') + '</div></section>' +
-      '<section class="py-10 lg:py-12" style="background-color: #f9fafb;"><div class="mx-auto max-w-6xl px-4 lg:px-0">' + secHead('Mais Vendidos', 'Os favoritos dos comerciantes e gestores de compras.', '#/categoria/todos?sort=vendas') + row(L.slice().sort((a, b) => b.sold - a.sold).slice(0, 5), 'best', 'lg:grid-cols-5') + '</div></section>' +
-      '<section class="py-10 lg:py-14" style="background-color: #2D2D2D;"><div class="mx-auto flex max-w-6xl flex-col items-start justify-between gap-8 px-4 lg:flex-row lg:items-center lg:px-0" style="color: #ffffff;"><div class="max-w-xl"><h2 class="text-2xl font-extrabold leading-snug sm:text-3xl">Quer optimizar a sua cadeia de fornecimento?</h2><p class="mt-4 text-sm" style="color: #e5e7eb;">A nossa equipa está pronta para ajudar a sua empresa a aceder às suas melhores condições de compra do mercado.</p></div><div class="flex flex-wrap gap-3"><a href="#/pagina/contactos" class="btn-especialista inline-flex items-center justify-center rounded-md px-6 py-2.5 text-xs font-semibold uppercase tracking-wide text-white">Falar com um especialista</a><a href="#/pagina/contactos" class="inline-flex items-center justify-center rounded-md bg-white px-6 py-2.5 text-xs font-semibold uppercase tracking-wide hover:bg-gray-100" style="color: #000000;">Baixar catalogo 2026</a></div></div></section>' +
-      '<section class="border-t border-b border-gray-200 py-8" style="background-color: #ffffff;"><div class="mx-auto max-w-6xl px-4 lg:px-0"><p class="mb-6 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-500">Parceiros</p><div class="flex flex-wrap items-center justify-center gap-10 lg:gap-16">' + [['Ministerio de Finanças.jpeg', 'Ministerio das Finanças', 'max-h-10'], ['Banco Mundial.jpeg', 'Banco Mundial', 'max-h-10'], ['PayTek logo.png', 'PayTek', 'max-h-10'], ['Imali banner.png', 'iMali', 'max-h-12']].map((p) => '<span class="flex h-14 items-center justify-center"><img src="' + brand(p[0]) + '" alt="' + p[1] + '" class="' + p[2] + ' w-auto object-contain"></span>').join('') + '</div></div></section></div>';
+    const L = liveProducts(), cats = D.categories, sellers = D.sellers.filter((s) => s.status === 'approved');
+    const kit = prod(28), part = kit.price / 3;
+    const day = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return d.toLocaleDateString('pt-PT', { day: '2-digit', month: 'short' }); };
+    const wallets = '<div class="d-wallets">' + [['Assets/M-pesa logo.png', 'M-Pesa'], ['Assets/emola logo.png', 'e-Mola'], ['Assets/mkesh logo.png', 'mKesh'], ['logo-imali-small.png', 'iMali']].map((w) => '<img src="' + brand(w[0]) + '" alt="' + w[1] + '">').join('') + '</div>';
+    const html =
+      '<div class="d-top"><div class="d-wrap">' +
+        '<nav class="d-cats" id="d-catnav" aria-label="Categorias"><a href="#/categoria/todos">Todas as categorias<span class="d-n">' + L.length + '</span></a>' +
+          cats.map((c) => '<a href="#/categoria/' + c.slug + '" data-mega="' + c.id + '">' + esc(c.name) + '<span class="d-n">' + catCount(c.id) + '</span></a>').join('') + '<div class="d-mega" id="d-mega"></div></nav>' +
+        '<div class="d-hero" id="d-hero">' +
+          '<article class="d-slide on"><div class="d-brandmark"><img src="../assets/brand/ica-white.png" alt="iCA"></div><div class="d-copy"><h1>Compras da empresa, <span>sem complicar.</span></h1><p>Fornecedores verificados, preços por volume e pagamento com a carteira que já usa.</p></div></article>' +
+          '<article class="d-slide"><div class="d-photo">' + pimg(prod(25)) + '</div><div class="d-copy"><h2>Energia própria, <span>até -15%.</span></h2><p>Kits, painéis e inversores de fornecedores com instalação certificada em todo o país.</p><a class="d-btn d-btn-lime" href="#/categoria/energia-solar">Ver ofertas solares →</a></div></article>' +
+          '<article class="d-slide d-slide-3"><span class="d-vshape"></span><div class="d-art"><div class="d-planc"><div class="d-hd"><img src="' + brand('Imali banner.png') + '" alt="iMali — Diferente, como tu!"><small>Crédito para empresas</small></div><small style="color:var(--d-mut);font-size:12px">' + esc(kit.name) + '</small><div class="d-tot">' + money(kit.price) + '</div><div class="d-bar"><i></i></div><ol>' +
+            [['Hoje', 0, 1], ['Em 30 dias', 30, 0], ['Em 60 dias', 60, 0]].map((r) => '<li class="' + (r[2] ? 'ok' : '') + '"><span>' + r[0] + (r[1] ? ' · ' + day(r[1]) : '') + '</span><b>' + money(part) + '</b></li>').join('') + '</ol>' + wallets + '</div></div>' +
+            '<div class="d-copy"><h2>Compre hoje, <span>pague em 3×.</span></h2><p>Pagamento diferido para empresas registadas, aprovado no checkout.</p><a class="d-btn d-btn-lime" href="#/" data-act="d-scroll" data-to="d-credito">Saber mais →</a></div></article>' +
+          '<div class="d-dots" role="tablist" aria-label="Destaques"><button class="on" aria-label="Destaque 1"></button><button aria-label="Destaque 2"></button><button aria-label="Destaque 3"></button></div>' +
+        '</div></div></div>' +
+      '<div class="d-trust"><div class="d-wrap">' +
+        '<div class="d-t"><b><em>' + sellers.length + '</em>Fornecedores verificados</b><small>Documentação validada pela ICA</small></div>' +
+        '<div class="d-t"><b><em>100%</em>Fatura com NUIT</b><small>Em todas as compras</small></div>' +
+        '<div class="d-t"><b><em>3×</em>Pague depois</b><small>Crédito iMali para empresas</small></div>' +
+        '<div class="d-t"><b><em>11</em>Províncias</b><small>Entrega em todo o país</small></div></div></div>' +
+      '<section class="d-sec"><div class="d-wrap"><div class="d-sh"><div><h2>Mais pedidos por empresas</h2><p>Preços de fornecedor, com desconto por volume.</p></div>' +
+        '<div class="d-tabs" id="d-tabs"><button type="button" class="' + (HS.tab ? '' : 'on') + '" data-act="d-tab" data-cat="0">Todos</button>' + cats.slice(0, 5).map((c) => '<button type="button" class="' + (HS.tab === c.id ? 'on' : '') + '" data-act="d-tab" data-cat="' + c.id + '">' + esc(c.name.split(' ')[0]) + '</button>').join('') + '</div></div>' +
+        '<div class="d-grid" id="d-top-grid">' + topGrid() + '</div></div></section>' +
+      '<section class="d-sec"><div class="d-wrap"><div class="d-sh"><div><h2>Compre por setor</h2><p>Seis setores, fornecedores especializados em cada um.</p></div><a class="d-more" href="#/categoria/todos">Ver catálogo completo</a></div>' +
+        '<div class="d-catgrid">' + cats.map((c) => '<a class="d-cat" href="#/categoria/' + c.slug + '">' + pimg(prod(CAT_PHOTO[c.id])) + '<div><b>' + esc(c.name) + '</b><small>' + catCount(c.id) + ' produtos →</small></div></a>').join('') + '</div></div></section>' +
+      '<section class="d-sec" id="d-cotacao"><div class="d-wrap"><div class="d-rfq"><span class="d-vshape"></span>' +
+        '<div><h2>Compra grande? <span>Peça cotação.</span></h2><p>Diga o que precisa uma vez e receba propostas de vários fornecedores verificados.</p><ol><li><span>1</span>Descreva o produto, a quantidade e o local</li><li><span>2</span>Os fornecedores respondem com proposta</li><li><span>3</span>Compare, aceite e pague com iMali</li></ol></div>' +
+        '<form data-form="rfq"><div class="d-fld"><label for="rfq-p">Produto</label><input id="rfq-p" name="product" required placeholder="Ex.: Painel Solar 550 W" list="sugg"></div>' +
+          '<div class="d-row2"><div class="d-fld"><label for="rfq-q">Quantidade</label><input id="rfq-q" name="qty" type="number" min="1" required placeholder="120"></div><div class="d-fld"><label for="rfq-l">Entrega</label><select id="rfq-l" name="where">' + PROVINCES.map((p) => '<option>' + p + '</option>').join('') + '</select></div></div>' +
+          '<button class="d-btn d-btn-lime">Enviar pedido de cotação →</button></form></div></div></section>' +
+      '<section class="d-sec"><div class="d-wrap"><div class="d-sh"><div><h2>Oportunidades da semana</h2><p>Lotes com preço reduzido, por tempo limitado.</p></div><a class="d-more" href="#/categoria/todos?sort=desconto">Ver todas</a></div>' +
+        '<div class="d-grid">' + L.filter((p) => p.oldPrice && p.id !== 27).slice(0, 5).map(dcard).join('') + '</div></div></section>' +
+      '<section class="d-sec" id="d-credito"><div class="d-wrap"><div class="d-credit"><div><h2>Compre hoje, pague em 3×</h2><p>Crédito iMali para empresas registadas no Mercado ICA. Aprovação no checkout, sem papelada.</p><a class="d-btn d-btn-dark" href="#/registar">Ativar crédito iMali →</a></div>' +
+        '<div class="d-plan"><div class="d-row"><span>' + esc(kit.name) + '</span><b>' + money(kit.price) + '</b></div><div class="d-bar"><i></i></div><div class="d-row"><span>Hoje</span><b>' + money(part) + '</b></div><div class="d-row" style="color:var(--d-mut)"><span>+30 dias · +60 dias</span><span>2 × ' + money(part) + '</span></div>' + wallets + '</div></div></div></section>' +
+      '<section class="d-sec"><div class="d-wrap"><div class="d-sh"><div><h2>Fornecedores verificados</h2><p>Empresas moçambicanas com documentação validada.</p></div><a class="d-more" href="#/vendedores">Todos os fornecedores</a></div>' +
+        '<div class="d-sellers">' + sellers.map((s) => '<a class="d-seller" href="#/vendedor/' + s.id + '"><span class="d-av" style="background:' + s.color + '">' + esc(s.shop[0]) + '</span><b>' + esc(s.shop) + '</b><small>' + esc(s.city) + ' · desde ' + s.since + '</small><span class="d-meta"><span>★ ' + s.rating.toFixed(1) + '</span><span>' + D.products.filter((p) => p.seller === s.id && p.status === 'approved').length + ' produtos</span></span></a>').join('') + '</div></div></section>';
+    return { html, mount: mountHome };
+  }
+  function mountHome(root) {
+    /* destaques rotativos (pára com o rato por cima e respeita "reduzir movimento") */
+    clearInterval(ICA._heroT);
+    const hero = $('#d-hero', root), slides = $$('.d-slide', hero), dots = $$('.d-dots button', hero); let cur = 0;
+    const go = (i) => { cur = (i + slides.length) % slides.length; slides.forEach((s, k) => s.classList.toggle('on', k === cur)); dots.forEach((d, k) => d.classList.toggle('on', k === cur)); };
+    const auto = () => { clearInterval(ICA._heroT); ICA._heroT = setInterval(() => { if (!document.body.contains(hero)) return clearInterval(ICA._heroT); go(cur + 1); }, 6000); };
+    dots.forEach((d, k) => d.addEventListener('click', () => { go(k); auto(); }));
+    hero.addEventListener('mouseenter', () => clearInterval(ICA._heroT));
+    hero.addEventListener('mouseleave', auto);
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) auto();
+    /* mega menu das categorias */
+    const nav = $('#d-catnav', root), mega = $('#d-mega', root); let t;
+    const open = (id) => {
+      const c = D.categories.find((x) => x.id === id), ps = liveProducts().filter((p) => p.cat === id);
+      mega.innerHTML = '<div><h4>' + esc(c.name) + '</h4><ul>' + c.subs.map((s) => '<li><a href="#/categoria/' + c.slug + '">' + esc(s) + ' <small>' + ps.filter((p) => p.sub === s).length + '</small></a></li>').join('') + '<li><a href="#/categoria/' + c.slug + '" style="color:var(--d-g-600)">Ver tudo em ' + esc(c.name) + ' →</a></li></ul></div>' + (ps[0] ? '<div class="d-pic">' + pimg(ps[0]) + '</div>' : '<div></div>');
+      mega.classList.add('open'); $$('[data-mega]', nav).forEach((a) => a.classList.toggle('on', +a.dataset.mega === id));
+    };
+    nav.addEventListener('mouseover', (e) => { const a = e.target.closest('[data-mega]'); if (a) { clearTimeout(t); open(+a.dataset.mega); } else if (e.target.closest('#d-mega')) clearTimeout(t); });
+    nav.addEventListener('mouseleave', () => { t = setTimeout(() => { mega.classList.remove('open'); $$('[data-mega]', nav).forEach((a) => a.classList.remove('on')); }, 180); });
   }
 
-  /* ---------- Listagem / pesquisa ---------- */
-  const LS = { sub: '', sellers: [], max: 6000000, rating: 0, sort: 'relevancia', view: 'grid', key: '' };
+  /* ---------- Listagem / pesquisa (D) ---------- */
+  const LS = { sub: '', sellers: [], max: 0, rating: 0, sale: false, sort: 'relevancia', key: '', sheet: false, closed: [] }; // closed: grupos de filtros minimizados (mantém-se entre categorias)
   const SORTS = [['relevancia', 'Relevância'], ['vendas', 'Mais vendidos'], ['desconto', 'Maior desconto'], ['preco-asc', 'Preço: menor para maior'], ['preco-desc', 'Preço: maior para menor'], ['avaliacao', 'Melhor avaliados']];
+  const LS_RESET = { sub: '', sellers: [], max: 0, rating: 0, sale: false };
   function listing({ params, q, path }) {
     const slug = path.startsWith('/pesquisa') ? 'pesquisa' : params.slug;
     const key = slug + '|' + (q.q || '');
-    if (LS.key !== key) Object.assign(LS, { sub: '', sellers: [], max: 6000000, rating: 0, sort: q.sort === 'vendas' ? 'vendas' : q.sort === 'desconto' ? 'desconto' : 'relevancia', key });
+    if (LS.key !== key) Object.assign(LS, LS_RESET, { sheet: false, sort: q.sort === 'vendas' ? 'vendas' : q.sort === 'desconto' ? 'desconto' : 'relevancia', key });
     const cat = slug === 'pesquisa' ? null : D.categories.find((c) => c.slug === slug);
-    let L = liveProducts().filter((p) => !cat || p.cat === cat.id);
-    if (slug === 'pesquisa' && q.q) L = L.filter((p) => (p.name + ' ' + p.catName + ' ' + p.sub).toLowerCase().includes(q.q.toLowerCase()));
-    const baseList = L;
+    let base = liveProducts().filter((p) => !cat || p.cat === cat.id);
+    if (slug === 'pesquisa' && q.q) base = base.filter((p) => (p.name + ' ' + p.catName + ' ' + p.sub + ' ' + sellerOf(p).shop).toLowerCase().includes(q.q.toLowerCase()));
+    const cap = base.reduce((m, p) => Math.max(m, p.price), 0), maxOn = LS.max && LS.max < cap;
+    let L = base;
     if (LS.sub) L = L.filter((p) => p.sub === LS.sub);
     if (LS.sellers.length) L = L.filter((p) => LS.sellers.includes(p.seller));
-    L = L.filter((p) => p.price <= LS.max && p.rating >= LS.rating);
+    if (maxOn) L = L.filter((p) => p.price <= LS.max);
+    if (LS.rating) L = L.filter((p) => p.rating >= LS.rating);
+    if (LS.sale) L = L.filter((p) => p.oldPrice);
     const sorters = { relevancia: (a, b) => b.sold - a.sold, vendas: (a, b) => b.sold - a.sold, desconto: (a, b) => (b.oldPrice ? 1 - b.price / b.oldPrice : 0) - (a.oldPrice ? 1 - a.price / a.oldPrice : 0), 'preco-asc': (a, b) => a.price - b.price, 'preco-desc': (a, b) => b.price - a.price, avaliacao: (a, b) => b.rating - a.rating };
     L = L.slice().sort(sorters[LS.sort]);
-    const title = slug === 'pesquisa' ? 'Resultados para: “' + esc(q.q || '') + '”' : cat ? esc(cat.name) : 'Todos os produtos';
-    const subs = cat ? cat.subs : [...new Set(baseList.map((p) => p.sub))];
-    const sellersIn = [...new Set(baseList.map((p) => p.seller))];
-    const fitem = (name, inner) => '<div class="border-b border-zinc-200 last:border-b-0"><div class="flex items-center justify-between px-0 py-2.5"><p class="text-lg font-semibold max-sm:text-base max-sm:font-medium">' + name + '</p></div><div class="pb-3">' + inner + '</div></div>';
-    const cb = (checked, act, attrs, label, extra = '') => '<div class="flex select-none items-center gap-x-4 rounded hover:bg-gray-100 max-sm:gap-x-1 ltr:pl-2"><span class="' + (checked ? 'icon-check-box' : 'icon-uncheck') + ' cursor-pointer text-2xl text-navyBlue max-sm:text-xl" role="checkbox" aria-checked="' + checked + '" tabindex="0" data-act="' + act + '" ' + attrs + '></span><label class="w-full cursor-pointer p-2 text-base text-gray-900 max-sm:p-1 max-sm:text-sm ltr:pl-0" role="button" tabindex="0" data-act="' + act + '" ' + attrs + '>' + label + '</label>' + extra + '</div>';
-    const filters = '<div class="panel-side journal-scroll grid max-h-[1320px] w-64 min-w-[256px] max-w-[256px] grid-cols-[1fr] overflow-y-auto overflow-x-hidden rounded-lg border border-gray-200 bg-white p-4 shadow-sm md:ltr:pr-2 ica-scope max-lg:hidden" style="background-color:#ffffff;border-color:#e5e7eb;"><div class="flex items-center justify-between border-b border-gray-200 pb-3"><h2 class="flex items-center gap-2 text-sm font-bold" style="color:#333333;"><svg class="h-4 w-4 shrink-0" style="color:#4CAF50;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>Filtros</h2><button type="button" class="cursor-pointer text-sm font-medium hover:underline" style="color:#4CAF50;" data-act="flt-reset">Limpar tudo</button></div><div class="mt-4 space-y-1">' +
-      fitem('Subcategoria', '<ul class="text-base text-gray-700">' + subs.map((s) => '<li>' + cb(LS.sub === s, 'flt-sub', 'data-v="' + esc(s) + '"', esc(s) + ' <span class="text-xs text-zinc-500">(' + baseList.filter((p) => p.sub === s).length + ')</span>') + '</li>').join('') + '</ul>') +
-      fitem('Preço', '<div class="px-2"><input type="range" min="1000" max="6000000" step="1000" value="' + LS.max + '" data-range="max" class="w-full accent-green-600" aria-label="Preço máximo"><div class="mt-1 flex justify-between text-sm text-zinc-500"><span>' + money(1000) + '</span><b class="text-gray-900" id="rng-val">' + money(LS.max) + '</b></div></div>') +
-      fitem('Vendedor', '<ul class="text-base text-gray-700">' + sellersIn.map((id) => '<li>' + cb(LS.sellers.includes(id), 'flt-seller', 'data-id="' + id + '"', esc(byId(D.sellers, id).shop)) + '</li>').join('') + '</ul>') +
-      fitem('Avaliação', '<ul class="text-base text-gray-700">' + [4, 3].map((r) => '<li>' + cb(LS.rating === r, 'flt-rating', 'data-v="' + r + '"', r + ' estrelas ou mais') + '</li>').join('') + '</ul>') +
-      '</div><button type="button" class="mt-4 w-full rounded py-2.5 text-sm font-bold text-white hover:opacity-90" style="background-color:#4CAF50;" data-act="toast" data-msg="Filtros aplicados.">Aplicar filtros</button></div>';
-    const toolbar = '<div class="ica-scope" style="background-color:transparent;color:#333333;"><div class="mb-4 flex flex-wrap items-center justify-between gap-4" style="color:#666666;"><p class="text-sm" style="color:#666666;">' + (L.length ? 'Mostrando 1-' + L.length + ' de ' + L.length + ' produtos' : 'Mostrando 0 produtos') + '</p><div class="flex items-center gap-2"><span class="text-sm" style="color:#666666;">Ordenar por</span><select class="flex max-w-[220px] cursor-pointer items-center justify-between gap-2 rounded border border-gray-200 bg-white px-3 py-2 text-sm focus:border-imali focus:outline-none" style="color:#333333;border-color:#e5e7eb;" data-sort aria-label="Ordenar">' + SORTS.map((o) => '<option value="' + o[0] + '"' + (LS.sort === o[0] ? ' selected' : '') + '>' + o[1] + '</option>').join('') + '</select>' +
-      '<span class="cursor-pointer rounded border p-2 ' + (LS.view === 'list' ? 'icon-listing-fill' : 'icon-listing') + '" style="border-color:#e5e7eb;color:#666666;" role="button" aria-label="Lista" tabindex="0" data-act="view" data-v="list"></span><span class="cursor-pointer rounded border p-2 ' + (LS.view === 'grid' ? 'icon-grid-view-fill' : 'icon-grid-view') + '" style="border-color:#e5e7eb;color:#666666;" role="button" aria-label="Grelha" tabindex="0" data-act="view" data-v="grid"></span></div></div></div>';
-    const body = L.length ? (LS.view === 'list' ? '<div class="mt-8 grid grid-cols-1 gap-6">' + L.map(pcardList).join('') + '</div>' : '<div class="mt-8 max-md:mt-5"><div class="ica-product-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3 max-md:justify-items-center" style="background-color:transparent;">' + L.map(pcard).join('') + '</div></div>') : '<div class="m-auto grid w-full place-content-center items-center justify-items-center py-32 text-center"><p class="text-xl max-md:text-sm" role="heading">Nenhum produto encontrado. Ajuste os filtros ou pesquise outro termo.</p></div>';
-    return '<div class="ica-scope ica-page ica-page--category" style="background-color:#ffffff;color:#333333;font-family:Inter,system-ui,sans-serif;"><section class="border-b border-gray-100 bg-white max-lg:border-gray-200" style="background-color:#ffffff;border-color:#f3f4f6;"><div class="container max-w-7xl mx-auto px-4 py-6 lg:px-8 max-lg:px-8 max-md:px-4"><nav class="text-sm" style="color:#666666;" aria-label="Breadcrumb"><a href="#/" style="color:#666666;" class="hover:opacity-80">Início</a><span class="mx-1" style="color:#666666;">&gt;</span><span style="color:#333333;">' + (cat ? esc(cat.name) : slug === 'pesquisa' ? 'Pesquisa' : 'Produtos') + '</span></nav><h1 class="mt-2 text-2xl font-bold tracking-tight lg:text-3xl" style="color:#333333;">' + title + '</h1><p class="mt-1 text-sm" style="color:#666666;">' + (cat ? 'Fornecedores verificados de ' + esc(cat.name.toLowerCase()) + ' com entrega em todo o país.' : 'Explore o catálogo completo do Mercado ICA.') + '</p></div></section>' +
-      '<div class="container max-w-7xl mx-auto px-4 lg:px-8 max-lg:px-8 max-md:px-4" style="background-color:#ffffff;color:#333333;"><div class="flex items-start gap-10 max-lg:gap-5 md:mt-10 mb-16" style="background-color:transparent;">' + filters + '<div class="flex-1">' + toolbar + body + '</div></div></div></div>';
+
+    const isSearch = slug === 'pesquisa';
+    const title = isSearch ? (q.q ? 'Resultados para “' + esc(q.q) + '”' : 'Pesquisa') : cat ? esc(cat.name) : 'Todos os produtos';
+    const lead = isSearch ? 'Procurámos em produtos, setores e fornecedores.' : cat ? 'Fornecedores verificados de ' + esc(cat.name.toLowerCase()) + ', com entrega em todo o país.' : 'O catálogo completo do Mercado ICA.';
+    const subs = cat ? cat.subs : [...new Set(base.map((p) => p.sub))];
+    const sellersIn = [...new Set(base.map((p) => p.seller))];
+    const chk = (on, act, attrs, label, n) => '<button type="button" class="d-chk' + (on ? ' on' : '') + '" role="checkbox" aria-checked="' + on + '" data-act="' + act + '" ' + attrs + '><i>' + svg('check') + '</i><span>' + label + '</span>' + (n != null ? '<small>' + n + '</small>' : '') + '</button>';
+    const used = { sub: LS.sub ? 1 : 0, price: maxOn ? 1 : 0, sale: LS.sale ? 1 : 0, seller: LS.sellers.length, rating: LS.rating ? 1 : 0 };
+    const group = (g, t, inner) => { const shut = LS.closed.includes(g), n = used[g];
+      return '<div class="d-fg' + (shut ? ' shut' : '') + '" data-g="' + g + '"><button type="button" class="d-fg-h" data-act="flt-fold" data-g="' + g + '" aria-expanded="' + !shut + '"><span>' + t + '</span>' +
+        '<em class="d-fg-n" data-n="' + n + '" aria-label="' + n + (n === 1 ? ' filtro ativo' : ' filtros ativos') + '">' + n + '</em><svg aria-hidden="true"><use href="#d-chev"/></svg></button><div class="d-fg-b">' + inner + '</div></div>'; };
+    const allShut = ['sub', 'price', 'sale', 'seller', 'rating'].every((g) => LS.closed.includes(g));
+    const filters =
+      '<aside class="d-flt' + (LS.sheet ? ' open' : '') + '" id="d-flt" aria-label="Filtros"><div class="d-flt-hd"><b>Filtros</b><button type="button" class="d-link d-link-mut" data-act="flt-fold-all">' + (allShut ? 'Expandir' : 'Minimizar') + '</button><button type="button" class="d-link" data-act="flt-reset">Limpar tudo</button><button type="button" class="d-flt-x" data-act="d-filters" aria-label="Fechar filtros">✕</button></div>' +
+      (subs.length ? group('sub', 'Subcategoria',subs.map((s) => chk(LS.sub === s, 'flt-sub', 'data-v="' + esc(s) + '"', esc(s), base.filter((p) => p.sub === s).length)).join('')) : '') +
+      (cap ? group('price', 'Preço máximo','<div class="d-range"><input type="range" min="0" max="' + cap + '" step="' + Math.max(100, Math.round(cap / 200 / 100) * 100) + '" value="' + (maxOn ? LS.max : cap) + '" data-range="max" aria-label="Preço máximo"><div><span>' + money(0) + '</span><b id="rng-val">' + (maxOn ? 'até ' + money(LS.max) : 'Qualquer preço') + '</b></div></div>') : '') +
+      group('sale', 'Ofertas',chk(LS.sale, 'flt-sale', '', 'Só com desconto', base.filter((p) => p.oldPrice).length)) +
+      group('seller', 'Fornecedor',sellersIn.map((id) => chk(LS.sellers.includes(id), 'flt-seller', 'data-id="' + id + '"', esc(byId(D.sellers, id).shop), base.filter((p) => p.seller === id).length)).join('')) +
+      group('rating', 'Avaliação',[4.5, 4].map((r) => chk(LS.rating === r, 'flt-rating', 'data-v="' + r + '"', '★ ' + String(r).replace('.', ',') + ' ou mais', base.filter((p) => p.rating >= r).length)).join('')) +
+      '<button type="button" class="d-btn d-btn-dark d-flt-go" data-act="d-filters">Ver ' + L.length + (L.length === 1 ? ' produto' : ' produtos') + '</button></aside>';
+
+    const chips = [];
+    if (LS.sub) chips.push(['flt-sub', 'data-v="' + esc(LS.sub) + '"', esc(LS.sub)]);
+    if (maxOn) chips.push(['flt-max', '', 'Até ' + money(LS.max)]);
+    if (LS.sale) chips.push(['flt-sale', '', 'Com desconto']);
+    LS.sellers.forEach((id) => chips.push(['flt-seller', 'data-id="' + id + '"', esc(byId(D.sellers, id).shop)]));
+    if (LS.rating) chips.push(['flt-rating', 'data-v="' + LS.rating + '"', '★ ' + String(LS.rating).replace('.', ',') + '+']);
+    const toolbar = '<div class="d-tool"><div class="d-tool-l"><button type="button" class="d-fbtn" data-act="d-filters">' + svg('grid', 'width:17px;height:17px') + 'Filtros' + (chips.length ? '<em>' + chips.length + '</em>' : '') + '</button><p><b>' + L.length + '</b> ' + (L.length === 1 ? 'produto' : 'produtos') + '</p>' +
+      chips.map((c) => '<button type="button" class="d-chip" data-act="' + c[0] + '" ' + c[1] + ' aria-label="Remover filtro ' + c[2] + '">' + c[2] + '<span aria-hidden="true">✕</span></button>').join('') + (chips.length > 1 ? '<button type="button" class="d-link" data-act="flt-reset">Limpar</button>' : '') + '</div>' +
+      '<label class="d-sort"><span>Ordenar</span><span class="d-scat"><select data-sort aria-label="Ordenar">' + SORTS.map((o) => '<option value="' + o[0] + '"' + (LS.sort === o[0] ? ' selected' : '') + '>' + o[1] + '</option>').join('') + '</select><svg aria-hidden="true"><use href="#d-chev"/></svg></span></label></div>';
+    const body = L.length ? '<div class="d-pgrid">' + L.map(dcard).join('') + '</div>' :
+      '<div class="d-empty"><b>Nenhum produto encontrado</b><p>' + (chips.length ? 'Experimente remover alguns filtros.' : 'Experimente outro termo ou explore os setores.') + '</p>' + (chips.length ? '<button type="button" class="d-btn d-btn-dark" data-act="flt-reset">Limpar filtros</button>' : '<a class="d-btn d-btn-dark" href="#/categoria/todos">Ver todo o catálogo</a>') + '</div>';
+    const pills = '<nav class="d-pills" aria-label="Setores"><a href="#/categoria/todos" class="' + (!cat && !isSearch ? 'on' : '') + '">Todos</a>' + D.categories.map((c) => '<a href="#/categoria/' + c.slug + '" class="' + (cat && cat.id === c.id ? 'on' : '') + '">' + esc(c.name) + '</a>').join('') + '</nav>';
+    const html = '<div class="d-phead"><div class="d-wrap"><nav class="d-crumbs" aria-label="Caminho"><a href="#/">Início</a><span>/</span>' + (isSearch ? 'Pesquisa' : cat ? '<a href="#/categoria/todos">Catálogo</a><span>/</span>' + esc(cat.name) : 'Catálogo') + '</nav>' +
+      '<h1>' + title + '</h1><p>' + lead + '</p>' + pills + '</div></div>' +
+      '<div class="d-wrap d-lst">' + filters + '<div class="d-lst-main">' + toolbar + body + '</div></div><div class="d-flt-scrim" data-act="d-filters"></div>';
+    return { html, mount: () => document.body.classList.toggle('d-flt-open', LS.sheet) };
   }
   const re = () => ICA.refresh();
   ACT['flt-sub'] = (el) => { LS.sub = LS.sub === el.dataset.v ? '' : el.dataset.v; re(); };
   ACT['flt-rating'] = (el) => { LS.rating = LS.rating === +el.dataset.v ? 0 : +el.dataset.v; re(); };
   ACT['flt-seller'] = (el) => { const id = +el.dataset.id; LS.sellers = LS.sellers.includes(id) ? LS.sellers.filter((x) => x !== id) : LS.sellers.concat(id); re(); };
-  ACT['flt-reset'] = () => { Object.assign(LS, { sub: '', sellers: [], max: 6000000, rating: 0 }); re(); };
-  ACT['view'] = (el) => { LS.view = el.dataset.v; re(); };
+  ACT['flt-sale'] = () => { LS.sale = !LS.sale; re(); };
+  ACT['flt-max'] = () => { LS.max = 0; re(); };
+  ACT['flt-reset'] = () => { Object.assign(LS, LS_RESET); re(); };
+  /* minimizar / expandir grupos de filtros sem redesenhar a página */
+  const paintFold = () => $$('#d-flt .d-fg').forEach((fg) => { const shut = LS.closed.includes(fg.dataset.g); fg.classList.toggle('shut', shut); $('.d-fg-h', fg).setAttribute('aria-expanded', !shut); });
+  ACT['flt-fold'] = (el) => { const g = el.dataset.g; LS.closed = LS.closed.includes(g) ? LS.closed.filter((x) => x !== g) : LS.closed.concat(g); paintFold(); };
+  ACT['flt-fold-all'] = (el) => { const all = $$('#d-flt .d-fg').map((fg) => fg.dataset.g), shutAll = !all.every((g) => LS.closed.includes(g)); LS.closed = shutAll ? all : []; el.textContent = shutAll ? 'Expandir' : 'Minimizar'; paintFold(); };
+  ACT['d-filters'] = () => { LS.sheet = !LS.sheet; const f = $('#d-flt'); if (f) f.classList.toggle('open', LS.sheet); document.body.classList.toggle('d-flt-open', LS.sheet); };
+  window.addEventListener('hashchange', () => { LS.sheet = false; document.body.classList.remove('d-flt-open'); });
   document.addEventListener('change', (e) => { const d = e.target.dataset || {}; if (d.sort !== undefined) { LS.sort = e.target.value; re(); } if (d.range) { LS.max = +e.target.value; re(); } });
   document.addEventListener('input', (e) => { const d = e.target.dataset || {}; if (d.range) { const b = $('#rng-val'); if (b) b.textContent = money(+e.target.value); } });
 
-  /* ---------- Página de produto ---------- */
+  /* ---------- Página de produto (D) ---------- */
   const PS = { pid: 0, img: 0, qty: 1, opt: 0 };
+  const VARIANTS = ['Standard', 'Com instalação', 'Pack empresarial'];
   function product({ params }) {
     const p = prod(params.id);
-    if (!p) return '<div class="container px-[60px] py-20">' + emptyBox('Produto não encontrado.') + '</div>';
+    if (!p || p.status !== 'approved') return '<div class="d-wrap"><div class="d-empty" style="margin-top:32px"><b>Produto não encontrado</b><p>Pode ter sido removido ou ainda estar em aprovação.</p><a class="d-btn d-btn-dark" href="#/categoria/todos">Ver o catálogo</a></div></div>';
     if (PS.pid !== p.id) Object.assign(PS, { pid: p.id, img: 0, qty: 1, opt: 0 });
-    const s = sellerOf(p), w = wish().includes(p.id), opts = ['Standard', 'Com instalação', 'Pack empresarial'];
-    const related = liveProducts().filter((x) => x.cat === p.cat && x.id !== p.id).slice(0, 4);
+    PS.qty = Math.min(PS.qty, p.stock); // nunca acima do stock disponível
+    const s = sellerOf(p), c = D.categories.find((x) => x.id === p.cat), fav = wish().includes(p.id);
+    const nImg = Math.max(1, ((ICA.productImages || {})[p.id] || []).length), off = p.oldPrice ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
+    const unit = unitPrice(p, PS.qty), total = unit * PS.qty;
     const revs = D.reviews.filter((r) => r.pid === p.id && r.status === 'approved');
-    const revList = (revs.length ? revs : D.reviews.filter((r) => r.status === 'approved').slice(0, 3)).map((r) => '<div class="flex gap-5 border-b border-zinc-200 pb-5 max-sm:flex-col"><div class="grid h-[100px] w-[100px] shrink-0 place-content-center rounded-full bg-zinc-100 text-3xl font-medium text-zinc-500 max-sm:h-14 max-sm:w-14 max-sm:text-xl">' + esc(r.customer[0]) + '</div><div><p class="text-xl font-medium max-sm:text-base">' + esc(r.title) + '</p><div class="mt-1 flex items-center gap-2">' + stars(r.rating) + '</div><p class="mt-2 text-base text-zinc-500 max-sm:text-sm">' + esc(r.comment) + '</p><p class="mt-2 text-sm text-zinc-500">' + esc(r.customer) + ' · ' + date(r.date) + '</p></div></div>').join('');
-    const artSrc = (i) => (i === 0 ? ICA.art(p.emoji, p.color) : ICA.art(['🔍', '📐', '📦', '🧰'][i % 4], ICA.shade(p.color, i * -18)));
-    const thumbs = [0, 1, 2, 3].map((i) => '<img class="transparent max-h-[100px] min-w-[100px] cursor-pointer rounded-xl border ' + (PS.img === i ? 'pointer-events-none border border-blue-600' : 'border-white') + '" src="' + artSrc(i) + '" alt="' + esc(p.name) + '" width="100" height="100" tabindex="0" data-act="pdp-img" data-i="' + i + '">').join('');
-    const mainSrc = artSrc(PS.img);
-    return '<div class="border-b border-gray-100 bg-white py-4 max-lg:hidden"><div class="container mx-auto px-4 text-xs text-zinc-500"><a href="#/">Início</a> / <a href="#/categoria/' + D.categories.find((c) => c.id === p.cat).slug + '">' + esc(p.catName) + '</a> / ' + esc(p.name) + '</div></div>' +
-      '<div class="container px-[60px] max-1180:px-0"><div class="flex mt-12 gap-9 max-1180:flex-wrap max-lg:mt-0 max-sm:gap-y-4">' +
-      '<div><div class="sticky top-20 flex h-max gap-8 max-sm:flex-col-reverse"><div class="flex-24 h-509 flex min-w-[100px] max-w-[100px] flex-wrap place-content-start justify-center gap-2.5 overflow-y-auto overflow-x-hidden max-sm:max-w-full"><div class="flex flex-col max-h-[540px] gap-2.5 [&>*]:flex-[0] overflow-auto scroll-smooth scrollbar-hide max-sm:flex-row">' + thumbs + '</div></div>' +
-      '<div class="relative flex-1 overflow-hidden rounded-lg border border-gray-200 bg-gray-100 p-4 max-h-[610px] max-w-[560px]"><img class="mx-auto h-auto max-h-[480px] w-full max-w-[520px] cursor-pointer object-contain rounded-lg" src="' + mainSrc + '" alt="' + esc(p.name) + '" data-act="zoom"></div></div></div>' +
-      '<div class="relative max-w-[590px] max-1180:w-full max-1180:max-w-full max-1180:px-5 max-sm:px-4"><div class="flex justify-between gap-4"><h1 class="text-3xl font-medium break-words max-sm:text-xl">' + esc(p.name) + '</h1><div class="flex max-h-[46px] min-h-[46px] min-w-[46px] cursor-pointer items-center justify-center rounded-full border bg-white text-2xl transition-all hover:opacity-[0.8] ' + (w ? 'icon-heart-fill text-red-600' : 'icon-heart') + '" role="button" aria-label="Adicionar à lista de desejos" tabindex="0" data-act="wish" data-pid="' + p.id + '"></div></div>' +
-      '<div class="mt-1 w-max cursor-pointer max-sm:mt-1.5" role="button" tabindex="0"><div class="flex items-center gap-1 rounded-md border border-zinc-200 px-3 py-1.5 text-sm">' + stars(p.rating) + '<span class="ml-1 text-zinc-500">' + p.rating + ' (' + p.reviews + ' avaliações)</span></div></div>' +
-      '<p class="mt-[22px] flex items-center gap-2.5 text-2xl !font-medium max-sm:mt-2 max-sm:text-lg"><span>' + money(p.price) + '</span>' + (p.oldPrice ? '<span class="text-lg font-normal text-zinc-500 line-through">' + money(p.oldPrice) + '</span>' : '') + '</p><span class="text-sm font-normal text-zinc-500 max-sm:text-xs">(IVA 16% calculado no checkout)</span>' +
-      '<p class="mt-6 text-lg text-zinc-500 max-sm:mt-1.5 max-sm:text-sm">' + esc(p.desc) + '</p>' +
-      '<div class="mt-5 grid gap-2"><p class="text-base font-medium">Variante</p><div class="flex flex-wrap gap-3">' + opts.map((o, i) => '<span class="flex h-[60px] min-w-[60px] cursor-pointer items-center justify-center rounded-xl border px-4 text-base max-sm:h-[40px] ' + (PS.opt === i ? 'border-2 border-navyBlue' : 'border-gray-300') + '" role="button" tabindex="0" data-act="pdp-opt" data-i="' + i + '">' + o + '</span>').join('') + '</div></div>' +
-      '<p class="mt-4 text-sm">Vendido por <a href="#/vendedor/' + s.id + '" class="font-medium" style="color:#19b51f;">' + esc(s.shop) + '</a> · ' + (p.stock > 10 ? 'Em stock' : 'Restam ' + p.stock + ' unidades') + '</p>' +
-      '<div class="mt-8 flex max-w-[470px] gap-4 max-sm:mt-4"><div class="flex items-center gap-x-4 rounded-xl border border-navyBlue px-7 py-4 max-md:py-3 max-sm:gap-x-5 max-sm:rounded-lg max-sm:px-4 max-sm:py-1.5"><span class="icon-minus cursor-pointer text-2xl" role="button" tabindex="0" aria-label="Diminuir" data-act="pdp-qty" data-d="-1"></span><p class="w-2.5 select-none text-center max-sm:text-sm">' + PS.qty + '</p><span class="icon-plus cursor-pointer text-2xl" role="button" tabindex="0" aria-label="Aumentar" data-act="pdp-qty" data-d="1"></span></div><button type="button" class="secondary-button w-full max-w-full max-md:py-3 max-sm:rounded-lg max-sm:py-1.5" data-act="pdp-add">Adicionar ao carrinho</button></div>' +
-      '<button type="button" class="primary-button mt-5 w-full max-w-[470px] max-md:py-3 max-sm:mt-3 max-sm:rounded-lg max-sm:py-1.5" data-act="pdp-buy">Comprar agora</button>' +
-      '<div class="flex mt-10 gap-9 max-md:mt-4 max-md:flex-wrap max-sm:justify-center max-sm:gap-3"><div class="flex cursor-pointer items-center justify-center gap-2.5 max-sm:gap-1.5 max-sm:text-base" role="button" tabindex="0" data-act="cmp" data-pid="' + p.id + '"><span class="text-2xl icon-compare" role="presentation"></span>Comparar</div><div class="flex cursor-pointer items-center justify-center gap-2.5 max-sm:text-base" role="button" tabindex="0" data-act="quote" data-pid="' + p.id + '"><span class="text-2xl icon-file" role="presentation"></span>Pedir orçamento</div><div class="flex cursor-pointer items-center justify-center gap-2.5 max-sm:text-base" role="button" tabindex="0" data-act="contact-seller" data-id="' + s.id + '"><span class="text-2xl icon-message" role="presentation"></span>Contactar vendedor</div></div></div></div></div>' +
-      '<div class="container mx-auto px-4 py-10 lg:px-8 1180:mt-12 max-1180:px-5"><section class="mb-12"><h2 class="text-xl font-bold text-gray-900 mb-4">Descrição</h2><div class="text-lg text-zinc-500 max-1180:text-sm max-w-none"><p>' + esc(p.desc) + ' Fornecido por ' + esc(s.shop) + ', com fatura (NUIT), documentação técnica e suporte pós-venda. Entregas para todas as províncias.</p></div></section>' +
-      '<section class="mb-12"><h2 class="text-xl font-bold text-gray-900 mb-4">Informação adicional</h2><div class="grid max-w-max grid-cols-[auto_1fr] gap-4 text-base"><div class="font-medium text-gray-900">Referência</div><div class="text-zinc-500">' + p.sku + '</div><div class="font-medium text-gray-900">Categoria</div><div class="text-zinc-500">' + esc(p.catName) + ' › ' + esc(p.sub) + '</div>' + p.specs.map((x) => '<div class="font-medium text-gray-900">' + esc(x[0]) + '</div><div class="text-zinc-500">' + esc(x[1]) + '</div>').join('') + '</div></section>' +
-      '<section id="product-reviews"><h2 class="text-xl font-bold text-gray-900 mb-4">Avaliações</h2><div class="flex gap-5 max-md:flex-wrap"><div class="grid gap-3 max-w-[300px]"><p class="text-5xl font-semibold">' + p.rating + '</p>' + stars(p.rating) + '<p class="text-sm text-zinc-500">' + p.reviews + ' avaliações</p><button type="button" class="primary-button w-full rounded-2xl px-11 py-4 text-center max-md:py-3" data-act="write-review">Escrever avaliação</button></div><div class="grid flex-1 gap-5">' + revList + '</div></div></section></div>' +
-      '<div class="container px-[60px] max-lg:px-8 max-md:px-4 pb-16"><h2 class="text-3xl font-dmserif max-sm:text-xl mb-6">Produtos relacionados</h2><div class="ica-scope"><div class="ica-product-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">' + related.map(pcard).join('') + '</div></div></div>';
+    const dist = [5, 4, 3, 2, 1].map((n) => [n, revs.filter((r) => Math.round(r.rating) === n).length]);
+    const stars5 = (n) => '<span class="d-stars" aria-label="' + String(n).replace('.', ',') + ' de 5">' + [1, 2, 3, 4, 5].map((i) => '<i class="' + (i <= Math.round(n) ? 'on' : '') + '">★</i>').join('') + '</span>';
+    const tierRows = [[1, 9], [10, 49], [50, 0]].map(([a, b], i) => { const u = unitPrice(p, a), on = PS.qty >= a && (!b || PS.qty <= b), out = a > p.stock;
+      return '<button type="button" class="d-tier' + (on ? ' on' : '') + '" data-act="pdp-tier" data-q="' + a + '"' + (out ? ' disabled title="Stock insuficiente"' : '') + '><span>' + a + (b ? '–' + b : '+') + ' un</span><b>' + money(u) + '</b><small>' + (out ? 'Sem stock' : i ? '-' + (i === 1 ? 5 : 10) + '%' : 'Preço base') + '</small></button>'; }).join('');
+    const nextTier = PS.qty < 10 && p.stock >= 10 ? [10, 5] : PS.qty < 50 && p.stock >= 50 ? [50, 10] : null;
+    const gallery = '<div class="d-gal"><button type="button" class="d-gal-main" data-act="zoom" aria-label="Ampliar imagem">' + pimg(p, '', PS.img) + (off ? '<span class="d-badge sale">-' + off + '%</span>' : '') + '</button>' +
+      (nImg > 1 ? '<div class="d-gal-th">' + Array.from({ length: nImg }, (_, i) => '<button type="button" class="' + (PS.img === i ? 'on' : '') + '" data-act="pdp-img" data-i="' + i + '" aria-label="Imagem ' + (i + 1) + '">' + pimg(p, '', i) + '</button>').join('') + '</div>' : '') + '</div>';
+    const buy = '<div class="d-buy">' +
+      '<a class="d-ver" href="#/vendedor/' + s.id + '">' + svg('check') + esc(s.shop) + ' · fornecedor verificado</a>' +
+      '<h1>' + esc(p.name) + '</h1>' +
+      '<div class="d-meta-row"><a href="#/" data-act="d-scroll" data-to="d-revs">' + stars5(p.rating) + ' <b>' + String(p.rating).replace('.', ',') + '</b> <span>(' + p.reviews + ' avaliações)</span></a><span>Ref. ' + p.sku + '</span></div>' +
+      '<div class="d-price"><b>' + money(unit) + '</b>' + (PS.qty < 10 && p.oldPrice ? '<s>' + money(p.oldPrice) + '</s>' : '') + '<small>/ un · IVA 16% no checkout</small></div>' +
+      '<div class="d-fg2"><h3>Preço por volume</h3><div class="d-tiers">' + tierRows + '</div>' + (nextTier ? '<p class="d-hint">Compre ' + (nextTier[0] - PS.qty) + ' un a mais e poupe ' + nextTier[1] + '% em cada unidade.</p>' : PS.qty >= 10 ? '<p class="d-hint ok">' + svg('check', 'width:14px;height:14px') + ' Preço por volume aplicado.</p>' : '<p class="d-hint">Stock atual não permite compra por volume. Para quantidades maiores, peça cotação.</p>') + '</div>' +
+      '<div class="d-fg2"><h3>Variante</h3><div class="d-vars">' + VARIANTS.map((o, i) => '<button type="button" class="' + (PS.opt === i ? 'on' : '') + '" data-act="pdp-opt" data-i="' + i + '" aria-pressed="' + (PS.opt === i) + '">' + o + '</button>').join('') + '</div></div>' +
+      '<div class="d-qrow"><div class="d-qty"><button type="button" data-act="pdp-qty" data-d="-1" aria-label="Diminuir">−</button><input type="number" min="1" max="' + p.stock + '" value="' + PS.qty + '" data-pdpqty aria-label="Quantidade"><button type="button" data-act="pdp-qty" data-d="1" aria-label="Aumentar"' + (PS.qty >= p.stock ? ' disabled' : '') + '>+</button></div>' +
+        '<div class="d-stock ' + (p.stock > 10 ? 'ok' : 'low') + '"><i></i>' + (p.stock > 10 ? 'Em stock · ' + p.stock + ' un' : p.stock === 1 ? 'Última unidade' : 'Últimas ' + p.stock + ' unidades') + '</div></div>' +
+      '<div class="d-total"><span>Total (' + PS.qty + ' un)</span><b>' + money(total) + '</b></div>' +
+      '<div class="d-ctas"><button type="button" class="d-btn d-btn-dark" data-act="pdp-add">' + svg('cart', 'width:18px;height:18px') + 'Adicionar ao carrinho</button><button type="button" class="d-btn d-btn-lime" data-act="pdp-buy">Comprar agora</button></div>' +
+      '<div class="d-ctas2"><button type="button" class="d-btn d-btn-line" data-act="quote" data-pid="' + p.id + '">Pedir cotação</button><button type="button" class="d-iconbtn' + (fav ? ' on' : '') + '" data-act="d-wish" data-pid="' + p.id + '" aria-pressed="' + fav + '" aria-label="Guardar nos desejos">' + svg('heart') + '</button><button type="button" class="d-iconbtn" data-act="cmp" data-pid="' + p.id + '" aria-label="Comparar" title="Comparar"><span class="icon-compare" style="font-size:20px"></span></button></div>' +
+      '<div class="d-imali"><div><b>Ou 3× de ' + money(Math.round(total / 3)) + '</b><span>com crédito iMali para empresas</span></div><div class="d-wallets" style="margin:0;padding:0;border:0">' + [['Assets/M-pesa logo.png', 'M-Pesa'], ['Assets/emola logo.png', 'e-Mola'], ['Assets/mkesh logo.png', 'mKesh'], ['logo-imali-small.png', 'iMali']].map((w) => '<img src="' + brand(w[0]) + '" alt="' + w[1] + '">').join('') + '</div></div>' +
+      '<ul class="d-perks"><li><b>Entrega em todo o país</b>Envio a partir de ' + esc(s.city) + '</li><li><b>Fatura com NUIT</b>Emitida pelo fornecedor</li><li><b>Garantia</b>' + esc((p.specs.find((x) => x[0] === 'Garantia') || ['', 'Conforme fabricante'])[1]) + '</li></ul>' +
+      '</div>';
+    const secNav = '<nav class="d-snav" aria-label="Secções"><a href="#/" data-act="d-scroll" data-to="d-desc">Descrição</a><a href="#/" data-act="d-scroll" data-to="d-spec">Especificações</a><a href="#/" data-act="d-scroll" data-to="d-revs">Avaliações (' + p.reviews + ')</a><a href="#/" data-act="d-scroll" data-to="d-sell">Fornecedor</a></nav>';
+    const specs = [['Referência', p.sku], ['Categoria', p.catName + ' › ' + p.sub]].concat(p.specs);
+    const revList = revs.length ? revs.map((r) => '<article class="d-rev"><div class="d-rev-h"><span class="d-av" style="background:var(--d-char-700)">' + esc(r.customer[0]) + '</span><div><b>' + esc(r.customer) + '</b><small>' + date(r.date) + '</small></div>' + stars5(r.rating) + '</div><h4>' + esc(r.title) + '</h4><p>' + esc(r.comment) + '</p></article>').join('') : '<p class="d-mut">Ainda não há avaliações publicadas deste produto. Seja o primeiro a avaliar.</p>';
+    const nProd = D.products.filter((x) => x.seller === s.id && x.status === 'approved').length;
+    const related = liveProducts().filter((x) => x.cat === p.cat && x.id !== p.id).slice(0, 4);
+    const html =
+      '<div class="d-phead d-phead-sm"><div class="d-wrap"><nav class="d-crumbs" aria-label="Caminho"><a href="#/">Início</a><span>/</span><a href="#/categoria/' + c.slug + '">' + esc(c.name) + '</a><span>/</span>' + esc(p.sub) + '</nav></div></div>' +
+      '<div class="d-wrap d-pdp">' + gallery + buy + '</div>' +
+      '<div class="d-wrap">' + secNav +
+        '<section class="d-box" id="d-desc"><h2>Descrição</h2><p>' + esc(p.desc) + '</p><p>Fornecido por ' + esc(s.shop) + ', com fatura (NUIT), documentação técnica e suporte pós-venda. Entregas para todas as províncias.</p></section>' +
+        '<section class="d-box" id="d-spec"><h2>Especificações</h2><dl class="d-specs">' + specs.map((x) => '<div><dt>' + esc(x[0]) + '</dt><dd>' + esc(x[1]) + '</dd></div>').join('') + '</dl></section>' +
+        '<section class="d-box" id="d-revs"><h2>Avaliações</h2><div class="d-revs"><div class="d-rsum"><b>' + String(p.rating).replace('.', ',') + '</b>' + stars5(p.rating) + '<small>' + p.reviews + ' avaliações</small>' +
+          (revs.length ? '<small class="d-dist-note">Distribuição dos ' + revs.length + (revs.length === 1 ? ' comentário publicado' : ' comentários publicados') + '</small><div class="d-dist">' + dist.map(([n, k]) => '<div><span>' + n + '★</span><i><em style="width:' + Math.round((k / revs.length) * 100) + '%"></em></i><span>' + k + '</span></div>').join('') + '</div>' : '') +
+          '<button type="button" class="d-btn d-btn-dark" data-act="write-review">Escrever avaliação</button></div><div class="d-rlist">' + revList + '</div></div></section>' +
+        '<section class="d-box d-sellbox" id="d-sell"><span class="d-av" style="background:' + s.color + '">' + esc(s.shop[0]) + '</span><div><span class="d-ver">' + svg('check') + 'Fornecedor verificado</span><h2>' + esc(s.shop) + '</h2><p>' + esc(s.about) + '</p><div class="d-sstats"><span><b>★ ' + s.rating.toFixed(1).replace('.', ',') + '</b>avaliação</span><span><b>' + nProd + '</b>produtos</span><span><b>' + esc(s.city) + '</b>sede</span><span><b>' + s.since + '</b>no Mercado ICA desde</span></div></div>' +
+          '<div class="d-sellacts"><a class="d-btn d-btn-dark" href="#/vendedor/' + s.id + '">Ver loja</a><button type="button" class="d-btn d-btn-line" data-act="contact-seller" data-id="' + s.id + '">Contactar</button></div></section>' +
+        (related.length ? '<section class="d-sec"><div class="d-sh"><div><h2>Também em ' + esc(c.name) + '</h2></div><a class="d-more" href="#/categoria/' + c.slug + '">Ver tudo</a></div><div class="d-pgrid">' + related.map(dcard).join('') + '</div></section>' : '') +
+      '</div>' +
+      '<div class="d-buybar"><div><small>' + PS.qty + ' un · ' + money(unit) + '/un</small><b>' + money(total) + '</b></div><button type="button" class="d-btn d-btn-lime" data-act="pdp-add">' + svg('cart', 'width:18px;height:18px') + 'Adicionar</button></div>';
+    return { html, mount: () => document.body.classList.add('d-has-buybar') };
   }
+  window.addEventListener('hashchange', () => document.body.classList.remove('d-has-buybar'));
   ACT['pdp-img'] = (el) => { PS.img = +el.dataset.i; re(); };
   ACT['pdp-opt'] = (el) => { PS.opt = +el.dataset.i; re(); };
   ACT['pdp-qty'] = (el) => { PS.qty = Math.max(1, PS.qty + +el.dataset.d); re(); };
-  ACT['pdp-add'] = () => { addToCart(PS.pid, PS.qty); toast('Produto adicionado ao carrinho com sucesso.'); };
+  ACT['pdp-tier'] = (el) => { PS.qty = +el.dataset.q; re(); }; // escolher um escalão define a quantidade mínima desse escalão
+  document.addEventListener('change', (e) => { if (e.target.dataset && e.target.dataset.pdpqty !== undefined) { PS.qty = Math.max(1, Math.round(+e.target.value) || 1); re(); } });
+  ACT['pdp-add'] = () => { const p = prod(PS.pid); addToCart(PS.pid, PS.qty); $$('[data-d-cart]').forEach((c) => { c.classList.remove('bump'); void c.offsetWidth; c.classList.add('bump'); }); toast(PS.qty + ' × ' + p.name + ' adicionado ao carrinho.'); };
   ACT['pdp-buy'] = () => { addToCart(PS.pid, PS.qty); location.hash = '#/checkout'; };
-  ACT['zoom'] = () => openModal({ title: 'Ampliar imagem', size: 'lg', body: '<img class="mx-auto max-h-[70vh]" src="' + $('[data-act="zoom"]').src + '" alt="">' });
+  /* visualizador de imagens em ecrã inteiro (substitui o modal genérico) */
+  const LB = { pid: 0, i: 0, n: 1, last: null };
+  function paintLightbox() {
+    const box = $('#d-lb'); if (!box) return;
+    const p = prod(LB.pid);
+    $('.d-lb-fig', box).innerHTML = pimg(p, '', LB.i);
+    $('.d-lb-count', box).textContent = (LB.i + 1) + ' / ' + LB.n;
+    $$('.d-lb-th button', box).forEach((b, k) => { b.classList.toggle('on', k === LB.i); b.setAttribute('aria-current', k === LB.i); });
+  }
+  function openLightbox(pid, i) {
+    const p = prod(pid); LB.pid = pid; LB.i = i; LB.n = Math.max(1, ((ICA.productImages || {})[pid] || []).length); LB.last = document.activeElement;
+    const nav = LB.n > 1;
+    const box = document.createElement('div'); box.id = 'd-lb'; box.className = 'd-lb'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-label', 'Imagens de ' + p.name);
+    box.innerHTML = '<div class="d-lb-top"><span class="d-lb-title">' + esc(p.name) + '</span><span class="d-lb-count"></span><button type="button" class="d-lb-btn" data-act="lb-close" aria-label="Fechar">✕</button></div>' +
+      '<div class="d-lb-stage" data-act="lb-close">' + (nav ? '<button type="button" class="d-lb-btn d-lb-prev" data-act="lb-go" data-d="-1" aria-label="Imagem anterior">‹</button>' : '') + '<figure class="d-lb-fig"></figure>' + (nav ? '<button type="button" class="d-lb-btn d-lb-next" data-act="lb-go" data-d="1" aria-label="Imagem seguinte">›</button>' : '') + '</div>' +
+      (nav ? '<div class="d-lb-th">' + Array.from({ length: LB.n }, (_, k) => '<button type="button" data-act="lb-to" data-i="' + k + '" aria-label="Imagem ' + (k + 1) + '">' + pimg(p, '', k) + '</button>').join('') + '</div>' : '');
+    document.body.appendChild(box); document.body.classList.add('d-lb-open');
+    paintLightbox(); $('[data-act="lb-close"].d-lb-btn', box).focus();
+  }
+  function closeLightbox() {
+    const box = $('#d-lb'); if (!box) return;
+    box.remove(); document.body.classList.remove('d-lb-open');
+    if (LB.i !== PS.img && PS.pid === LB.pid) { PS.img = LB.i; re(); } else if (LB.last) LB.last.focus();
+  }
+  ACT['zoom'] = () => openLightbox(PS.pid, PS.img);
+  ACT['lb-close'] = (el, e) => { if (e.target.closest('.d-lb-fig img, .d-lb-prev, .d-lb-next') && el.classList.contains('d-lb-stage')) return; closeLightbox(); };
+  ACT['lb-go'] = (el, e) => { e.stopPropagation(); LB.i = (LB.i + +el.dataset.d + LB.n) % LB.n; paintLightbox(); };
+  ACT['lb-to'] = (el) => { LB.i = +el.dataset.i; paintLightbox(); };
+  document.addEventListener('keydown', (e) => {
+    if (!$('#d-lb')) return;
+    if (e.key === 'Escape') closeLightbox();
+    else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { LB.i = (LB.i + (e.key === 'ArrowRight' ? 1 : -1) + LB.n) % LB.n; paintLightbox(); }
+  });
+  window.addEventListener('hashchange', () => { const b = $('#d-lb'); if (b) { b.remove(); document.body.classList.remove('d-lb-open'); } });
   const mform = (msg, inner, ok, danger) => '<form data-msg="' + esc(msg) + '"><div class="form-grid">' + inner + '</div><div style="margin-top:16px;display:flex;justify-content:flex-end;gap:8px"><button type="button" class="secondary-button" data-act="close-modal">Cancelar</button><button class="' + (danger ? 'btn btn-danger' : 'primary-button') + '">' + ok + '</button></div></form>';
   shop.mform = mform;
   const f = (label, name, o = {}) => ICA.field({ label, name, ...o });
-  ACT['quote'] = (el) => { const p = prod(+el.dataset.pid); openModal({ title: 'Pedir orçamento', body: '<p class="mut" style="margin-bottom:14px">' + esc(p.name) + '</p>' + mform('Pedido enviado! O vendedor responde em 24 h.', f('Quantidade', 'qty', { type: 'number', value: 10, required: true }) + f('Prazo desejado', 'when', { type: 'date' }) + f('Observações', 'msg', { type: 'textarea', span: 2 }), 'Enviar pedido') }); };
+  ACT['quote'] = (el) => { const p = prod(+el.dataset.pid); openModal({ title: 'Pedir cotação', body: '<p class="mut" style="margin-bottom:14px">' + esc(p.name) + '</p>' + mform('Pedido enviado! O vendedor responde em 24 h.', f('Quantidade', 'qty', { type: 'number', value: 10, required: true }) + f('Prazo desejado', 'when', { type: 'date' }) + f('Observações', 'msg', { type: 'textarea', span: 2 }), 'Enviar pedido') }); };
   ACT['contact-seller'] = (el) => { const s = byId(D.sellers, el.dataset.id); openModal({ title: 'Contactar ' + s.shop, body: mform('Mensagem enviada ao vendedor.', f('Assunto', 'subject', { value: 'Dúvida sobre produto', span: 2 }) + f('Mensagem', 'msg', { type: 'textarea', span: 2, required: true }), 'Enviar') }); };
   ACT['write-review'] = () => {
     if (!buyer()) { toast('Inicie sessão para avaliar.', 'info'); location.hash = '#/entrar'; return; }
@@ -274,5 +479,5 @@
   const cmsPage = ({ params }) => { const pg = D.cmsPages.find((x) => x.slug === params.slug); return pg ? pageTitle(esc(pg.title), esc(pg.title)) + '<div class="container mx-auto px-4 py-10 lg:px-8"><div class="prose max-w-3xl text-lg leading-8 text-zinc-600"><p>' + esc(pg.body) + '</p></div></div>' : notFound(); };
   const notFound = () => '<div class="container px-[60px] py-24 text-center"><h1 class="text-7xl font-dmserif" style="color:#16a34a">404</h1><p class="mt-2 text-xl">Página não encontrada</p><a class="primary-button mt-6 inline-block" href="#/">Voltar ao início</a></div>';
 
-  Object.assign(shop, { layout, updateHeader, home, listing, product, sellers, sellerPage, cmsPage, notFound, sellerCards, pcardList, pageTitle, f });
+  Object.assign(shop, { layout, updateHeader, markTab, syncCookie, home, listing, product, sellers, sellerPage, cmsPage, notFound, sellerCards, pcardList, pageTitle, f });
 })();

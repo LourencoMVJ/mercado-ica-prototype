@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mercado ICA — Mais direções de estilo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --char: #2B2B2B; --char2: #1E1F1E; --char3: #262826; --g1: #3AB54A; --g2: #8DC63F; --lime: #B5E33A;
+    --grad: linear-gradient(120deg, #3AB54A, #8DC63F); --grad2: linear-gradient(120deg, #3AB54A, #B5E33A);
+    --bg: #F5F7F4; --line: #E4E8E2; --mut: #6B7069; --ink: #1C1D1B; --dg: #2f7a36;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Inter, system-ui, sans-serif; color: var(--ink); background: #ECEFEA; }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; text-decoration: none; }
+  .M { font-family: Montserrat, sans-serif; }
+
+  .switch { position: sticky; top: 0; z-index: 50; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 12px 16px; background: rgba(28,29,27,.92); backdrop-filter: blur(8px); color: #fff; }
+  .switch b { font-family: Montserrat; margin-right: 8px; }
+  .switch a { padding: 8px 14px; border-radius: 99px; background: rgba(255,255,255,.08); font-size: 14px; font-weight: 600; }
+  .switch a:hover { background: var(--g1); }
+  .switch .mix { background: rgba(181,227,58,.18); color: var(--lime); }
+  .label { max-width: 1240px; margin: 56px auto 14px; padding: 0 16px; display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; }
+  .label h2 { margin: 0; font-family: Montserrat; font-size: 28px; font-weight: 800; }
+  .label p { margin: 0; color: var(--mut); max-width: 680px; }
+  .label .pill { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 99px; background: var(--char); color: var(--lime); }
+  .label .pill.mx { background: var(--lime); color: var(--char); }
+  .frame { max-width: 1240px; margin: 0 auto; border-radius: 20px; overflow: hidden; box-shadow: 0 30px 80px -30px rgba(0,0,0,.35); background: #fff; }
+  .why { max-width: 1240px; margin: 14px auto 0; padding: 0 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .why div { background: #fff; border-radius: 14px; padding: 14px 16px; font-size: 14px; color: #3a3d38; }
+  .why b { display: block; margin-bottom: 4px; color: var(--ink); }
+  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .price { font-weight: 800; }
+  .old { color: #9aa095; text-decoration: line-through; font-size: 12px; font-weight: 500; margin-left: 6px; }
+  .im { position: relative; overflow: hidden; background: #e9ece6; }
+  .im img { width: 100%; height: 100%; object-fit: cover; }
+  .tiers { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 11px; color: var(--mut); }
+  .tiers span { border-radius: 8px; padding: 5px 7px; background: #F2F4EF; }
+  .tiers b { display: block; color: var(--ink); font-size: 12px; }
+  .ver { font-size: 11.5px; color: var(--dg); font-weight: 600; }
+  /* o "V" iMali */
+  .vshape { position: absolute; background: var(--grad); clip-path: polygon(0 0, 18% 0, 50% 62%, 82% 0, 100% 0, 50% 100%); }
+  .dot { position: absolute; border-radius: 50%; background: var(--grad2); }
+
+  /* ========== D — Bold Marketplace (B + C) ========== */
+  .D { background: var(--bg); font-size: 14px; }
+  .D .top { display: flex; justify-content: space-between; padding: 8px 32px; background: #111211; color: #a9ada5; font-size: 12px; }
+  .D .top b { color: var(--lime); }
+  .D header { display: flex; align-items: center; gap: 24px; padding: 16px 32px; background: var(--char2); color: #fff; }
+  .D .logo { font-family: Montserrat; font-weight: 900; font-size: 22px; }
+  .D .logo i { font-style: normal; color: var(--lime); }
+  .D .search { flex: 1; display: flex; align-items: center; background: #fff; border-radius: 99px; padding: 5px; color: #9aa095; }
+  .D .search span { padding: 8px 14px; }
+  .D .search span:first-child { color: var(--ink); font-weight: 600; border-right: 1px solid var(--line); }
+  .D .search span:nth-child(2) { flex: 1; }
+  .D .search span:last-child { background: var(--lime); color: var(--char); font-weight: 800; border-radius: 99px; padding: 9px 20px; }
+  .D .hdr { display: flex; gap: 20px; font-size: 13px; font-weight: 700; }
+  .D .hdr small { display: block; color: #9aa095; font-weight: 500; font-size: 11px; }
+  .D .body { display: grid; grid-template-columns: 250px 1fr; gap: 16px; padding: 16px 32px; background: var(--char2); padding-bottom: 32px; }
+  .D aside { background: var(--char3); border-radius: 18px; padding: 8px; color: #e5e8e2; }
+  .D aside div { display: flex; justify-content: space-between; padding: 11px 14px; border-radius: 12px; font-weight: 600; }
+  .D aside div:first-child { background: var(--lime); color: var(--char); font-weight: 800; }
+  .D aside div span { color: #6f746c; }
+  .D .hero { position: relative; overflow: hidden; border-radius: 18px; background: #151615; color: #fff; padding: 40px; min-height: 300px; }
+  .D .hero .vshape { right: -20px; top: 40px; width: 380px; height: 210px; }
+  .D .hero .dot { right: 160px; top: 0; width: 52px; height: 52px; }
+  .D h1 { position: relative; font-family: Montserrat; font-weight: 900; text-transform: uppercase; font-size: 46px; line-height: .98; margin: 0 0 14px; max-width: 520px; }
+  .D h1 span { color: var(--lime); }
+  .D .hero p { position: relative; color: #C9CCC6; max-width: 440px; font-size: 15px; margin: 0 0 22px; }
+  .D .btn { position: relative; display: inline-flex; align-items: center; height: 48px; padding: 0 24px; border-radius: 99px; font-weight: 800; }
+  .D .btn-p { background: var(--lime); color: var(--char); }
+  .D .btn-s { border: 1.5px solid rgba(255,255,255,.3); color: #fff; margin-left: 8px; }
+  .D .trust { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 0 32px; margin-top: -16px; position: relative; }
+  .D .trust div { background: #fff; border-radius: 16px; padding: 14px 16px; font-weight: 700; font-size: 13px; box-shadow: 0 12px 30px -20px rgba(0,0,0,.4); }
+  .D .trust small { display: block; color: var(--mut); font-weight: 500; }
+  .D section { padding: 32px 32px 36px; }
+  .D .sh { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .D .sh h3 { font-family: Montserrat; font-weight: 900; text-transform: uppercase; font-size: 22px; margin: 0; }
+  .D .sh a { font-weight: 700; border-bottom: 2px solid var(--g1); }
+  .D .cards { grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .D .card { background: #fff; border-radius: 18px; padding: 8px; transition: .2s; }
+  .D .card:hover { transform: translateY(-3px); box-shadow: 0 18px 36px -22px rgba(0,0,0,.4); }
+  .D .card .im { aspect-ratio: 1; border-radius: 12px; }
+  .D .badge { position: absolute; left: 8px; top: 8px; background: var(--char); color: var(--lime); font-size: 10.5px; font-weight: 800; padding: 4px 9px; border-radius: 99px; text-transform: uppercase; }
+  .D .card .bd { padding: 10px 6px 6px; }
+  .D .card h4 { font-size: 13.5px; font-weight: 700; margin: 4px 0 8px; line-height: 1.35; min-height: 36px; }
+  .D .card .tiers { margin: 8px 0; }
+  .D .card .acts { display: grid; grid-template-columns: 1fr auto; gap: 6px; margin-top: 10px; }
+  .D .card .acts span { display: grid; place-items: center; height: 36px; border-radius: 99px; font-weight: 700; font-size: 12px; }
+  .D .card .acts span:first-child { border: 1.5px solid var(--char); }
+  .D .card .acts span:last-child { width: 36px; background: var(--char); color: var(--lime); }
+
+  /* ========== E — Bold Cotação (B + C) ========== */
+  .E { background: #fff; font-size: 14px; }
+  .E header { display: flex; align-items: center; gap: 22px; padding: 16px 36px; border-bottom: 1px solid var(--line); }
+  .E .logo { font-family: Montserrat; font-weight: 900; font-size: 22px; letter-spacing: -.02em; }
+  .E .logo i { font-style: normal; color: var(--g1); }
+  .E .search { flex: 1; display: flex; align-items: center; justify-content: space-between; border: 2px solid var(--char); border-radius: 14px; padding: 4px 4px 4px 16px; color: #9aa095; }
+  .E .search span:last-child { background: var(--char); color: var(--lime); font-weight: 800; padding: 9px 18px; border-radius: 10px; }
+  .E .hdr { display: flex; gap: 18px; font-weight: 700; font-size: 13px; }
+  .E .catbar { display: flex; gap: 6px; padding: 10px 36px; background: var(--char2); overflow: hidden; }
+  .E .catbar span { color: #d8dbd5; font-weight: 600; font-size: 13px; padding: 7px 14px; border-radius: 99px; white-space: nowrap; }
+  .E .catbar span:first-child { background: var(--lime); color: var(--char); font-weight: 800; }
+  .E .hero { position: relative; overflow: hidden; display: grid; grid-template-columns: 1.25fr 1fr; gap: 36px; align-items: center; padding: 48px 36px; background: var(--char); color: #fff; }
+  .E .hero .vshape { left: 34%; bottom: -120px; width: 420px; height: 240px; opacity: .2; }
+  .E h1 { position: relative; font-family: Montserrat; font-weight: 900; text-transform: uppercase; font-size: 52px; line-height: .98; margin: 0 0 16px; }
+  .E h1 span { background: var(--grad2); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .E .hero p { position: relative; color: #C9CCC6; font-size: 16px; max-width: 460px; margin: 0 0 22px; }
+  .E .stats { position: relative; display: flex; gap: 28px; }
+  .E .stats b { display: block; font-family: Montserrat; font-size: 22px; color: var(--lime); }
+  .E .stats span { color: #a9ada5; font-size: 12.5px; }
+  .E .rfq { position: relative; background: #fff; color: var(--ink); border-radius: 22px; padding: 22px; box-shadow: 0 30px 60px -30px rgba(0,0,0,.6); }
+  .E .rfq h3 { font-family: Montserrat; font-weight: 800; margin: 0 0 4px; font-size: 18px; }
+  .E .rfq p { color: var(--mut); margin: 0 0 14px; font-size: 13px; }
+  .E .fld { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; color: #8b9087; font-size: 13px; }
+  .E .fld small { display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--mut); }
+  .E .fld b { color: var(--ink); font-weight: 600; }
+  .E .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .E .rfq .go { display: grid; place-items: center; height: 46px; border-radius: 12px; background: var(--lime); color: var(--char); font-weight: 800; margin-top: 6px; }
+  .E section { padding: 34px 36px; }
+  .E .sh { display: flex; justify-content: space-between; align-items: end; margin-bottom: 16px; }
+  .E .sh h3 { font-family: Montserrat; font-weight: 900; text-transform: uppercase; font-size: 22px; margin: 0; }
+  .E .sh p { margin: 4px 0 0; color: var(--mut); }
+  .E .tabs { display: flex; gap: 6px; }
+  .E .tabs span { padding: 7px 14px; border-radius: 99px; border: 1px solid var(--line); font-weight: 600; font-size: 13px; }
+  .E .tabs span:first-child { background: var(--char); color: #fff; border-color: var(--char); }
+  .E .card { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: grid; grid-template-columns: 130px 1fr; transition: .2s; }
+  .E .card:hover { border-color: var(--char); }
+  .E .cards { grid-template-columns: repeat(2, 1fr); }
+  .E .card .im { height: 100%; min-height: 150px; }
+  .E .card .bd { padding: 14px 16px; display: grid; gap: 6px; }
+  .E .card h4 { margin: 0; font-size: 14.5px; font-weight: 700; }
+  .E .card .ln { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .E .card .acts { display: flex; gap: 6px; }
+  .E .card .acts span { padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: 12.5px; }
+  .E .card .acts span:first-child { background: var(--char); color: var(--lime); }
+  .E .card .acts span:last-child { border: 1px solid var(--line); }
+
+  /* ========== F — Gradiente iMali ========== */
+  .F { background: #fff; }
+  .F .hero { position: relative; overflow: hidden; background: var(--grad); padding: 0 40px 70px; color: var(--char); }
+  .F header { display: flex; align-items: center; gap: 24px; padding: 20px 0; }
+  .F .logo { font-family: Montserrat; font-weight: 900; font-size: 22px; }
+  .F nav { display: flex; gap: 22px; font-weight: 600; font-size: 14px; }
+  .F .sp { flex: 1; }
+  .F .pillbtn { padding: 10px 18px; border-radius: 99px; background: var(--char); color: #fff; font-weight: 700; font-size: 14px; }
+  .F .hero .dot { width: 340px; height: 340px; right: -60px; top: -60px; background: rgba(255,255,255,.16); }
+  .F .hero .dot.b { width: 180px; height: 180px; right: 260px; top: 220px; background: rgba(43,43,43,.08); }
+  .F .inner { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; padding-top: 36px; }
+  .F h1 { font-family: Montserrat; font-weight: 900; font-size: 58px; line-height: 1; letter-spacing: -.03em; margin: 0 0 18px; }
+  .F .hero p { font-size: 18px; max-width: 480px; margin: 0 0 26px; color: #22301f; }
+  .F .search { display: flex; background: #fff; border-radius: 18px; padding: 6px; box-shadow: 0 20px 40px -20px rgba(0,0,0,.35); max-width: 520px; }
+  .F .search span { flex: 1; padding: 12px 14px; color: #9aa095; }
+  .F .search span:last-child { flex: 0; background: var(--char); color: #fff; font-weight: 700; border-radius: 13px; padding: 12px 20px; }
+  .F .chips { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; font-size: 13px; font-weight: 600; }
+  .F .chips span { background: rgba(255,255,255,.35); padding: 6px 12px; border-radius: 99px; }
+  .F .stack { position: relative; height: 340px; }
+  .F .stack .c { position: absolute; width: 230px; background: #fff; border-radius: 22px; padding: 10px; box-shadow: 0 30px 50px -24px rgba(0,0,0,.45); }
+  .F .stack .c .im { aspect-ratio: 1; border-radius: 14px; }
+  .F .stack .c b { display: block; font-size: 13px; margin: 10px 4px 2px; }
+  .F .stack .c span { font-weight: 800; margin: 0 4px; }
+  .F .stack .c:nth-child(1) { left: 0; top: 30px; transform: rotate(-6deg); }
+  .F .stack .c:nth-child(2) { left: 160px; top: 0; z-index: 2; }
+  .F .stack .c:nth-child(3) { left: 310px; top: 50px; transform: rotate(6deg); }
+  .F section { padding: 40px; margin-top: -30px; position: relative; background: #fff; border-radius: 30px 30px 0 0; }
+  .F .sh { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .F .sh h3 { font-family: Montserrat; font-weight: 800; font-size: 26px; margin: 0; letter-spacing: -.02em; }
+  .F .card { border-radius: 22px; background: #F4F7F1; padding: 10px; }
+  .F .card .im { aspect-ratio: 1; border-radius: 16px; background: #fff; }
+  .F .card .bd { padding: 12px 8px 6px; }
+  .F .card h4 { font-size: 14.5px; margin: 0 0 10px; font-weight: 600; min-height: 38px; }
+  .F .card .ft { display: flex; justify-content: space-between; align-items: center; }
+  .F .card .add { width: 40px; height: 40px; border-radius: 50%; background: var(--grad); display: grid; place-items: center; font-weight: 800; font-size: 20px; color: var(--char); }
+
+  /* ========== G — Editorial premium ========== */
+  .G { background: #FAFAF7; }
+  .G header { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 22px 44px; border-bottom: 1px solid #E6E6DF; font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+  .G header .r { justify-self: end; display: flex; gap: 20px; }
+  .G header nav { display: flex; gap: 20px; }
+  .G .logo { font-family: Montserrat; font-weight: 900; font-size: 22px; letter-spacing: .12em; }
+  .G .logo i { font-style: normal; color: var(--g1); }
+  .G .hero { padding: 54px 44px 30px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; align-items: end; }
+  .G h1 { font-family: Montserrat; font-weight: 800; font-size: 76px; line-height: .95; letter-spacing: -.04em; margin: 0; }
+  .G h1 em { font-style: normal; color: var(--g1); }
+  .G .hero p { font-size: 17px; color: #4b4f48; line-height: 1.6; margin: 0 0 18px; }
+  .G .lnk { font-weight: 700; border-bottom: 2px solid var(--lime); padding-bottom: 3px; }
+  .G .bento { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 220px 220px; gap: 14px; padding: 20px 44px 44px; }
+  .G .bento .t { position: relative; border-radius: 6px; overflow: hidden; background: #ddd; }
+  .G .bento .t img { width: 100%; height: 100%; object-fit: cover; }
+  .G .bento .t:first-child { grid-row: span 2; }
+  .G .bento .cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px; color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.7)); }
+  .G .bento .cap small { text-transform: uppercase; letter-spacing: .1em; font-size: 11px; color: var(--lime); font-weight: 700; }
+  .G .bento .cap b { display: block; font-family: Montserrat; font-size: 18px; }
+  .G .bento .t.k { background: var(--char); color: #fff; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; }
+  .G .bento .t.k b { font-family: Montserrat; font-size: 22px; line-height: 1.15; }
+  .G .bento .t.k span { color: var(--lime); font-weight: 700; }
+  .G section { padding: 10px 44px 48px; }
+  .G .sh { display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid #E6E6DF; padding-top: 18px; margin-bottom: 20px; }
+  .G .sh h3 { font-family: Montserrat; font-weight: 800; font-size: 30px; margin: 0; letter-spacing: -.03em; }
+  .G .card .im { aspect-ratio: 4/5; border-radius: 6px; }
+  .G .card .bd { padding-top: 12px; }
+  .G .card small { text-transform: uppercase; letter-spacing: .08em; font-size: 11px; color: var(--mut); font-weight: 600; }
+  .G .card h4 { font-size: 15px; font-weight: 600; margin: 4px 0 6px; }
+
+  /* ========== H — App / carteira ========== */
+  .H { background: #EEF2EB; padding: 0 0 28px; }
+  .H header { display: flex; align-items: center; gap: 18px; padding: 18px 32px; }
+  .H .logo { font-family: Montserrat; font-weight: 900; font-size: 21px; }
+  .H .logo i { font-style: normal; color: var(--g1); }
+  .H .search { flex: 1; background: #fff; border-radius: 99px; padding: 13px 20px; color: #9aa095; }
+  .H .ic { width: 46px; height: 46px; border-radius: 50%; background: #fff; display: grid; place-items: center; }
+  .H .grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr; grid-template-rows: auto auto; gap: 16px; padding: 0 32px; }
+  .H .tile { border-radius: 28px; background: #fff; padding: 24px; position: relative; overflow: hidden; }
+  .H .tile.hero { grid-row: span 2; background: var(--char2); color: #fff; display: flex; flex-direction: column; justify-content: space-between; min-height: 380px; }
+  .H .tile.hero .vshape { right: -30px; bottom: 30px; width: 300px; height: 170px; }
+  .H .tile.hero h1 { position: relative; font-family: Montserrat; font-weight: 900; font-size: 40px; line-height: 1.02; margin: 0; }
+  .H .tile.hero h1 span { color: var(--lime); }
+  .H .tile.hero .btn { position: relative; align-self: flex-start; background: var(--lime); color: var(--char); font-weight: 800; padding: 14px 22px; border-radius: 99px; }
+  .H .wallet { background: var(--grad); color: var(--char); }
+  .H .wallet small { font-weight: 700; opacity: .7; }
+  .H .wallet b { display: block; font-family: Montserrat; font-size: 30px; margin: 6px 0 14px; }
+  .H .wallet .r { display: flex; gap: 8px; }
+  .H .wallet .r span { background: rgba(255,255,255,.4); padding: 8px 12px; border-radius: 99px; font-weight: 700; font-size: 12.5px; }
+  .H .track small { color: var(--mut); font-weight: 600; }
+  .H .track b { display: block; margin: 4px 0 14px; }
+  .H .steps { display: flex; gap: 6px; }
+  .H .steps i { flex: 1; height: 8px; border-radius: 9px; background: #E3E8DF; }
+  .H .steps i.on { background: var(--g1); }
+  .H .cats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .H .cats span { background: #F2F5EF; border-radius: 16px; padding: 12px 6px; text-align: center; font-size: 12px; font-weight: 700; }
+  .H .cats em { display: block; font-style: normal; font-size: 20px; }
+  .H .promo { background: var(--char); color: #fff; }
+  .H .promo b { font-family: Montserrat; font-size: 20px; display: block; margin-bottom: 6px; }
+  .H .promo span { color: var(--lime); font-weight: 700; }
+  .H section { padding: 28px 32px 0; }
+  .H .sh { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .H .sh h3 { font-family: Montserrat; font-weight: 800; font-size: 22px; margin: 0; }
+  .H .card { background: #fff; border-radius: 26px; padding: 10px; }
+  .H .card .im { aspect-ratio: 1; border-radius: 20px; }
+  .H .card .bd { padding: 12px 8px 6px; display: flex; justify-content: space-between; align-items: end; gap: 8px; }
+  .H .card h4 { font-size: 13.5px; margin: 0 0 6px; font-weight: 600; }
+  .H .card .add { flex: none; width: 42px; height: 42px; border-radius: 50%; background: var(--char); color: var(--lime); display: grid; place-items: center; font-size: 20px; font-weight: 800; }
+
+  .refs { max-width: 1240px; margin: 64px auto 80px; padding: 0 16px; }
+  .refs h2 { font-family: Montserrat; font-weight: 800; }
+  .refs table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 14px; overflow: hidden; font-size: 14px; }
+  .refs th, .refs td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+  .refs th { background: var(--char); color: #fff; }
+
+  @media (max-width: 900px) {
+    .D header, .D .body, .D section, .D .trust, .E header, .E .hero, .E section, .E .catbar, .F .hero, .F section, .G header, .G .hero, .G .bento, .G section, .H header, .H .grid, .H section { padding-left: 16px; padding-right: 16px; }
+    .D .hdr, .D aside, .D .top, .E .hdr, .F nav, .F .stack, .G header nav, .G header .r { display: none; }
+    .D .body, .E .hero, .F .inner, .G .hero, .H .grid { grid-template-columns: 1fr; }
+    .cards, .D .cards { grid-template-columns: repeat(2, 1fr); }
+    .E .cards { grid-template-columns: 1fr; }
+    .D .trust { grid-template-columns: 1fr 1fr; }
+    .D h1, .E h1 { font-size: 34px; } .F h1 { font-size: 38px; } .G h1 { font-size: 44px; } .H .tile.hero h1 { font-size: 30px; }
+    .G .bento { grid-template-columns: 1fr 1fr; grid-template-rows: 200px 160px 160px; } .G .bento .t:first-child { grid-column: span 2; grid-row: auto; }
+    .H .tile.hero { grid-row: auto; min-height: 280px; }
+    .why { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="switch"><b>Mais direções</b><a class="mix" href="#D">D · Bold Marketplace (B+C)</a><a class="mix" href="#E">E · Bold Cotação (B+C)</a><a href="#F">F · Gradiente iMali</a><a href="#G">G · Editorial</a><a href="#H">H · App / Carteira</a><a href="#refs">Comparar</a><a href="estilos.html">← A, B, C</a></div>
+
+<!-- D -->
+<div class="label" id="D"><span class="pill mx">B + C</span><h2>D · Bold Marketplace</h2><p>O esqueleto da C (barra de pesquisa com categoria, menu lateral, preços por volume e cotação) com a pele da B: tudo escuro no topo, lima e o "V" iMali. É a C com a personalidade da B.</p></div>
+<div class="frame D">
+  <div class="top"><span>Entrega em todas as províncias · Fatura com NUIT</span><span>Pague com <b>iMali</b> · M-Pesa · e-Mola · mKesh</span></div>
+  <header><span class="logo">MERCADO <i>ICA</i></span><span class="search"><span>Todas ▾</span><span>Pesquisar produtos, marcas ou fornecedores…</span><span>Pesquisar</span></span><span class="hdr"><span><small>Empresas</small>Cotações</span><span><small>Olá, Ana</small>Conta</span><span><small>2 itens</small>Carrinho</span></span></header>
+  <div class="body">
+    <aside><div>Todas as categorias</div><div>🏗️ Construção Civil<span>›</span></div><div>🚜 Maquinário Pesado<span>›</span></div><div>💻 Eletrónicos & TI<span>›</span></div><div>🚚 Logística & Frota<span>›</span></div><div>☀️ Energia Solar<span>›</span></div><div>⚙️ Automação<span>›</span></div></aside>
+    <div class="hero"><span class="vshape"></span><span class="dot"></span><h1>Compras da empresa, <span>sem complicar.</span></h1><p>Fornecedores verificados, preços por volume e pagamento com a carteira que já usa.</p><a class="btn btn-p">Começar a comprar →</a><a class="btn btn-s">Pedir cotação</a></div>
+  </div>
+  <div class="trust"><div>✔ Fornecedores verificados<small>Documentação validada</small></div><div>🧾 Fatura com NUIT<small>Em todas as compras</small></div><div>💳 Pague depois<small>Crédito iMali para empresas</small></div><div>🚚 Todo o país<small>Entrega nas 11 províncias</small></div></div>
+  <section><div class="sh"><h3>Mais pedidos por empresas</h3><a>Ver tudo</a></div><div class="cards" data-cards="D"></div></section>
+</div>
+<div class="why"><div><b>Pontos fortes</b>Tem a força da marca B e a utilidade da C. A pesquisa e as categorias estão sempre à mão, como num marketplace a sério.</div><div><b>Riscos</b>O topo escuro com o menu lateral ocupa muito espaço. No telemóvel o menu passa a gaveta.</div><div><b>Para quem</b>Gestores de compras que entram para procurar algo concreto.</div></div>
+
+<!-- E -->
+<div class="label" id="E"><span class="pill mx">B + C</span><h2>E · Bold Cotação</h2><p>O topo forte da B com um formulário de "Pedir cotação" logo no início, o gesto principal do B2B. A página é clara e os produtos aparecem em lista horizontal, com volume, fornecedor e ações.</p></div>
+<div class="frame E">
+  <header><span class="logo">Mercado<i>ICA</i></span><span class="search"><span>Pesquisar produtos, marcas ou fornecedores…</span><span>Pesquisar</span></span><span class="hdr"><span>♡ Desejos</span><span>🛒 Carrinho</span><span>👤 Ana</span></span></header>
+  <div class="catbar"><span>Todas</span><span>Construção Civil</span><span>Maquinário Pesado</span><span>Eletrónicos & TI</span><span>Logística & Frota</span><span>Energia Solar</span><span>Automação</span><span>Ofertas</span></div>
+  <div class="hero"><span class="vshape"></span>
+    <div><h1>Diga o que precisa. <span>Os fornecedores respondem.</span></h1><p>Peça uma cotação uma vez e receba propostas de fornecedores verificados de todo o país, com fatura e pagamento iMali.</p><div class="stats"><div><b>24 h</b><span>tempo médio de resposta</span></div><div><b>6</b><span>setores</span></div><div><b>3×</b><span>pagamento diferido</span></div></div></div>
+    <div class="rfq"><h3>Pedir cotação</h3><p>Grátis e sem compromisso.</p><div class="fld"><small>Produto</small><b>Painel Solar 550 W</b></div><div class="row2"><div class="fld"><small>Quantidade</small><b>120 unidades</b></div><div class="fld"><small>Entrega</small><b>Beira, Sofala</b></div></div><div class="fld"><small>Prazo</small>Até 15 de novembro</div><span class="go">Enviar pedido →</span></div>
+  </div>
+  <section><div class="sh"><div><h3>Oportunidades da semana</h3><p>Preços de fornecedor, com desconto por volume.</p></div><div class="tabs"><span>Todos</span><span>Energia</span><span>Construção</span><span>TI</span></div></div><div class="cards" data-cards="E"></div></section>
+</div>
+<div class="why"><div><b>Pontos fortes</b>Diferencia-se de uma loja comum, porque a cotação é o que as empresas fazem de facto. Mostra bem o valor da plataforma a um júri.</div><div><b>Riscos</b>Obriga a desenhar o fluxo de cotação (comprador → vendedor → proposta), que hoje não existe no protótipo.</div><div><b>Para quem</b>Compras grandes e recorrentes: obras, frotas, instituições.</div></div>
+
+<!-- F -->
+<div class="label" id="F"><span class="pill">F</span><h2>Gradiente iMali</h2><p>O verde iMali em grande, como no banner da marca: gradiente no topo, texto em carvão e cartões arredondados. É a B em versão clara e alegre.</p></div>
+<div class="frame F">
+  <div class="hero"><span class="dot"></span><span class="dot b"></span>
+    <header><span class="logo">MERCADO ICA</span><nav><span>Categorias</span><span>Fornecedores</span><span>Pague depois</span></nav><span class="sp"></span><span>♡</span><span>🛒</span><span class="pillbtn">Entrar</span></header>
+    <div class="inner"><div><h1>Diferente, como a sua empresa.</h1><p>O marketplace B2B de Moçambique com pagamentos iMali integrados.</p><div class="search"><span>O que procura hoje?</span><span>Pesquisar</span></div><div class="chips"><span>Painéis solares</span><span>Cimento</span><span>Geradores</span><span>Portáteis</span></div></div>
+      <div class="stack" data-stack></div></div>
+  </div>
+  <section><div class="sh"><h3>Escolhidos para si</h3><a style="font-weight:700">Ver tudo →</a></div><div class="cards" data-cards="F"></div></section>
+</div>
+<div class="why"><div><b>Pontos fortes</b>É a mais "iMali" de todas (até usa o slogan). Simpática e moderna, e não pesa como a B.</div><div><b>Riscos</b>Muito verde cansa. O gradiente deve ficar só no topo e em pontos de destaque.</div><div><b>Para quem</b>Pequenas empresas e comerciantes, um público mais próximo do consumidor.</div></div>
+
+<!-- G -->
+<div class="label" id="G"><span class="pill">G</span><h2>Editorial premium</h2><p>Fundo creme, tipografia enorme, imagens grandes em mosaico e o verde/lima só em detalhes. Parece uma marca premium e fica muito bem em apresentações.</p></div>
+<div class="frame G">
+  <header><nav><span>Loja</span><span>Setores</span><span>Fornecedores</span></nav><span class="logo">MERCADO <i>ICA</i></span><span class="r"><span>Pesquisar</span><span>Conta</span><span>Carrinho (2)</span></span></header>
+  <div class="hero"><h1>Tudo o que move <em>Moçambique</em>, num só lugar.</h1><div><p>Equipamento, materiais e tecnologia de fornecedores verificados, com pagamento iMali e entrega em todo o país.</p><a class="lnk">Explorar setores →</a></div></div>
+  <div class="bento" data-bento></div>
+  <section><div class="sh"><h3>Seleção da semana</h3><a class="lnk">Ver tudo</a></div><div class="cards" data-cards="G"></div></section>
+</div>
+<div class="why"><div><b>Pontos fortes</b>Muito elegante e diferente de qualquer marketplace local. Dá um ar de produto "grande".</div><div><b>Riscos</b>Mostra menos produtos por ecrã e depende muito de boas fotografias.</div><div><b>Para quem</b>Para o lançamento e o concurso, onde a primeira impressão conta mais.</div></div>
+
+<!-- H -->
+<div class="label" id="H"><span class="pill">H</span><h2>App / Carteira</h2><p>Mosaico de blocos arredondados, como uma app de banco. Junta a loja e a carteira: saldo e crédito iMali, encomenda em curso e atalhos de categoria logo no início.</p></div>
+<div class="frame H">
+  <header><span class="logo">Mercado<i>ICA</i></span><span class="search">🔍 Pesquisar no Mercado ICA</span><span class="ic">♡</span><span class="ic">🛒</span><span class="ic">👤</span></header>
+  <div class="grid">
+    <div class="tile hero"><span class="vshape"></span><h1>Olá, Ana.<br>O que vamos <span>comprar hoje?</span></h1><a class="btn">Explorar catálogo →</a></div>
+    <div class="tile wallet"><small>Crédito iMali disponível</small><b>250 000 MT</b><div class="r"><span>Pagar em 3×</span><span>Ver extrato</span></div></div>
+    <div class="tile track"><small>Encomenda ICA-100417</small><b>Gerador 100 kVA · a caminho</b><div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div></div>
+    <div class="tile"><div class="cats"><span><em>🏗️</em>Obra</span><span><em>🚜</em>Máquinas</span><span><em>💻</em>TI</span><span><em>🚚</em>Frota</span><span><em>☀️</em>Solar</span><span><em>⚙️</em>Automação</span></div></div>
+    <div class="tile promo"><b>Semana Solar</b>Até <span>-15%</span> em kits e inversores de fornecedores verificados.</div>
+  </div>
+  <section><div class="sh"><h3>Para a sua empresa</h3><a style="font-weight:700">Ver tudo</a></div><div class="cards" data-cards="H"></div></section>
+</div>
+<div class="why"><div><b>Pontos fortes</b>Mostra a integração loja + pagamento como nenhuma outra, o que é forte para a iMali. Já pensada para o telemóvel.</div><div><b>Riscos</b>O saldo e o crédito precisam de dados reais da iMali. Para quem ainda não tem sessão iniciada, a página tem de ser outra.</div><div><b>Para quem</b>Clientes iMali com conta, que fazem compras repetidas.</div></div>
+
+<div class="refs" id="refs">
+  <h2>Comparação rápida</h2>
+  <table>
+    <tr><th>Direção</th><th>Marca iMali</th><th>Utilidade B2B</th><th>Impacto no concurso</th><th>Esforço</th></tr>
+    <tr><td><b>B</b> · Bold iMali</td><td>●●●●○</td><td>●●○○○</td><td>●●●●○</td><td>Médio</td></tr>
+    <tr><td><b>D</b> · Bold Marketplace (B+C)</td><td>●●●●○</td><td>●●●●○</td><td>●●●●○</td><td>Médio</td></tr>
+    <tr><td><b>E</b> · Bold Cotação (B+C)</td><td>●●●○○</td><td>●●●●●</td><td>●●●●●</td><td>Alto (fluxo de cotação novo)</td></tr>
+    <tr><td><b>F</b> · Gradiente iMali</td><td>●●●●●</td><td>●●○○○</td><td>●●●○○</td><td>Baixo</td></tr>
+    <tr><td><b>G</b> · Editorial</td><td>●●○○○</td><td>●●○○○</td><td>●●●●○</td><td>Médio (precisa de boas fotos)</td></tr>
+    <tr><td><b>H</b> · App / Carteira</td><td>●●●●●</td><td>●●●○○</td><td>●●●●●</td><td>Alto (dados da carteira)</td></tr>
+  </table>
+</div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/images.js"></script>
+<script>
+  (function () {
+    var ICA = window.ICA;
+    var money = function (n) { return new Intl.NumberFormat('pt-PT').format(n) + ' MT'; };
+    var P = function (id) { return ICA.products.find(function (p) { return p.id === id; }); };
+    var src = function (p, n) { var l = ICA.productImages[p.id] || []; return l[(n || 0) % (l.length || 1)] || ''; };
+    var img = function (p, n) { return '<img loading="lazy" referrerpolicy="no-referrer" alt="" src="' + src(p, n) + '">'; };
+    var seller = function (p) { var s = ICA.sellers.find(function (x) { return x.id === p.seller; }); return s ? s.shop : ''; };
+    var old = function (p) { return p.oldPrice ? '<span class="old">' + money(p.oldPrice) + '</span>' : ''; };
+    var tiers = function (p) { return '<div class="tiers"><span>10+ un<b>' + money(Math.round(p.price * .95)) + '</b></span><span>50+ un<b>' + money(Math.round(p.price * .9)) + '</b></span></div>'; };
+    var tpl = {
+      D: function (p) { return '<div class="card"><div class="im">' + img(p) + '<span class="badge">' + (p.oldPrice ? '-' + Math.round((1 - p.price / p.oldPrice) * 100) + '%' : 'Novo') + '</span></div><div class="bd"><span class="ver">✔ ' + seller(p) + '</span><h4>' + p.name + '</h4><span class="price">' + money(p.price) + '</span>' + old(p) + tiers(p) + '<div class="acts"><span>Pedir cotação</span><span>🛒</span></div></div></div>'; },
+      E: function (p) { return '<div class="card"><div class="im">' + img(p) + '</div><div class="bd"><span class="ver">✔ ' + seller(p) + '</span><h4>' + p.name + '</h4><div class="ln"><span><span class="price">' + money(p.price) + '</span> <small style="color:var(--mut)">/ un</small>' + old(p) + '</span><small style="color:var(--mut)">Mín. 1 un · stock ' + p.stock + '</small></div>' + tiers(p) + '<div class="ln"><div class="acts"><span>Adicionar</span><span>Cotação</span></div><span>♡</span></div></div></div>'; },
+      F: function (p) { return '<div class="card"><div class="im">' + img(p) + '</div><div class="bd"><h4>' + p.name + '</h4><div class="ft"><span><span class="price">' + money(p.price) + '</span>' + old(p) + '</span><span class="add">+</span></div></div></div>'; },
+      G: function (p) { return '<div class="card"><div class="im">' + img(p, 1) + '</div><div class="bd"><small>' + p.catName + '</small><h4>' + p.name + '</h4><span class="price">' + money(p.price) + '</span></div></div>'; },
+      H: function (p) { return '<div class="card"><div class="im">' + img(p) + '</div><div class="bd"><div><h4>' + p.name + '</h4><span class="price">' + money(p.price) + '</span></div><span class="add">+</span></div></div>'; },
+    };
+    var sets = { D: [25, 9, 13, 4, 27], E: [25, 26, 9, 4], F: [28, 13, 16, 2], G: [29, 12, 20, 5], H: [27, 15, 22, 3] };
+    document.querySelectorAll('[data-cards]').forEach(function (el) { el.innerHTML = sets[el.dataset.cards].map(function (id) { return tpl[el.dataset.cards](P(id)); }).join(''); });
+    var st = document.querySelector('[data-stack]');
+    if (st) st.innerHTML = [26, 9, 12].map(function (id) { var p = P(id); return '<div class="c"><div class="im">' + img(p) + '</div><b>' + p.name + '</b><span>' + money(p.price) + '</span></div>'; }).join('');
+    var bt = document.querySelector('[data-bento]');
+    if (bt) bt.innerHTML = [[7, 'Maquinário Pesado', 'Força para grandes obras'], [28, 'Energia Solar', 'Energia própria'], [19, 'Logística & Frota', 'Mover o país']].map(function (x) { var p = P(x[0]); return '<div class="t">' + img(p) + '<div class="cap"><small>' + x[1] + '</small><b>' + x[2] + '</b></div></div>'; }).join('') + '<div class="t k"><b>Pague em 3× com crédito iMali</b><span>Saber mais →</span></div>' + (function () { var p = P(12); return '<div class="t">' + img(p) + '<div class="cap"><small>Eletrónicos & TI</small><b>Escritório pronto</b></div></div>'; })();
+  })();
+</script>
+</body>
+</html>

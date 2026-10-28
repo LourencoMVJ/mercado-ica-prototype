@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mercado ICA — Direções de estilo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --char: #2B2B2B; --char2: #1E1F1E; --g1: #3AB54A; --g2: #8DC63F; --lime: #B5E33A;
+    --grad: linear-gradient(120deg, #3AB54A, #8DC63F);
+    --bg: #F5F7F4; --line: #E4E8E2; --mut: #6B7069; --ink: #1C1D1B;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Inter, system-ui, sans-serif; color: var(--ink); background: #ECEFEA; }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; text-decoration: none; }
+
+  /* navegação entre direções */
+  .switch { position: sticky; top: 0; z-index: 50; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 12px 16px; background: rgba(28,29,27,.92); backdrop-filter: blur(8px); color: #fff; }
+  .switch b { font-family: Montserrat; margin-right: 8px; }
+  .switch a { padding: 8px 14px; border-radius: 99px; background: rgba(255,255,255,.08); font-size: 14px; font-weight: 600; }
+  .switch a:hover { background: var(--g1); }
+  .label { max-width: 1240px; margin: 56px auto 14px; padding: 0 16px; display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; }
+  .label h2 { margin: 0; font-family: Montserrat; font-size: 28px; font-weight: 800; }
+  .label p { margin: 0; color: var(--mut); max-width: 640px; }
+  .label .pill { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 99px; background: var(--char); color: var(--lime); }
+  .frame { max-width: 1240px; margin: 0 auto; border-radius: 20px; overflow: hidden; box-shadow: 0 30px 80px -30px rgba(0,0,0,.35); background: #fff; }
+  .wrap { padding: 0 40px; }
+  .price { font-weight: 800; }
+  .old { color: #9aa095; text-decoration: line-through; font-size: 13px; font-weight: 500; margin-left: 6px; }
+  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .why { max-width: 1240px; margin: 14px auto 0; padding: 0 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .why div { background: #fff; border-radius: 14px; padding: 14px 16px; font-size: 14px; color: #3a3d38; }
+  .why b { display: block; margin-bottom: 4px; color: var(--ink); }
+
+  /* ========== A — Fintech clean ========== */
+  .A { font-family: Inter; background: #fff; }
+  .A header { display: flex; align-items: center; gap: 28px; padding: 18px 40px; border-bottom: 1px solid var(--line); }
+  .A .logo { font-family: Montserrat; font-weight: 800; font-size: 20px; letter-spacing: -.02em; }
+  .A .logo i { font-style: normal; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .A nav { display: flex; gap: 22px; font-size: 14px; color: var(--mut); font-weight: 500; }
+  .A .search { flex: 1; display: flex; align-items: center; gap: 8px; padding: 11px 16px; border: 1px solid var(--line); border-radius: 12px; color: #9aa095; font-size: 14px; }
+  .A .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 46px; padding: 0 22px; border-radius: 12px; font-weight: 600; font-size: 15px; border: 1px solid transparent; }
+  .A .btn-p { background: var(--char); color: #fff; }
+  .A .btn-s { background: #fff; border-color: var(--line); }
+  .A .hero { display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: center; padding: 64px 40px; }
+  .A .eyebrow { display: inline-flex; gap: 8px; align-items: center; font-size: 13px; font-weight: 600; color: #2f7a36; background: #EEF8EC; padding: 6px 12px; border-radius: 99px; }
+  .A h1 { font-family: Montserrat; font-size: 50px; line-height: 1.05; letter-spacing: -.03em; margin: 18px 0; font-weight: 800; }
+  .A h1 span { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .A .lead { font-size: 18px; color: var(--mut); line-height: 1.55; max-width: 520px; margin: 0 0 28px; }
+  .A .panel { position: relative; border-radius: 24px; background: var(--grad); padding: 28px; min-height: 360px; overflow: hidden; }
+  .A .panel::after { content: ''; position: absolute; right: -60px; bottom: -80px; width: 300px; height: 300px; border-radius: 50%; background: rgba(255,255,255,.18); }
+  .A .paycard { position: relative; z-index: 1; background: #fff; border-radius: 18px; padding: 20px; width: 300px; box-shadow: 0 20px 40px -18px rgba(0,0,0,.35); }
+  .A .paycard + .paycard { margin: -40px 0 0 auto; }
+  .A .row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+  .A .tag { font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 99px; background: #EEF8EC; color: #2f7a36; }
+  .A .cats { display: flex; gap: 10px; padding: 0 40px 8px; flex-wrap: wrap; }
+  .A .cats span { padding: 10px 16px; border: 1px solid var(--line); border-radius: 99px; font-size: 14px; font-weight: 500; }
+  .A .cats span:first-child { background: var(--char); color: #fff; border-color: var(--char); }
+  .A section { padding: 36px 40px 48px; }
+  .A .sh { display: flex; justify-content: space-between; align-items: end; margin-bottom: 20px; }
+  .A .sh h3 { font-family: Montserrat; font-size: 24px; margin: 0; letter-spacing: -.02em; }
+  .A .card { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; transition: .2s; }
+  .A .card:hover { box-shadow: 0 16px 36px -20px rgba(0,0,0,.3); transform: translateY(-3px); }
+  .A .card .im { aspect-ratio: 4/3; background: #F2F4F0; position: relative; }
+  .A .card .im img { width: 100%; height: 100%; object-fit: cover; }
+  .A .card .fav { position: absolute; top: 10px; right: 10px; width: 34px; height: 34px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-size: 15px; }
+  .A .card .bd { padding: 14px 16px 16px; }
+  .A .card small { color: var(--mut); font-size: 12px; }
+  .A .card h4 { font-size: 15px; font-weight: 600; margin: 4px 0 10px; line-height: 1.35; min-height: 40px; }
+  .A .card .ft { display: flex; justify-content: space-between; align-items: center; }
+  .A .card .add { width: 38px; height: 38px; border-radius: 10px; background: var(--char); color: #fff; display: grid; place-items: center; font-size: 20px; }
+
+  /* ========== B — Bold iMali ========== */
+  .B { font-family: Inter; background: var(--bg); }
+  .B header { display: flex; align-items: center; gap: 24px; padding: 18px 40px; background: var(--char2); color: #fff; }
+  .B .logo { font-family: Montserrat; font-weight: 900; font-size: 22px; letter-spacing: -.02em; }
+  .B .logo i { font-style: normal; color: var(--lime); }
+  .B .search { flex: 1; display: flex; align-items: center; justify-content: space-between; padding: 6px 6px 6px 18px; border-radius: 99px; background: #fff; color: #9aa095; font-size: 14px; }
+  .B .search span:last-child { background: var(--lime); color: var(--char); font-weight: 700; padding: 9px 18px; border-radius: 99px; }
+  .B .hdr-ic { display: flex; gap: 18px; font-size: 14px; font-weight: 600; }
+  .B .hero { position: relative; overflow: hidden; background: var(--char2); color: #fff; padding: 72px 40px 96px; }
+  .B .hero::before { content: ''; position: absolute; right: -40px; top: 40px; width: 560px; height: 300px; background: var(--grad); clip-path: polygon(0 0, 18% 0, 50% 62%, 82% 0, 100% 0, 50% 100%); opacity: .95; }
+  .B .hero::after { content: ''; position: absolute; right: 240px; top: 0; width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(120deg, #3AB54A, #B5E33A); }
+  .B h1 { position: relative; font-family: Montserrat; font-weight: 900; text-transform: uppercase; font-size: 60px; line-height: .98; letter-spacing: -.02em; margin: 0 0 22px; max-width: 640px; }
+  .B h1 span { color: var(--lime); }
+  .B .lead { position: relative; color: #C9CCC6; font-size: 18px; max-width: 520px; line-height: 1.55; margin: 0 0 30px; }
+  .B .btn { display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 26px; border-radius: 99px; font-weight: 700; font-size: 15px; position: relative; }
+  .B .btn-p { background: var(--lime); color: var(--char); }
+  .B .btn-s { border: 1.5px solid rgba(255,255,255,.35); color: #fff; margin-left: 10px; }
+  .B .strip { position: relative; margin: -48px 40px 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  .B .strip div { background: #fff; border-radius: 16px; padding: 18px 14px; text-align: center; font-weight: 700; font-size: 13px; box-shadow: 0 12px 30px -18px rgba(0,0,0,.4); }
+  .B .strip div em { display: block; font-style: normal; font-size: 26px; margin-bottom: 6px; }
+  .B section { padding: 48px 40px; }
+  .B .sh { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+  .B .sh h3 { font-family: Montserrat; font-weight: 900; text-transform: uppercase; font-size: 26px; margin: 0; }
+  .B .sh a { font-weight: 700; font-size: 14px; border-bottom: 2px solid var(--g1); }
+  .B .card { background: #fff; border-radius: 20px; padding: 10px; transition: .2s; }
+  .B .card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -24px rgba(0,0,0,.35); }
+  .B .card .im { aspect-ratio: 1; border-radius: 14px; overflow: hidden; position: relative; background: #eee; }
+  .B .card .im img { width: 100%; height: 100%; object-fit: cover; }
+  .B .badge { position: absolute; left: 10px; top: 10px; background: var(--char); color: var(--lime); font-size: 11px; font-weight: 800; padding: 5px 10px; border-radius: 99px; text-transform: uppercase; }
+  .B .card .bd { padding: 14px 8px 8px; }
+  .B .card small { font-size: 12px; color: var(--mut); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+  .B .card h4 { font-size: 15px; font-weight: 700; margin: 6px 0 12px; line-height: 1.35; min-height: 40px; }
+  .B .card .ft { display: flex; justify-content: space-between; align-items: center; }
+  .B .card .add { height: 40px; padding: 0 16px; border-radius: 99px; background: var(--char); color: #fff; display: inline-flex; align-items: center; font-weight: 700; font-size: 13px; }
+  .B .pay { margin: 0 40px 48px; border-radius: 24px; background: var(--grad); color: var(--char); padding: 32px 36px; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+  .B .pay h3 { font-family: Montserrat; font-weight: 900; font-size: 26px; margin: 0 0 6px; text-transform: uppercase; }
+
+  /* ========== C — Marketplace B2B ========== */
+  .C { font-family: Inter; background: #F4F5F3; font-size: 14px; }
+  .C .top { display: flex; justify-content: space-between; padding: 8px 32px; background: var(--char); color: #cfd2cc; font-size: 12px; }
+  .C .top b { color: var(--lime); }
+  .C header { display: flex; align-items: center; gap: 24px; padding: 16px 32px; background: #fff; border-bottom: 1px solid var(--line); }
+  .C .logo { font-family: Montserrat; font-weight: 800; font-size: 20px; }
+  .C .logo i { font-style: normal; color: var(--g1); }
+  .C .search { flex: 1; display: flex; border: 2px solid var(--g1); border-radius: 10px; overflow: hidden; }
+  .C .search span { padding: 11px 14px; color: #9aa095; }
+  .C .search span:first-child { background: #F4F5F3; color: var(--ink); font-weight: 600; border-right: 1px solid var(--line); }
+  .C .search span:nth-child(2) { flex: 1; }
+  .C .search span:last-child { background: var(--g1); color: #fff; font-weight: 700; padding: 11px 22px; }
+  .C .hdr { display: flex; gap: 20px; font-size: 13px; font-weight: 600; }
+  .C .hdr span small { display: block; color: var(--mut); font-weight: 400; font-size: 11px; }
+  .C .body { display: grid; grid-template-columns: 240px 1fr; gap: 16px; padding: 16px 32px; }
+  .C aside { background: #fff; border-radius: 12px; padding: 8px; }
+  .C aside div { display: flex; justify-content: space-between; padding: 10px 12px; border-radius: 8px; font-weight: 500; }
+  .C aside div:first-child { background: #EEF8EC; color: #2f7a36; font-weight: 700; }
+  .C .banner { position: relative; border-radius: 12px; background: var(--char2); color: #fff; padding: 32px; display: flex; justify-content: space-between; align-items: center; overflow: hidden; min-height: 230px; }
+  .C .banner h1 { font-family: Montserrat; font-size: 34px; line-height: 1.1; margin: 0 0 10px; font-weight: 800; }
+  .C .banner h1 span { color: var(--lime); }
+  .C .banner p { color: #C9CCC6; margin: 0 0 18px; max-width: 420px; }
+  .C .banner .btn { display: inline-block; background: var(--g1); color: #fff; font-weight: 700; padding: 12px 20px; border-radius: 8px; }
+  .C .banner .kpis { display: grid; gap: 10px; }
+  .C .banner .kpis div { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); border-radius: 10px; padding: 10px 14px; font-size: 13px; }
+  .C .banner .kpis b { color: var(--lime); }
+  .C section { padding: 4px 32px 28px; }
+  .C .sh { display: flex; justify-content: space-between; align-items: center; margin: 12px 0; }
+  .C .sh h3 { margin: 0; font-size: 18px; font-weight: 700; }
+  .C .sh a { color: #2f7a36; font-weight: 600; }
+  .C .cards { grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .C .card { background: #fff; border-radius: 10px; overflow: hidden; border: 1px solid transparent; }
+  .C .card:hover { border-color: var(--g1); }
+  .C .card .im { aspect-ratio: 1; background: #eee; }
+  .C .card .im img { width: 100%; height: 100%; object-fit: cover; }
+  .C .card .bd { padding: 10px 12px 12px; }
+  .C .card h4 { font-size: 13px; font-weight: 500; margin: 0 0 8px; line-height: 1.35; min-height: 35px; }
+  .C .tiers { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin: 8px 0; font-size: 11px; color: var(--mut); }
+  .C .tiers span { background: #F4F5F3; border-radius: 6px; padding: 4px 6px; }
+  .C .tiers b { color: var(--ink); display: block; font-size: 12px; }
+  .C .ver { font-size: 11px; color: #2f7a36; font-weight: 600; }
+  .C .acts { display: grid; grid-template-columns: 1fr auto; gap: 6px; margin-top: 10px; }
+  .C .acts span { text-align: center; padding: 8px; border-radius: 8px; font-weight: 600; font-size: 12px; }
+  .C .acts span:first-child { border: 1px solid var(--g1); color: #2f7a36; }
+  .C .acts span:last-child { background: var(--g1); color: #fff; padding: 8px 12px; }
+
+  .refs { max-width: 1240px; margin: 64px auto 80px; padding: 0 16px; }
+  .refs h2 { font-family: Montserrat; font-weight: 800; }
+  .refs ul { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; list-style: none; padding: 0; }
+  .refs li { background: #fff; border-radius: 14px; padding: 16px; }
+  .refs li b { display: block; margin-bottom: 6px; }
+  .refs a { color: #2f7a36; font-weight: 600; font-size: 14px; display: block; margin-top: 4px; }
+
+  @media (max-width: 900px) {
+    .wrap, .A header, .A .hero, .A section, .A .cats, .B header, .B .hero, .B section, .C header, .C .body, .C section { padding-left: 16px; padding-right: 16px; }
+    .A nav, .B .hdr-ic, .C .hdr, .C aside, .C .top, .A .panel { display: none; }
+    .A .hero, .C .body { grid-template-columns: 1fr; }
+    .cards, .C .cards { grid-template-columns: repeat(2, 1fr); }
+    .A h1 { font-size: 34px; } .B h1 { font-size: 38px; }
+    .B .hero::before { width: 260px; height: 140px; top: auto; bottom: 10px; opacity: .5; }
+    .B .strip { grid-template-columns: repeat(3, 1fr); margin: -40px 16px 0; }
+    .B .pay { flex-direction: column; align-items: flex-start; margin: 0 16px 32px; }
+    .C .banner .kpis { display: none; }
+    .why, .refs ul { grid-template-columns: 1fr; }
+    .B .btn-s { margin: 10px 0 0; }
+  }
+</style>
+</head>
+<body>
+<div class="switch"><b>Mercado ICA · Direções de estilo</b><a href="#A">A · Fintech limpo</a><a href="#B">B · Bold iMali</a><a href="#C">C · Marketplace B2B</a><a href="#refs">Referências</a></div>
+
+<!-- A -->
+<div class="label" id="A"><span class="pill">A</span><h2>Fintech limpo</h2><p>Muito branco, carvão nos botões e o verde iMali só como acento. Sóbrio e confiável, no espírito de Stripe e Wise. Funciona bem num júri de concurso.</p></div>
+<div class="frame A">
+  <header><span class="logo">Mercado <i>ICA</i></span><nav><span>Categorias</span><span>Fornecedores</span><span>Pagamentos iMali</span></nav><span class="search">🔍 Pesquisar produtos, marcas ou fornecedores</span><span>♡</span><span>🛒</span><a class="btn btn-p" style="height:40px">Entrar</a></header>
+  <div class="hero">
+    <div>
+      <span class="eyebrow">● Marketplace B2B · Moçambique</span>
+      <h1>Compre para a sua empresa. <span>Pague como quiser.</span></h1>
+      <p class="lead">Fornecedores verificados, fatura com NUIT e pagamento por M-Pesa, e-Mola, mKesh ou iMali, incluindo pagamento diferido.</p>
+      <a class="btn btn-p">Explorar produtos</a> <a class="btn btn-s">Vender no Mercado ICA</a>
+    </div>
+    <div class="panel">
+      <div class="paycard"><div class="row"><b>Pedido ICA-100420</b><span class="tag">Pago</span></div><div class="row" style="margin-top:14px;color:var(--mut)"><span>Painel Solar 550 W × 4</span><b style="color:var(--ink)">39 200 MT</b></div><div class="row" style="margin-top:6px;color:var(--mut)"><span>via iMali Way</span><span>agora</span></div></div>
+      <div class="paycard"><div class="row"><b>Pagar depois (BNPL)</b><span class="tag">Aprovado</span></div><div style="margin-top:14px;height:8px;border-radius:9px;background:#EEF1EC"><div style="width:35%;height:100%;border-radius:9px;background:var(--grad)"></div></div><div class="row" style="margin-top:8px;color:var(--mut)"><span>1 de 3 prestações</span><b style="color:var(--ink)">18 167 MT</b></div></div>
+    </div>
+  </div>
+  <div class="cats"><span>Tudo</span><span>Construção Civil</span><span>Maquinário Pesado</span><span>Eletrónicos & TI</span><span>Logística & Frota</span><span>Energia Solar</span><span>Automação</span></div>
+  <section><div class="sh"><h3>Em destaque esta semana</h3><a style="font-weight:600;color:#2f7a36">Ver tudo →</a></div><div class="cards" data-cards="A"></div></section>
+</div>
+<div class="why"><div><b>Pontos fortes</b>Transmite confiança e seriedade. Fácil de ler e de manter igual nos 3 perfis.</div><div><b>Riscos</b>Pode parecer "mais um site". A personalidade iMali fica discreta.</div><div><b>Referências</b>Stripe, Wise, Mercury, Faire.</div></div>
+
+<!-- B -->
+<div class="label" id="B"><span class="pill">B</span><h2>Bold iMali</h2><p>Carvão escuro, lima e o "V" do logótipo iMali como elemento gráfico. Tipografia em maiúsculas e botões arredondados. Tem muita personalidade e é muito reconhecível.</p></div>
+<div class="frame B">
+  <header><span class="logo">MERCADO <i>ICA</i></span><span class="search"><span>O que procura hoje?</span><span>Pesquisar</span></span><span class="hdr-ic"><span>♡ Desejos</span><span>🛒 Carrinho</span><span>👤 Conta</span></span></header>
+  <div class="hero">
+    <h1>O mercado das empresas <span>moçambicanas.</span></h1>
+    <p class="lead">Do cimento ao painel solar: compre a fornecedores verificados e pague com a carteira que já usa.</p>
+    <a class="btn btn-p">Começar a comprar →</a><a class="btn btn-s">Quero vender</a>
+  </div>
+  <div class="strip"><div><em>🏗️</em>Construção</div><div><em>🚜</em>Maquinário</div><div><em>💻</em>Eletrónicos & TI</div><div><em>🚚</em>Logística</div><div><em>☀️</em>Energia Solar</div><div><em>⚙️</em>Automação</div></div>
+  <section><div class="sh"><h3>Oportunidades</h3><a>Ver todas</a></div><div class="cards" data-cards="B"></div></section>
+  <div class="pay"><div><h3>Compre hoje, pague em 3×</h3><span>Pagamento diferido iMali para empresas registadas, aprovado no momento.</span></div><a class="btn" style="background:var(--char);color:#fff">Saber mais →</a></div>
+</div>
+<div class="why"><div><b>Pontos fortes</b>É a mais fiel à marca iMali. Memorável numa apresentação e diferente da concorrência.</div><div><b>Riscos</b>Exige disciplina para não ficar "pesado". O lima tem de ser usado com moderação para manter o contraste.</div><div><b>Referências</b>Apps de carteira móvel, Nubank, Revolut Business, Bolt.</div></div>
+
+<!-- C -->
+<div class="label" id="C"><span class="pill">C</span><h2>Marketplace B2B</h2><p>Denso e prático, com foco na pesquisa, no menu de categorias, nos preços por volume e nos fornecedores verificados. Usa as cores iMali, mas a prioridade é a informação.</p></div>
+<div class="frame C">
+  <div class="top"><span>Entrega em todas as províncias · Fatura com NUIT</span><span>Pague com <b>iMali</b>, M-Pesa, e-Mola, mKesh</span></div>
+  <header><span class="logo">Mercado<i>ICA</i></span><span class="search"><span>Todas ▾</span><span>Pesquisar 3 500+ produtos industriais…</span><span>Pesquisar</span></span><span class="hdr"><span><small>Pedir</small>Cotação</span><span><small>Olá, Ana</small>Conta</span><span><small>2 itens</small>Carrinho</span></span></header>
+  <div class="body">
+    <aside><div>Todas as categorias</div><div>🏗️ Construção Civil<span>›</span></div><div>🚜 Maquinário Pesado<span>›</span></div><div>💻 Eletrónicos & TI<span>›</span></div><div>🚚 Logística & Frota<span>›</span></div><div>☀️ Energia Solar<span>›</span></div><div>⚙️ Automação<span>›</span></div></aside>
+    <div class="banner"><div><h1>Preços de fábrica para <span>compras em volume</span></h1><p>Peça cotação a vários fornecedores de uma vez e compare num só ecrã.</p><a class="btn">Pedir cotação</a></div><div class="kpis"><div><b>✔</b> Fornecedores verificados</div><div><b>✔</b> Fatura com NUIT</div><div><b>✔</b> Pagamento diferido iMali</div></div></div>
+  </div>
+  <section><div class="sh"><h3>Mais pedidos por empresas</h3><a>Ver tudo ›</a></div><div class="cards" data-cards="C"></div></section>
+</div>
+<div class="why"><div><b>Pontos fortes</b>Útil para quem compra muito. Mostra o que é próprio do B2B: volume, cotação e fornecedor.</div><div><b>Riscos</b>Menos "bonito" na primeira impressão. Precisa de muitos dados de qualidade.</div><div><b>Referências</b>Alibaba, Amazon Business, Jumia (na densidade de informação).</div></div>
+
+<div class="refs" id="refs">
+  <h2>Mais referências para explorar</h2>
+  <ul>
+    <li><b>Pinterest</b><a href="https://www.pinterest.com/search/pins/?q=b2b%20marketplace%20website%20design" target="_blank">B2B marketplace website</a><a href="https://www.pinterest.com/search/pins/?q=fintech%20green%20dark%20ui" target="_blank">Fintech UI verde e escuro</a><a href="https://www.pinterest.com/search/pins/?q=ecommerce%20product%20card%20ui" target="_blank">Cartões de produto</a></li>
+    <li><b>Dribbble</b><a href="https://dribbble.com/search/b2b-marketplace" target="_blank">B2B marketplace</a><a href="https://dribbble.com/search/fintech-green" target="_blank">Fintech green</a><a href="https://dribbble.com/search/checkout-mobile-money" target="_blank">Checkout mobile money</a></li>
+    <li><b>Behance</b><a href="https://www.behance.net/search/projects?search=b2b%20marketplace" target="_blank">B2B marketplace</a><a href="https://www.behance.net/search/projects?search=wholesale%20ecommerce" target="_blank">Wholesale e-commerce</a><a href="https://www.behance.net/search/projects?search=fintech%20africa" target="_blank">Fintech Africa</a></li>
+  </ul>
+</div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/images.js"></script>
+<script>
+  (function () {
+    var ICA = window.ICA;
+    var ids = [25, 9, 13, 4, 27];
+    var money = function (n) { return new Intl.NumberFormat('pt-PT').format(n) + ' MT'; };
+    var img = function (p) { var l = ICA.productImages[p.id] || []; return '<img loading="lazy" referrerpolicy="no-referrer" alt="" src="' + (l[0] || '') + '">'; };
+    var seller = function (p) { var s = ICA.sellers.find(function (x) { return x.id === p.seller; }); return s ? s.shop : ''; };
+    var tpl = {
+      A: function (p) { return '<div class="card"><div class="im">' + img(p) + '<span class="fav">♡</span></div><div class="bd"><small>' + seller(p) + '</small><h4>' + p.name + '</h4><div class="ft"><span><span class="price">' + money(p.price) + '</span>' + (p.oldPrice ? '<span class="old">' + money(p.oldPrice) + '</span>' : '') + '</span><span class="add">+</span></div></div></div>'; },
+      B: function (p) { return '<div class="card"><div class="im">' + img(p) + (p.oldPrice ? '<span class="badge">-' + Math.round((1 - p.price / p.oldPrice) * 100) + '%</span>' : '<span class="badge">Novo</span>') + '</div><div class="bd"><small>' + p.catName + '</small><h4>' + p.name + '</h4><div class="ft"><span class="price">' + money(p.price) + '</span><span class="add">Adicionar</span></div></div></div>'; },
+      C: function (p) { return '<div class="card"><div class="im">' + img(p) + '</div><div class="bd"><h4>' + p.name + '</h4><span class="price">' + money(p.price) + '</span> <small style="color:var(--mut)">/ un</small><div class="tiers"><span>10+ un<b>' + money(Math.round(p.price * .95)) + '</b></span><span>50+ un<b>' + money(Math.round(p.price * .9)) + '</b></span></div><span class="ver">✔ ' + seller(p) + '</span><div class="acts"><span>Pedir cotação</span><span>🛒</span></div></div></div>'; },
+    };
+    document.querySelectorAll('[data-cards]').forEach(function (el) {
+      var k = el.dataset.cards, list = ids.slice(0, k === 'C' ? 5 : 4).map(function (id) { return ICA.products.find(function (p) { return p.id === id; }); });
+      el.innerHTML = list.map(tpl[k]).join('');
+    });
+  })();
+</script>
+</body>
+</html>

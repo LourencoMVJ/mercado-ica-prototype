@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mercado ICA — Home (direção D)</title>
+<link rel="icon" type="image/png" href="../assets/real/brand/logo-imali-small.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+  /* ---------- Tokens (sistema visual D) ---------- */
+  :root {
+    --char-950: #111211; --char-900: #1A1B1A; --char-800: #232523; --char-700: #2B2B2B; --char-500: #5E625B; --char-300: #A9ADA5;
+    --g-600: #2E9A3D; --g-500: #3AB54A; --g-400: #8DC63F; --lime: #B5E33A; --lime-soft: #F1F9DC; --g-soft: #EAF6EA;
+    --grad: linear-gradient(120deg, #3AB54A, #8DC63F); --grad-lime: linear-gradient(120deg, #3AB54A, #B5E33A);
+    --bg: #F4F6F2; --surface: #FFFFFF; --line: #E3E7E0; --ink: #1A1B1A; --mut: #5E625B; --sale: #D92D20;
+    --r-sm: 10px; --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
+    --sh: 0 1px 2px rgba(0,0,0,.05), 0 8px 24px -16px rgba(0,0,0,.25);
+    --sh-lg: 0 24px 48px -24px rgba(0,0,0,.35);
+    --display: Montserrat, system-ui, sans-serif; --text: Inter, system-ui, sans-serif;
+    --container: 1280px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font: 15px/1.5 var(--text); color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased; }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--lime); outline-offset: 2px; border-radius: 6px; }
+  .container { width: min(var(--container), 100% - 48px); margin-inline: auto; }
+  .ic { width: 20px; height: 20px; flex: none; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+  /* ---------- Botões ---------- */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border-radius: var(--r-pill); font-weight: 800; font-size: 15px; transition: transform .15s, background .15s, box-shadow .15s; white-space: nowrap; }
+  .btn:active { transform: scale(.98); }
+  .btn-lime { background: var(--lime); color: var(--char-700); }
+  .btn-lime:hover { background: #c3ee4a; box-shadow: 0 8px 24px -8px rgba(181,227,58,.6); }
+  .btn-dark { background: var(--char-700); color: #fff; }
+  .btn-dark:hover { background: var(--char-950); }
+  .btn-ghost { border: 1.5px solid rgba(255,255,255,.3); color: #fff; }
+  .btn-ghost:hover { border-color: var(--lime); color: var(--lime); }
+  .btn-line { border: 1.5px solid var(--char-700); color: var(--char-700); }
+  .btn-line:hover { background: var(--char-700); color: #fff; }
+  .btn-sm { height: 38px; padding: 0 16px; font-size: 13px; }
+
+  /* ---------- Cabeçalho ---------- */
+  .hdr { position: sticky; top: 0; z-index: 40; background: var(--char-900); color: #fff; }
+  .hdr .container { display: flex; align-items: center; gap: 24px; height: 76px; }
+  .logo { display: flex; align-items: center; flex: none; }
+  .logo img { height: 50px; width: auto; }
+  .burger { display: none; }
+  .search { flex: 1; display: flex; align-items: center; height: 50px; background: #fff; border-radius: var(--r-pill); padding: 5px 5px 5px 18px; color: var(--ink); border: 2px solid transparent; transition: border-color .15s, box-shadow .15s; }
+  .search:focus-within { border-color: var(--lime); box-shadow: 0 0 0 4px rgba(181,227,58,.18); }
+  .search > .ic { color: var(--char-300); width: 19px; height: 19px; }
+  .search input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; font: 15px var(--text); padding: 0 12px; background: none; }
+  .search input::-webkit-search-cancel-button { display: none; }
+  .scat { position: relative; flex: none; height: 100%; }
+  .scat select { appearance: none; -webkit-appearance: none; height: 100%; border: 0; border-radius: var(--r-pill); background: var(--bg); font: 600 13.5px var(--text); color: var(--ink); padding: 0 38px 0 16px; cursor: pointer; max-width: 190px; text-overflow: ellipsis; transition: background .15s; }
+  .scat select:hover { background: #E9EDE6; }
+  .scat select:focus { outline: 0; box-shadow: inset 0 0 0 2px var(--g-500); }
+  .scat svg { position: absolute; right: 14px; top: 50%; width: 14px; height: 14px; margin-top: -7px; pointer-events: none; color: var(--char-500); }
+  .hdr-acts { display: flex; gap: 6px; }
+  .hdr-act { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--r-md); font-size: 13px; font-weight: 700; line-height: 1.2; }
+  .hdr-act:hover { background: var(--char-800); }
+  .hdr-act small { display: block; font-weight: 500; color: var(--char-300); font-size: 11.5px; }
+  .hdr-act .ico { position: relative; display: grid; }
+  .hdr-act .cnt { position: absolute; top: -8px; right: -10px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--lime); color: var(--char-700); font-size: 11px; font-weight: 800; display: grid; place-items: center; box-shadow: 0 0 0 2px var(--char-900); }
+  .cnt:empty, .cnt[data-n="0"] { display: none !important; }
+  /* saldo iMali */
+  .bal { display: flex; align-items: center; gap: 10px; padding: 6px 8px 6px 12px; border-radius: var(--r-md); background: var(--char-800); font-size: 13px; line-height: 1.2; }
+  .bal small { display: block; font-weight: 500; color: var(--char-300); font-size: 11.5px; }
+  .bal b { font: 800 14px var(--display); color: var(--lime); letter-spacing: .01em; white-space: nowrap; }
+  .bal .eye { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; color: var(--char-300); }
+  .bal .eye:hover { background: rgba(255,255,255,.08); color: #fff; }
+  .bal .eye svg { width: 17px; height: 17px; }
+  .bal.hidden b { letter-spacing: .12em; }
+  .bal-m { display: none; }
+  .cnt.bump { animation: bump .4s; }
+  @keyframes bump { 50% { transform: scale(1.35); } }
+
+  /* ---------- Hero ---------- */
+  .top { background: var(--char-900); padding: 8px 0 56px; }
+  .top .container { display: grid; grid-template-columns: 264px 1fr; gap: 16px; }
+  .cats { position: relative; background: var(--char-800); border-radius: var(--r-lg); padding: 8px; color: #E6E9E3; align-self: start; }
+  .cats > a { position: relative; display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 12px; font-weight: 600; font-size: 14px; transition: background .15s, padding .15s; }
+  .cats > a:first-child { background: var(--lime); color: var(--char-700); font-weight: 800; margin-bottom: 4px; }
+  .cats > a .n { margin-left: auto; min-width: 26px; padding: 2px 8px; border-radius: var(--r-pill); background: rgba(255,255,255,.06); color: var(--char-300); font-size: 11.5px; font-weight: 700; text-align: center; }
+  .cats > a:not(:first-child):hover, .cats > a.on { background: rgba(255,255,255,.06); color: #fff; padding-left: 18px; }
+  .cats > a:not(:first-child):hover::before, .cats > a.on::before { transform: none; }
+  .cats > a:not(:first-child):hover .n, .cats > a.on .n { background: var(--lime); color: var(--char-700); }
+  .mega { position: absolute; left: calc(100% + 8px); top: 0; z-index: 30; width: 520px; min-height: 100%; background: #fff; color: var(--ink); border-radius: var(--r-lg); box-shadow: var(--sh-lg); padding: 22px; display: none; }
+  .mega.open { display: grid; grid-template-columns: 1fr 180px; gap: 20px; }
+  .mega h4 { margin: 0 0 12px; font: 800 18px var(--display); }
+  .mega ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+  .mega li a { display: flex; justify-content: space-between; padding: 9px 12px; border-radius: 10px; font-weight: 600; font-size: 14px; }
+  .mega li a:hover { background: var(--g-soft); color: var(--g-600); }
+  .mega li small { color: var(--mut); font-weight: 500; }
+  .mega .pic { border-radius: var(--r-md); overflow: hidden; aspect-ratio: 3/4; background: var(--bg); }
+  .mega .pic img { width: 100%; height: 100%; object-fit: cover; }
+
+  .hero { position: relative; overflow: hidden; border-radius: var(--r-lg); background: var(--char-950); color: #fff; min-height: 280px; isolation: isolate; }
+  .slide { position: absolute; inset: 0; padding: 32px 40px 44px; opacity: 0; visibility: hidden; transition: opacity .5s, visibility .5s; display: flex; flex-direction: column; justify-content: center; }
+  .slide.on { opacity: 1; visibility: visible; }
+  .slide .vshape { position: absolute; right: 24px; top: 46px; width: 320px; height: 176px; background: var(--grad); clip-path: polygon(0 0, 18% 0, 50% 62%, 82% 0, 100% 0, 50% 100%); }
+  .slide .dot { position: absolute; right: 162px; top: -4px; width: 44px; height: 44px; border-radius: 50%; background: var(--grad-lime); }
+  /* fotografia a toda a largura, fundida no carvão por um gradiente suave (sem corte visível) */
+  .slide .photo { position: absolute; inset: 0; z-index: -1; }
+  .slide .photo img { width: 100%; height: 100%; object-fit: cover; object-position: right center; }
+  .slide .photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, var(--char-950) 0%, var(--char-950) 34%, rgba(17,18,17,.82) 50%, rgba(17,18,17,.35) 70%, rgba(17,18,17,.05) 100%); }
+  .slide .photo::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(0deg, rgba(17,18,17,.45), transparent 40%); }
+  .hero h1, .hero h2 { position: relative; font: 900 38px/1 var(--display); text-transform: uppercase; letter-spacing: -.01em; margin: 0 0 12px; max-width: 520px; }
+  .hero h1 span, .hero h2 span { display: block; color: var(--lime); }
+  .hero p { position: relative; color: #C9CCC6; max-width: 420px; font-size: 15px; margin: 0 0 20px; }
+  .hero .ctas { position: relative; display: flex; gap: 10px; flex-wrap: wrap; }
+  .hero .btn { height: 44px; padding: 0 22px; font-size: 14px; }
+  .slide .copy { position: relative; z-index: 1; max-width: 50%; }
+  .art { position: absolute; right: 28px; top: 0; bottom: 0; width: 46%; }
+  /* slide 1: cartões de produto a flutuar sobre o "V" */
+  .pc { position: absolute; width: 148px; background: #fff; color: var(--ink); border-radius: 16px; padding: 6px; box-shadow: 0 24px 40px -18px rgba(0,0,0,.7); transition: transform .4s; }
+  .pc .im { aspect-ratio: 1; border-radius: 11px; overflow: hidden; background: var(--bg); }
+  .pc .im img { width: 100%; height: 100%; object-fit: cover; }
+  .pc b { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin: 7px 4px 0; font-size: 11.5px; line-height: 1.25; }
+  .pc span { display: flex; justify-content: space-between; align-items: center; margin: 4px 4px 3px; font: 800 13px var(--display); }
+  .pc span i { font-style: normal; width: 22px; height: 22px; border-radius: 50%; background: var(--char-700); color: var(--lime); display: grid; place-items: center; font: 800 14px var(--text); }
+  .pc:nth-child(1) { left: 2%; top: 22%; transform: rotate(-7deg); }
+  .pc:nth-child(2) { left: 34%; top: 9%; z-index: 2; transform: scale(1.08); }
+  .pc:nth-child(3) { left: 66%; top: 24%; transform: rotate(6deg); }
+  .hero:hover .pc:nth-child(1) { transform: rotate(-4deg) translateY(-4px); }
+  .hero:hover .pc:nth-child(3) { transform: rotate(3deg) translateY(-4px); }
+  /* slide 1: só a marca iCA */
+  .brandmark { position: absolute; right: 56px; top: 50%; transform: translateY(-50%); width: 38%; display: grid; place-items: center; }
+  .brandmark img { width: 100%; max-width: 380px; height: auto; filter: drop-shadow(0 20px 40px rgba(0,0,0,.45)); }
+  .brandmark::before { content: ''; position: absolute; left: 4%; top: -10%; width: 34%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(181,227,58,.28), transparent 70%); }
+  /* slide 3: plano de prestações iMali */
+  .planc { position: absolute; right: 30px; top: 34px; width: 300px; background: #fff; color: var(--ink); border-radius: 18px; padding: 16px 18px; box-shadow: 0 30px 50px -24px rgba(0,0,0,.8); }
+  .planc .hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .planc .hd img { height: 30px; width: auto; }
+  .planc .hd small { color: var(--mut); font-weight: 600; font-size: 12px; }
+  .planc .tot { font: 900 24px var(--display); }
+  .planc .bar { height: 7px; border-radius: 9px; background: var(--bg); margin: 10px 0 8px; overflow: hidden; }
+  .planc .bar i { display: block; width: 33.3%; height: 100%; background: var(--grad); }
+  .planc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 12.5px; }
+  .planc li { display: flex; justify-content: space-between; align-items: center; }
+  .planc li span { display: flex; gap: 8px; align-items: center; color: var(--mut); }
+  .planc li span::before { content: ''; width: 8px; height: 8px; border-radius: 50%; border: 2px solid var(--line); }
+  .planc li.ok span { color: var(--ink); font-weight: 600; } .planc li.ok span::before { border-color: var(--g-500); background: var(--g-500); }
+  .planc .wallets { display: flex; gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .planc .wallets img { height: 26px; width: auto; border-radius: 6px; }
+  .slide-3 .vshape { right: 150px; top: 90px; width: 300px; height: 166px; opacity: .35; }
+  .dots { position: absolute; left: 40px; bottom: 18px; display: flex; gap: 8px; z-index: 2; }
+  .dots button { width: 26px; height: 6px; border-radius: 3px; background: rgba(255,255,255,.25); transition: .3s; }
+  .dots button.on { width: 44px; background: var(--lime); }
+
+  /* ---------- Faixa de confiança ---------- */
+  .trust { margin-top: -32px; position: relative; z-index: 2; }
+  .trust .container { display: grid; grid-template-columns: repeat(4, 1fr); background: #fff; border-radius: var(--r-lg); box-shadow: var(--sh); padding: 6px; }
+  .trust div { padding: 14px 20px; }
+  .trust div + div { border-left: 1px solid var(--line); }
+  .trust b { display: flex; align-items: baseline; gap: 8px; font: 800 15px var(--display); }
+  .trust b em { font-style: normal; font-size: 22px; line-height: 1; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .trust small { display: block; margin-top: 2px; color: var(--mut); font-size: 12.5px; }
+
+  /* ---------- Secções ---------- */
+  section { padding: 48px 0 0; }
+  .sh { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 18px; }
+  .sh h2 { margin: 0; font: 900 24px/1.1 var(--display); text-transform: uppercase; letter-spacing: -.01em; }
+  .sh p { margin: 6px 0 0; color: var(--mut); }
+  .sh .more { font-weight: 800; font-size: 14px; border-bottom: 2px solid var(--g-500); padding-bottom: 2px; white-space: nowrap; }
+  .sh .more:hover { color: var(--g-600); }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tabs button { padding: 8px 14px; border-radius: var(--r-pill); border: 1px solid var(--line); background: #fff; font-weight: 700; font-size: 13px; }
+  .tabs button.on { background: var(--char-700); border-color: var(--char-700); color: #fff; }
+
+  /* ---------- Cartão de produto ---------- */
+  .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .card { position: relative; display: flex; flex-direction: column; background: #fff; border-radius: var(--r-lg); padding: 8px; transition: transform .2s, box-shadow .2s; }
+  .card:hover { transform: translateY(-3px); box-shadow: var(--sh-lg); }
+  .card .im { position: relative; aspect-ratio: 1; border-radius: 14px; overflow: hidden; background: var(--bg); }
+  .card .im img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+  .card:hover .im img { transform: scale(1.04); }
+  .badge { position: absolute; left: 8px; top: 8px; padding: 4px 9px; border-radius: var(--r-pill); background: var(--char-700); color: var(--lime); font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .03em; }
+  .badge.sale { background: var(--sale); color: #fff; }
+  .fav { position: absolute; right: 8px; top: 8px; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.92); display: grid; place-items: center; color: var(--char-700); transition: .15s; }
+  .fav:hover { transform: scale(1.08); }
+  .fav.on { color: var(--sale); }
+  .fav.on svg { fill: currentColor; }
+  .card .bd { display: flex; flex-direction: column; gap: 6px; padding: 12px 6px 6px; flex: 1; }
+  .ver { display: inline-flex; gap: 4px; align-items: center; font-size: 11.5px; font-weight: 700; color: var(--g-600); }
+  .ver svg { width: 13px; height: 13px; }
+  .card h3 { margin: 0; font-size: 14px; font-weight: 700; line-height: 1.35; min-height: 38px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .card h3 a:hover { color: var(--g-600); }
+  .pr { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+  .pr b { font: 800 17px var(--display); }
+  .pr s { color: var(--char-300); font-size: 12px; }
+  .pr small { color: var(--mut); font-size: 12px; }
+  .vol { display: flex; gap: 4px; font-size: 11px; color: var(--mut); }
+  .vol span { flex: 1; padding: 5px 7px; border-radius: 8px; background: var(--bg); }
+  .vol b { display: block; color: var(--ink); font-size: 12px; }
+  .card .acts { display: grid; grid-template-columns: 1fr 40px; gap: 6px; margin-top: auto; padding-top: 6px; }
+  .card .acts .btn { height: 40px; padding: 0 10px; font-size: 13px; }
+  .card .acts .add { width: 40px; padding: 0; }
+  .card .acts .add.done { background: var(--g-500); color: #fff; }
+
+  /* ---------- Categorias com fotografia ---------- */
+  .catgrid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  .cat { position: relative; aspect-ratio: 4/5; border-radius: var(--r-lg); overflow: hidden; color: #fff; background: var(--char-800); }
+  .cat img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+  .cat:hover img { transform: scale(1.06); }
+  .cat::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent 35%, rgba(17,18,17,.85)); }
+  .cat div { position: absolute; left: 14px; right: 14px; bottom: 14px; z-index: 1; }
+  .cat b { display: block; font: 800 15px/1.2 var(--display); }
+  .cat small { color: var(--lime); font-weight: 700; font-size: 12px; }
+
+  /* ---------- Faixa de cotação ---------- */
+  .rfq { position: relative; overflow: hidden; display: grid; grid-template-columns: 1fr 1.1fr; gap: 32px; align-items: center; padding: 36px 40px; border-radius: var(--r-lg); background: var(--char-900); color: #fff; }
+  .rfq .vshape { position: absolute; left: 30%; bottom: -130px; width: 420px; height: 240px; background: var(--grad); opacity: .18; clip-path: polygon(0 0, 18% 0, 50% 62%, 82% 0, 100% 0, 50% 100%); }
+  .rfq h2 { position: relative; margin: 0 0 10px; font: 900 30px/1.05 var(--display); text-transform: uppercase; }
+  .rfq h2 span { color: var(--lime); }
+  .rfq p { position: relative; color: #C9CCC6; margin: 0 0 18px; }
+  .rfq ol { position: relative; margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+  .rfq li { display: flex; gap: 12px; align-items: center; font-weight: 600; font-size: 14px; }
+  .rfq li span { width: 28px; height: 28px; border-radius: 50%; background: var(--lime); color: var(--char-700); display: grid; place-items: center; font-weight: 800; font-size: 13px; }
+  .rfq form { position: relative; background: #fff; color: var(--ink); border-radius: var(--r-lg); padding: 22px; display: grid; gap: 10px; }
+  .fld { display: grid; gap: 4px; }
+  .fld label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--mut); }
+  .fld input, .fld select { height: 44px; border: 1px solid var(--line); border-radius: 12px; padding: 0 12px; font: 15px var(--text); background: #fff; }
+  .fld input:focus, .fld select:focus { outline: 0; border-color: var(--g-500); box-shadow: 0 0 0 3px var(--g-soft); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* ---------- Crédito iMali ---------- */
+  .credit { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; align-items: center; padding: 32px 40px; border-radius: var(--r-lg); background: var(--grad); color: var(--char-700); overflow: hidden; position: relative; }
+  .credit h2 { margin: 0 0 8px; font: 900 30px/1.05 var(--display); text-transform: uppercase; }
+  .credit p { margin: 0 0 18px; max-width: 460px; color: #20301d; }
+  .plan { background: #fff; border-radius: var(--r-lg); padding: 20px; box-shadow: var(--sh-lg); }
+  .plan .row { display: flex; justify-content: space-between; font-size: 14px; padding: 6px 0; }
+  .plan .row b { font-family: var(--display); }
+  .plan .bar { height: 8px; border-radius: 9px; background: var(--bg); margin: 10px 0; overflow: hidden; }
+  .plan .bar i { display: block; width: 33%; height: 100%; background: var(--grad); }
+  .plan .pays { display: flex; gap: 6px; margin-top: 10px; }
+  .plan .pays img { height: 30px; width: auto; border-radius: 6px; }
+
+  /* ---------- Fornecedores ---------- */
+  .sellers { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .seller { background: #fff; border-radius: var(--r-lg); padding: 18px; display: grid; gap: 10px; transition: .2s; }
+  .seller:hover { box-shadow: var(--sh-lg); }
+  .seller .av { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; color: #fff; font: 900 18px var(--display); }
+  .seller b { font-size: 14.5px; line-height: 1.3; }
+  .seller small { color: var(--mut); font-size: 12.5px; }
+  .seller .meta { display: flex; justify-content: space-between; font-size: 12.5px; font-weight: 700; }
+  .seller .meta span:first-child { color: #B7791F; }
+
+  /* ---------- Rodapé ---------- */
+  footer { margin-top: 64px; background: var(--char-950); color: var(--char-300); font-size: 14px; }
+  footer .container { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 32px; padding: 48px 0 32px; }
+  footer h4 { color: #fff; margin: 0 0 14px; font: 800 13px var(--display); text-transform: uppercase; letter-spacing: .06em; }
+  footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+  footer a:hover { color: var(--lime); }
+  footer .logo { margin-bottom: 16px; }
+  footer .logo img { height: 92px; }
+  .news { display: flex; background: var(--char-800); border-radius: var(--r-pill); padding: 4px; margin-top: 14px; }
+  .news input { flex: 1; min-width: 0; background: none; border: 0; outline: 0; color: #fff; padding: 0 14px; font: 14px var(--text); }
+  .news .btn { height: 40px; padding: 0 16px; font-size: 13px; }
+  .paylogos { display: flex; flex-wrap: wrap; gap: 8px; }
+  .paylogos img { height: 36px; width: auto; border-radius: 8px; background: #fff; padding: 3px; }
+  .legal { border-top: 1px solid var(--char-800); }
+  .legal .container { display: flex; justify-content: space-between; padding: 18px 0; grid-template-columns: none; font-size: 13px; }
+
+  /* ---------- Toast ---------- */
+  .toast { position: fixed; left: 50%; bottom: 24px; z-index: 100; transform: translate(-50%, 20px); opacity: 0; display: flex; gap: 10px; align-items: center; padding: 12px 18px; border-radius: var(--r-pill); background: var(--char-700); color: #fff; font-weight: 600; font-size: 14px; box-shadow: var(--sh-lg); transition: .25s; pointer-events: none; }
+  .toast.on { opacity: 1; transform: translate(-50%, 0); }
+  .toast i { width: 22px; height: 22px; border-radius: 50%; background: var(--lime); color: var(--char-700); display: grid; place-items: center; font-style: normal; font-weight: 900; font-size: 12px; }
+
+  /* ---------- Gaveta + barra inferior (telemóvel) ---------- */
+  .drawer { position: fixed; inset: 0; z-index: 90; visibility: hidden; }
+  .drawer.open { visibility: visible; }
+  .drawer .bg { position: absolute; inset: 0; background: rgba(0,0,0,.5); opacity: 0; transition: .25s; }
+  .drawer.open .bg { opacity: 1; }
+  .drawer .panel { position: absolute; left: 0; top: 0; bottom: 0; width: min(340px, 86vw); background: var(--char-900); color: #fff; padding: 18px; overflow: auto; transform: translateX(-100%); transition: .25s; }
+  .drawer.open .panel { transform: none; }
+  .drawer details { border-bottom: 1px solid var(--char-800); }
+  .drawer summary { list-style: none; display: flex; gap: 12px; align-items: center; padding: 14px 4px; font-weight: 700; cursor: pointer; }
+  .drawer summary::-webkit-details-marker { display: none; }
+  .drawer summary::after { content: '+'; margin-left: auto; color: var(--lime); font-size: 20px; }
+  .drawer details[open] summary::after { content: '–'; }
+  .drawer details a { display: block; padding: 9px 4px 9px 16px; color: var(--char-300); }
+  .tabbar { display: none; }
+
+  /* ---------- Responsivo ---------- */
+  @media (max-width: 1180px) {
+    .grid { grid-template-columns: repeat(4, 1fr); } .grid .card:nth-child(5) { display: none; }
+    .sellers { grid-template-columns: repeat(3, 1fr); } .sellers .seller:nth-child(n+4) { display: none; }
+    .catgrid { grid-template-columns: repeat(3, 1fr); } .cat { aspect-ratio: 16/10; }
+    .hdr-act small { display: none; }
+  }
+  @media (max-width: 900px) {
+    .container { width: calc(100% - 32px); }
+    .hdr-acts .hide-m, .cats, .mega { display: none; }
+    .top .container { grid-template-columns: minmax(0, 1fr); }
+    .burger { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--char-800); }
+    .hdr .container { height: auto; flex-wrap: wrap; gap: 12px; padding: 12px 0; }
+    .hdr .logo { flex: 1; } .hdr .logo img { height: 40px; }
+    .art, .brandmark, .hdr .bal { display: none; } .slide .copy { max-width: none; }
+    .bal-m { display: flex; margin: 4px 0 14px; }
+    .search { order: 5; flex-basis: 100%; height: 46px; }
+    .scat { display: none; }
+    .hero { min-height: 330px; }
+    .slide { padding: 24px 22px 48px; justify-content: flex-end; }
+    .slide .photo::after { background: linear-gradient(0deg, var(--char-950) 38%, rgba(17,18,17,.55) 70%, rgba(17,18,17,.2)); }
+    .slide .vshape { width: 180px; height: 100px; top: 18px; right: -16px; opacity: .3; } .slide .dot { right: 74px; width: 32px; height: 32px; }
+    .hero h1, .hero h2 { font-size: 30px; }
+    .dots { left: 22px; }
+    html, body { overflow-x: clip; }
+    .trust .container { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .trust div { padding: 12px 14px; } .trust div:nth-child(3) { border-left: 0; } .trust div:nth-child(n+3) { border-top: 1px solid var(--line); }
+    .trust b { font-size: 13.5px; } .trust b em { font-size: 18px; } .trust small { font-size: 11.5px; }
+    .sh { flex-direction: column; align-items: flex-start; }
+    .tabs { flex-wrap: nowrap; overflow-x: auto; max-width: 100%; scrollbar-width: none; }
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .grid .card:nth-child(5) { display: flex; }
+    .card .acts { grid-template-columns: minmax(0, 1fr) 40px; }
+    .card .acts .btn { font-size: 12px; padding: 0 6px; white-space: normal; line-height: 1.1; }
+    .pr b { font-size: 15px; }
+    .grid .card:nth-child(n+5) { display: none; }
+    .card .vol span:nth-child(2) { display: none; }
+    .catgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .rfq, .credit { grid-template-columns: minmax(0, 1fr); padding: 24px 20px; }
+    .row2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .rfq h2, .credit h2 { font-size: 24px; }
+    .sellers { grid-template-columns: repeat(2, minmax(0, 1fr)); } .sellers .seller:nth-child(n+3) { display: none; }
+    footer .container { grid-template-columns: repeat(2, minmax(0, 1fr)); } footer .container > div:first-child { grid-column: span 2; }
+    .legal .container { flex-direction: column; gap: 6px; }
+    body { padding-bottom: 72px; }
+    .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; display: grid; grid-template-columns: repeat(5, 1fr); background: #fff; border-top: 1px solid var(--line); padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); }
+    .tabbar a { position: relative; display: grid; justify-items: center; gap: 2px; font-size: 11px; font-weight: 700; color: var(--mut); padding: 4px; }
+    .tabbar a.on { color: var(--ink); }
+    .tabbar a.on svg { color: var(--g-600); }
+    .tabbar .cnt { position: absolute; top: 0; left: calc(50% + 4px); min-width: 17px; height: 17px; border-radius: 9px; background: var(--lime); color: var(--char-700); font-size: 10.5px; font-weight: 800; display: grid; place-items: center; padding: 0 4px; }
+    .toast { bottom: 84px; }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-cart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.5L22 7H6"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M3 10 12 3l9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-receipt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M5 2h14v20l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 7h6M9 11h6M9 15h3"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M20 7V5a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15v12H5a2 2 0 0 1-2-2V6"/><circle cx="16" cy="14" r="1.3" fill="currentColor"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M1 4h14v12H1zM15 9h4l3 3v4h-7"/><circle cx="6" cy="18.5" r="2"/><circle cx="18" cy="18.5" r="2"/></symbol>
+</svg>
+
+<header class="hdr">
+  <div class="container">
+    <button class="burger" data-drawer aria-label="Abrir categorias"><svg class="ic"><use href="#i-menu"/></svg></button>
+    <a class="logo" href="#"><img src="../assets/brand/mercado-ica-mark-white.png?v=2" alt="Mercado ICA"></a>
+    <form class="search" role="search" onsubmit="event.preventDefault();toast('Pesquisa: ' + (this.q.value || 'tudo'))">
+      <svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>
+      <label class="sr" for="q">Pesquisar</label>
+      <input id="q" name="q" type="search" placeholder="Pesquisar produtos, marcas ou fornecedores…" autocomplete="off">
+      <span class="scat"><label class="sr" for="cat">Categoria</label><select id="cat" data-catselect><option>Todas as categorias</option></select><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+    </form>
+    <nav class="hdr-acts" aria-label="Conta">
+      <div class="bal" data-bal><svg class="ic" style="color:var(--lime)"><use href="#i-wallet"/></svg><span><small>Saldo iMali</small><b data-balval>125 430 MT</b></span><button class="eye" data-baleye aria-label="Esconder saldo" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+      <a class="hdr-act hide-m" href="#"><span class="ico"><svg class="ic"><use href="#i-heart"/></svg><span class="cnt" data-favcount data-n="0">0</span></span><span><small>Guardados</small>Desejos</span></a>
+      <a class="hdr-act hide-m" href="#"><span class="ico"><svg class="ic"><use href="#i-user"/></svg></span><span><small>Olá, Ana</small>Conta</span></a>
+      <a class="hdr-act" href="#"><span class="ico"><svg class="ic"><use href="#i-cart"/></svg><span class="cnt" data-cartcount>2</span></span><span class="hide-m"><small data-carttotal>45 700 MT</small>Carrinho</span></a>
+    </nav>
+  </div>
+</header>
+
+<div class="top">
+  <div class="container">
+    <nav class="cats" aria-label="Categorias" data-cats></nav>
+    <div class="hero" data-hero>
+      <article class="slide slide-1 on">
+        <div class="brandmark"><img src="../assets/brand/ica-white.png" alt="iCA"></div>
+        <div class="copy">
+          <h1>Compras da empresa, <span>sem complicar.</span></h1>
+          <p>Fornecedores verificados, preços por volume e pagamento com a carteira que já usa.</p>
+        </div>
+      </article>
+      <article class="slide slide-2">
+        <div class="photo" data-photo="25" data-pos="center 60%"></div>
+        <div class="copy">
+          <h2>Energia própria, <span>até -15%.</span></h2>
+          <p>Kits, painéis e inversores de fornecedores com instalação certificada em todo o país.</p>
+          <div class="ctas"><a class="btn btn-lime" href="#destaques">Ver ofertas solares →</a></div>
+        </div>
+      </article>
+      <article class="slide slide-3">
+        <span class="vshape"></span>
+        <div class="art">
+          <div class="planc">
+            <div class="hd"><img src="../assets/real/brand/Imali banner.png" alt="iMali — Diferente, como tu!"><small>Crédito para empresas</small></div>
+            <small style="color:var(--mut);font-size:12px" data-plan3name></small>
+            <div class="tot" data-plan3total></div>
+            <div class="bar"><i></i></div>
+            <ol data-plan3rows></ol>
+            <div class="wallets"><img src="../assets/real/brand/Assets/M-pesa logo.png" alt="M-Pesa"><img src="../assets/real/brand/Assets/emola logo.png" alt="e-Mola"><img src="../assets/real/brand/Assets/mkesh logo.png" alt="mKesh"><img src="../assets/real/brand/logo-imali-small.png" alt="iMali"></div>
+          </div>
+        </div>
+        <div class="copy">
+          <h2>Compre hoje, <span>pague em 3×.</span></h2>
+          <p>Pagamento diferido para empresas registadas, aprovado no checkout.</p>
+          <div class="ctas"><a class="btn btn-lime" href="#credito">Saber mais →</a></div>
+        </div>
+      </article>
+      <div class="dots" role="tablist" aria-label="Destaques"><button class="on" aria-label="Destaque 1"></button><button aria-label="Destaque 2"></button><button aria-label="Destaque 3"></button></div>
+    </div>
+  </div>
+</div>
+
+<div class="trust"><div class="container">
+  <div><b><em data-sellercount>5</em>Fornecedores verificados</b><small>Documentação validada pela ICA</small></div>
+  <div><b><em>100%</em>Fatura com NUIT</b><small>Em todas as compras</small></div>
+  <div><b><em>3×</em>Pague depois</b><small>Crédito iMali para empresas</small></div>
+  <div><b><em>11</em>Províncias</b><small>Entrega em todo o país</small></div>
+</div></div>
+
+<main>
+  <section id="destaques"><div class="container">
+    <div class="sh"><div><h2>Mais pedidos por empresas</h2><p>Preços de fornecedor, com desconto por volume.</p></div>
+      <div class="tabs" data-tabs><button class="on" data-cat="0">Todos</button></div></div>
+    <div class="grid" data-grid="top"></div>
+  </div></section>
+
+  <section><div class="container">
+    <div class="sh"><div><h2>Compre por setor</h2><p>Seis setores, fornecedores especializados em cada um.</p></div><a class="more" href="#">Ver catálogo completo</a></div>
+    <div class="catgrid" data-catgrid></div>
+  </div></section>
+
+  <section id="cotacao"><div class="container">
+    <div class="rfq"><span class="vshape"></span>
+      <div>
+        <h2>Compra grande? <span>Peça cotação.</span></h2>
+        <p>Diga o que precisa uma vez e receba propostas de vários fornecedores verificados.</p>
+        <ol><li><span>1</span>Descreva o produto, a quantidade e o local</li><li><span>2</span>Os fornecedores respondem com proposta</li><li><span>3</span>Compare, aceite e pague com iMali</li></ol>
+      </div>
+      <form onsubmit="event.preventDefault();toast('Pedido de cotação enviado (simulação)');this.reset()">
+        <div class="fld"><label for="rp">Produto</label><input id="rp" required placeholder="Ex.: Painel Solar 550 W"></div>
+        <div class="row2"><div class="fld"><label for="rq">Quantidade</label><input id="rq" type="number" min="1" required placeholder="120"></div>
+          <div class="fld"><label for="rl">Entrega</label><select id="rl"><option>Maputo Cidade</option><option>Maputo Província</option><option>Gaza</option><option>Inhambane</option><option>Sofala</option><option>Manica</option><option>Tete</option><option>Zambézia</option><option>Nampula</option><option>Cabo Delgado</option><option>Niassa</option></select></div></div>
+        <button class="btn btn-lime">Enviar pedido de cotação →</button>
+      </form>
+    </div>
+  </div></section>
+
+  <section><div class="container">
+    <div class="sh"><div><h2>Oportunidades da semana</h2><p>Lotes com preço reduzido, por tempo limitado.</p></div><a class="more" href="#">Ver todas</a></div>
+    <div class="grid" data-grid="sale"></div>
+  </div></section>
+
+  <section id="credito"><div class="container">
+    <div class="credit">
+      <div><h2>Compre hoje, pague em 3×</h2><p>Crédito iMali para empresas registadas no Mercado ICA. Aprovação no checkout, sem papelada.</p><a class="btn btn-dark" href="#">Ativar crédito iMali →</a></div>
+      <div class="plan">
+        <div class="row"><span>Kit Solar Residencial 3 kW</span><b data-plantotal></b></div>
+        <div class="bar"><i></i></div>
+        <div class="row"><span>Hoje</span><b data-planpart></b></div>
+        <div class="row" style="color:var(--mut)"><span>+30 dias · +60 dias</span><span data-planpart2></span></div>
+        <div class="pays"><img src="../assets/real/brand/Assets/M-pesa logo.png" alt="M-Pesa"><img src="../assets/real/brand/Assets/emola logo.png" alt="e-Mola"><img src="../assets/real/brand/Assets/mkesh logo.png" alt="mKesh"><img src="../assets/real/brand/logo-imali-small.png" alt="iMali"></div>
+      </div>
+    </div>
+  </div></section>
+
+  <section><div class="container">
+    <div class="sh"><div><h2>Fornecedores verificados</h2><p>Empresas moçambicanas com documentação validada.</p></div><a class="more" href="#">Todos os fornecedores</a></div>
+    <div class="sellers" data-sellers></div>
+  </div></section>
+</main>
+
+<footer>
+  <div class="container">
+    <div><a class="logo" href="#"><img src="../assets/brand/mercado-ica-logo-white.png?v=2" alt="Mercado ICA — B2B Connectivity Hub"></a><p style="margin:0;max-width:340px">O marketplace B2B de Moçambique, com pagamentos iMali integrados.</p>
+      <form class="news" onsubmit="event.preventDefault();toast('Subscrição registada (simulação)');this.reset()"><label class="sr" for="nl">Email</label><input id="nl" type="email" required placeholder="O seu email profissional"><button class="btn btn-lime">Subscrever</button></form></div>
+    <div><h4>Comprar</h4><ul><li><a href="#">Categorias</a></li><li><a href="#cotacao">Pedir cotação</a></li><li><a href="#credito">Crédito iMali</a></li><li><a href="#">Fornecedores</a></li></ul></div>
+    <div><h4>Ajuda</h4><ul><li><a href="#">Central de ajuda</a></li><li><a href="#">Devoluções</a></li><li><a href="#">Vender no Mercado ICA</a></li><li><a href="#">Contacto</a></li></ul></div>
+    <div><h4>Formas de pagamento</h4><div class="paylogos"><img src="../assets/real/brand/Assets/M-pesa logo.png" alt="M-Pesa"><img src="../assets/real/brand/Assets/emola logo.png" alt="e-Mola"><img src="../assets/real/brand/Assets/mkesh logo.png" alt="mKesh"><img src="../assets/real/brand/logo-imali-small.png" alt="iMali"><img src="../assets/real/brand/Assets/BNPL logo.png" alt="Pagar depois (BNPL)"></div></div>
+  </div>
+  <div class="legal"><div class="container"><span>© 2026 Paytek. Todos os direitos reservados.</span><span>Termos · Privacidade · Cookies</span></div></div>
+</footer>
+
+<nav class="tabbar" aria-label="Navegação">
+  <a class="on" href="#"><svg class="ic"><use href="#i-home"/></svg>Início</a>
+  <a href="#" data-drawer><svg class="ic"><use href="#i-grid"/></svg>Categorias</a>
+  <a href="#"><svg class="ic"><use href="#i-heart"/></svg>Desejos</a>
+  <a href="#"><svg class="ic"><use href="#i-cart"/></svg><span class="cnt" data-cartcount>2</span>Carrinho</a>
+  <a href="#"><svg class="ic"><use href="#i-user"/></svg>Conta</a>
+</nav>
+
+<div class="drawer" data-drawerbox><div class="bg" data-drawerclose></div><div class="panel"><a class="logo" href="#" style="margin-bottom:12px"><img src="../assets/brand/mercado-ica-mark-white.png?v=2" alt="Mercado ICA" style="height:42px"></a><div class="bal bal-m" data-bal><svg class="ic" style="color:var(--lime)"><use href="#i-wallet"/></svg><span style="flex:1"><small>Saldo iMali</small><b data-balval>125 430 MT</b></span><button class="eye" data-baleye aria-label="Esconder saldo" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div><div data-drawercats></div></div></div>
+<div class="toast" role="status" aria-live="polite"><i>✓</i><span></span></div>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/images.js"></script>
+<script>
+  (function () {
+    var ICA = window.ICA, $ = function (s, r) { return (r || document).querySelector(s); }, $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+    var money = function (n) { return new Intl.NumberFormat('pt-PT').format(Math.round(n)) + ' MT'; };
+    var P = function (id) { return ICA.products.find(function (p) { return p.id === id; }); };
+    var src = function (p, n) { var l = ICA.productImages[p.id] || []; return l[(n || 0) % (l.length || 1)] || ''; };
+    var img = function (p, n) { return '<img loading="lazy" referrerpolicy="no-referrer" alt="' + p.name.replace(/"/g, '&quot;') + '" src="' + src(p, n) + '">'; };
+    var seller = function (id) { return ICA.sellers.find(function (s) { return s.id === id; }); };
+    var approved = ICA.sellers.filter(function (s) { return s.status === 'approved'; });
+    var withImg = ICA.products.filter(function (p) { return (ICA.productImages[p.id] || []).length && p.status === 'approved'; });
+
+    /* toast */
+    var tEl = $('.toast'), tT;
+    window.toast = function (msg) { $('span', tEl).textContent = msg; tEl.classList.add('on'); clearTimeout(tT); tT = setTimeout(function () { tEl.classList.remove('on'); }, 2400); };
+
+    /* cartão de produto */
+    var card = function (p) {
+      var s = seller(p.seller), off = p.oldPrice ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
+      return '<article class="card"><div class="im"><a href="#" tabindex="-1">' + img(p) + '</a>' +
+        (off ? '<span class="badge sale">-' + off + '%</span>' : p.tags.indexOf('novo') > -1 ? '<span class="badge">Novo</span>' : '') +
+        '<button class="fav" data-fav="' + p.id + '" aria-label="Guardar ' + p.name + '"><svg class="ic" style="width:17px;height:17px"><use href="#i-heart"/></svg></button></div>' +
+        '<div class="bd"><span class="ver"><svg><use href="#i-check"/></svg>' + s.shop + '</span><h3><a href="#">' + p.name + '</a></h3>' +
+        '<div class="pr"><b>' + money(p.price) + '</b>' + (p.oldPrice ? '<s>' + money(p.oldPrice) + '</s>' : '') + '<small>/ un</small></div>' +
+        '<div class="vol"><span>10+ un<b>' + money(p.price * .95) + '</b></span><span>50+ un<b>' + money(p.price * .9) + '</b></span></div>' +
+        '<div class="acts"><button class="btn btn-line" data-rfq="' + p.id + '">Pedir cotação</button><button class="btn btn-dark add" data-add="' + p.id + '" aria-label="Adicionar ao carrinho"><svg class="ic" style="width:18px;height:18px"><use href="#i-cart"/></svg></button></div></div></article>';
+    };
+    var top = [25, 9, 13, 4, 26, 1, 16, 22, 33, 15, 2, 29];
+    var renderTop = function (cat) { $('[data-grid="top"]').innerHTML = top.map(P).filter(function (p) { return !cat || p.cat === cat; }).concat(cat ? withImg.filter(function (p) { return p.cat === cat && top.indexOf(p.id) < 0; }) : []).slice(0, 5).map(card).join(''); };
+    renderTop(0);
+    $('[data-grid="sale"]').innerHTML = withImg.filter(function (p) { return p.oldPrice; }).slice(0, 5).map(card).join('');
+
+    /* separadores por categoria */
+    $('[data-tabs]').insertAdjacentHTML('beforeend', ICA.categories.slice(0, 5).map(function (c) { return '<button data-cat="' + c.id + '">' + c.name.split(' ')[0] + '</button>'; }).join(''));
+    $('[data-tabs]').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; $$('button', this).forEach(function (x) { x.classList.toggle('on', x === b); }); renderTop(+b.dataset.cat); });
+
+    /* menu de categorias + mega menu */
+    var catsEl = $('[data-cats]');
+    var count = function (id) { return ICA.products.filter(function (p) { return p.cat === id; }).length; };
+    catsEl.innerHTML = '<a href="#">Todas as categorias<span class="n" style="background:rgba(43,43,43,.12);color:inherit">' + ICA.products.length + '</span></a>' + ICA.categories.map(function (c) { return '<a href="#" data-mega="' + c.id + '">' + c.name + '<span class="n">' + count(c.id) + '</span></a>'; }).join('') + '<div class="mega" data-megabox></div>';
+    var mega = $('[data-megabox]'), mT;
+    var openMega = function (id) {
+      var c = ICA.categories.find(function (x) { return x.id === id; }), ps = withImg.filter(function (p) { return p.cat === id; });
+      mega.innerHTML = '<div><h4>' + c.name + '</h4><ul>' + c.subs.map(function (s) { var n = ICA.products.filter(function (p) { return p.cat === id && p.sub === s; }).length; return '<li><a href="#">' + s + ' <small>' + n + '</small></a></li>'; }).join('') + '<li><a href="#" style="color:var(--g-600)">Ver tudo em ' + c.name + ' →</a></li></ul></div>' + (ps[0] ? '<div class="pic">' + img(ps[0]) + '</div>' : '<div></div>');
+      mega.classList.add('open'); $$('[data-mega]').forEach(function (a) { a.classList.toggle('on', +a.dataset.mega === id); });
+    };
+    catsEl.addEventListener('mouseover', function (e) { var a = e.target.closest('[data-mega]'); if (a) { clearTimeout(mT); openMega(+a.dataset.mega); } else if (e.target.closest('[data-megabox]')) clearTimeout(mT); });
+    catsEl.addEventListener('mouseleave', function () { mT = setTimeout(function () { mega.classList.remove('open'); $$('[data-mega]').forEach(function (a) { a.classList.remove('on'); }); }, 180); });
+    $('[data-catselect]').insertAdjacentHTML('beforeend', ICA.categories.map(function (c) { return '<option>' + c.name + '</option>'; }).join(''));
+
+    /* gaveta (telemóvel) */
+    $('[data-drawercats]').innerHTML = ICA.categories.map(function (c) { return '<details><summary>' + c.name + '</summary>' + c.subs.map(function (s) { return '<a href="#">' + s + '</a>'; }).join('') + '</details>'; }).join('');
+    var dbox = $('[data-drawerbox]');
+    $$('[data-drawer]').forEach(function (b) { b.addEventListener('click', function (e) { e.preventDefault(); dbox.classList.add('open'); }); });
+    $('[data-drawerclose]').addEventListener('click', function () { dbox.classList.remove('open'); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { dbox.classList.remove('open'); mega.classList.remove('open'); } });
+
+    /* destaques rotativos */
+    var slides = $$('.slide'), dots = $$('.dots button'), cur = 0, timer;
+    /* saldo iMali: mostrar / esconder (fica lembrado neste browser) */
+    var balHidden = false; try { balHidden = localStorage.getItem('ica.balHidden') === '1'; } catch (e) { /* sem armazenamento */ }
+    var paintBal = function () {
+      $$('[data-bal]').forEach(function (b) { b.classList.toggle('hidden', balHidden); $('[data-balval]', b).textContent = balHidden ? '••••• MT' : '125 430 MT'; var e = $('[data-baleye]', b); e.setAttribute('aria-pressed', balHidden); e.setAttribute('aria-label', balHidden ? 'Mostrar saldo' : 'Esconder saldo'); });
+    };
+    $$('[data-baleye]').forEach(function (e) { e.addEventListener('click', function () { balHidden = !balHidden; try { localStorage.setItem('ica.balHidden', balHidden ? '1' : '0'); } catch (x) { /* ignorar */ } paintBal(); }); });
+    paintBal();
+    var k3 = P(28), part = k3.price / 3, day = function (n) { var d = new Date(); d.setDate(d.getDate() + n); return d.toLocaleDateString('pt-PT', { day: '2-digit', month: 'short' }); };
+    $('[data-plan3name]').textContent = k3.name;
+    $('[data-plan3total]').textContent = money(k3.price);
+    $('[data-plan3rows]').innerHTML = [['Hoje', 0, 1], ['Em 30 dias', 30, 0], ['Em 60 dias', 60, 0]].map(function (r) { return '<li class="' + (r[2] ? 'ok' : '') + '"><span>' + r[0] + (r[1] ? ' · ' + day(r[1]) : '') + '</span><b>' + money(part) + '</b></li>'; }).join('');
+    $$('[data-photo]').forEach(function (el) { el.innerHTML = img(P(+el.dataset.photo)); if (el.dataset.pos) el.firstChild.style.objectPosition = el.dataset.pos; });
+    var go = function (i) { cur = (i + slides.length) % slides.length; slides.forEach(function (s, k) { s.classList.toggle('on', k === cur); }); dots.forEach(function (d, k) { d.classList.toggle('on', k === cur); }); };
+    var auto = function () { clearInterval(timer); timer = setInterval(function () { go(cur + 1); }, 6000); };
+    dots.forEach(function (d, k) { d.addEventListener('click', function () { go(k); auto(); }); });
+    $('[data-hero]').addEventListener('mouseenter', function () { clearInterval(timer); });
+    $('[data-hero]').addEventListener('mouseleave', auto);
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) auto();
+
+    /* setores com fotografia */
+    var catPhoto = { 1: 1, 2: 7, 3: 12, 4: 19, 5: 26, 6: 31 };
+    $('[data-catgrid]').innerHTML = ICA.categories.map(function (c) { var n = ICA.products.filter(function (p) { return p.cat === c.id; }).length, p = P(catPhoto[c.id]); return '<a class="cat" href="#">' + ((ICA.productImages[p.id] || []).length ? img(p) : '') + '<div><b>' + c.name + '</b><small>' + n + ' produtos →</small></div></a>'; }).join('');
+
+    /* fornecedores (números reais dos dados) */
+    $('[data-sellercount]').textContent = approved.length;
+    $('[data-sellers]').innerHTML = approved.map(function (s) { var n = ICA.products.filter(function (p) { return p.seller === s.id; }).length; return '<a class="seller" href="#"><span class="av" style="background:' + s.color + '">' + s.shop[0] + '</span><b>' + s.shop + '</b><small>' + s.city + ' · desde ' + s.since + '</small><span class="meta"><span>★ ' + s.rating.toFixed(1) + '</span><span>' + n + ' produtos</span></span></a>'; }).join('');
+
+    /* plano de crédito */
+    var kit = P(28); $('[data-plantotal]').textContent = money(kit.price); $('[data-planpart]').textContent = money(kit.price / 3); $('[data-planpart2]').textContent = '2 × ' + money(kit.price / 3);
+
+    /* interações dos cartões */
+    var cart = 2, total = 45700, favs = 0;
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest('[data-add]'), f = e.target.closest('[data-fav]'), r = e.target.closest('[data-rfq]');
+      if (a) { var p = P(+a.dataset.add); cart++; total += p.price; $$('[data-cartcount]').forEach(function (c) { c.textContent = cart; c.classList.remove('bump'); void c.offsetWidth; c.classList.add('bump'); }); $('[data-carttotal]').textContent = money(total); a.classList.add('done'); a.innerHTML = '<svg class="ic" style="width:18px;height:18px"><use href="#i-check"/></svg>'; toast(p.name + ' adicionado ao carrinho'); }
+      if (f) { f.classList.toggle('on'); favs += f.classList.contains('on') ? 1 : -1; var fc = $('[data-favcount]'); fc.textContent = favs; fc.dataset.n = favs; toast(f.classList.contains('on') ? 'Guardado nos desejos' : 'Removido dos desejos'); }
+      if (r) { var pr = P(+r.dataset.rfq); $('#rp').value = pr.name; $('#rq').focus(); location.hash = 'cotacao'; }
+    });
+  })();
+</script>
+</body>
+</html>
