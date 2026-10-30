@@ -17,7 +17,7 @@
     ['/configuracao', ad.config], ['/perfil', ad.profile], ['/notificacoes', ad.notifications],
   ], {
     before: (path) => ad.ensureShell(path),
-    after: (path) => { const c = document.getElementById('imali-auth'); if (c) c.disabled = !['/entrar'].includes(path); ICA.markNav(path); },
+    after: (path) => { document.body.classList.toggle('d-auth', path === '/entrar'); ICA.markNav(path); },
     notFound: () => '<div class="empty-state"><h2>Página não encontrada</h2><a class="btn btn-primary" href="#/">Voltar ao dashboard</a></div>',
   });
 })();

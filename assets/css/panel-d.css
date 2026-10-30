@@ -96,7 +96,11 @@ body.d-panel .table-responsive > .row > div small, body.d-panel .table-responsiv
 body.d-panel .table-responsive > .row > div:last-child, body.d-panel .table-responsive > .row > p:last-child { align-self: center !important; }
 body.d-panel .table-responsive .avatar { display: none; }
 /* tabelas com produto na 1.ª coluna: o nome precisa de mais espaço que as colunas numéricas (o ui.js reparte por igual em estilo inline) */
-body.d-panel #tb-s-prod .row { grid-template-columns: minmax(0, 2.6fr) repeat(4, minmax(0, 1fr)) minmax(0, .7fr) !important; }
+/* em todas as tabelas: linhas em flex com a 1.ª coluna (nome/produto) mais larga e a coluna de ações mais estreita */
+body.d-panel .table-responsive > .row { display: flex !important; }
+body.d-panel .table-responsive > .row > * { flex: 1 1 0; }
+body.d-panel .table-responsive > .row > :first-child { flex: 2.2 1 0; }
+body.d-panel .table-responsive > .row > :last-child:not(:first-child) { flex: .8 1 0; min-width: 132px; display: flex; justify-content: flex-end; align-items: center; gap: 4px; }
 /* estados (label-* do Bagisto) como pills D */
 body.d-panel [class^="label-"], body.d-panel [class*=" label-"] { display: inline-flex; align-items: center; width: max-content; padding: 4px 10px !important; border-radius: var(--d-pill) !important; font: 800 12px var(--d-text) !important; border: 0 !important; white-space: nowrap; }
 body.d-panel .label-pending, body.d-panel .label-open { background: #FEF0C7 !important; color: #B54708 !important; }
