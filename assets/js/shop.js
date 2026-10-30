@@ -32,35 +32,9 @@
   };
   Object.assign(shop, { cart, wish, cmp, buyer, prod, sellerOf, cartLines, cartCount, totals, liveProducts, brand, ic, TIERS, unitPrice, FREE_SHIP });
 
-  /* ---------- Cartão de produto (grelha) ---------- */
-  function pcard(p) {
-    const w = wish().includes(p.id), isNew = p.tags.includes('novo'), sale = !!p.oldPrice;
-    return '<div class="group w-full rounded-lg relative overflow-hidden duration-300 hover:shadow-[0_4px_8px_rgba(0,0,0,0.1)] ica-scope" style="background-color:#ffffff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.08);color:#333333;">' +
-      '<div class="relative isolate aspect-square overflow-hidden bg-gray-100 w-full"><a href="#/produto/' + p.id + '" aria-label="' + esc(p.name) + '">' +
-      pimg(p, 'relative h-full w-full bg-zinc-100 object-cover transition-all duration-300 group-hover:scale-105') + '</a>' +
-      '<div class="absolute bottom-1.5 flex items-center rounded-md border !border-white bg-white/80 !px-2 !py-1 text-xs ltr:left-1.5"><span class="icon-star-fill text-amber-500 text-sm"></span><span class="ml-1">' + p.rating + '</span></div>' +
-      '<div class="action-items">' +
-      (isNew ? '<p class="absolute top-2 left-2 z-[1] inline-block rounded-full px-2.5 py-0.5 text-xs font-bold text-white" style="background-color:#4CAF50;">Novo</p>' : '') +
-      (sale ? '<p class="absolute top-2 right-2 z-[1] inline-block rounded px-2 py-0.5 text-xs font-bold text-white" style="background-color:#D9534F;">Promoção</p>' : '') +
-      '<div class="opacity-0 transition-all duration-300 group-hover:bottom-0 group-hover:opacity-100 max-lg:opacity-100 max-sm:opacity-100"><span class="absolute top-2.5 flex h-6 w-6 items-center justify-center rounded-full border border-zinc-200 bg-white text-lg ltr:right-1.5 ' + (w ? 'icon-heart-fill text-red-500' : 'icon-heart') + '" role="button" aria-label="Adicionar à lista de desejos" tabindex="0" data-act="wish" data-pid="' + p.id + '"></span></div></div></div>' +
-      '<div class="grid content-start gap-0.5 p-2 max-md:p-1.5" style="background-color:#ffffff;color:#333333;">' +
-      '<p class="text-[9px] font-medium uppercase tracking-wide leading-tight" style="color:#666666;">' + esc(p.catName) + '</p>' +
-      '<a href="#/produto/' + p.id + '" class="block text-xs font-medium hover:opacity-80 line-clamp-2 leading-tight" style="color:#333333;">' + esc(p.name) + '</a>' +
-      '<div class="flex items-center gap-2 text-sm font-semibold" style="color:#333333;">' + (sale ? '<span class="text-xs font-normal text-zinc-500 line-through">' + money(p.oldPrice) + '</span>' : '') + '<span>' + money(p.price) + '</span></div>' +
-      '<button type="button" class="mt-1 w-full rounded py-1.5 text-xs font-bold text-white hover:opacity-90" style="background-color:#4CAF50;" data-act="add-cart" data-pid="' + p.id + '">Adicionar ao carrinho</button>' +
-      '<div class="mt-1 flex items-center justify-center gap-1"><a href="#/produto/' + p.id + '" class="flex flex-1 items-center justify-center gap-0.5 rounded border py-1 text-[10px] font-medium hover:opacity-80" style="border-color:#e5e7eb;background-color:#ffffff;color:#333333;"><span class="icon-eye text-sm"></span> Ver produto</a>' +
-      '<button type="button" class="flex items-center justify-center rounded border p-1 hover:opacity-80" style="border-color:#e5e7eb;background-color:#ffffff;color:#333333;" aria-label="Comparar" data-act="cmp" data-pid="' + p.id + '"><span class="icon-compare text-sm"></span></button></div></div></div>';
-  }
-  function pcardList(p) {
-    const sale = !!p.oldPrice, isNew = p.tags.includes('novo');
-    return '<div class="ica-scope relative flex max-w-max grid-cols-2 gap-4 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm max-sm:flex-wrap" style="border-color:#e5e7eb;color:#333333;"><div class="group relative isolate max-h-[258px] max-w-[250px] overflow-hidden"><a href="#/produto/' + p.id + '">' + pimg(p, 'relative min-w-[250px] bg-zinc-100 transition-all duration-300 group-hover:scale-105') + '</a>' +
-      (isNew ? '<p class="absolute top-2 left-2 z-[1] inline-block rounded-full px-2.5 py-0.5 text-xs font-bold text-white" style="background-color:#4CAF50;">Novo</p>' : '') + (sale ? '<p class="absolute top-2 right-2 z-[1] inline-block rounded px-2 py-0.5 text-xs font-bold text-white" style="background-color:#D9534F;">Promoção</p>' : '') + '</div>' +
-      '<div class="grid content-start gap-2" style="color:#333333;"><a href="#/produto/' + p.id + '" class="text-base font-medium hover:opacity-80" style="color:#333333;">' + esc(p.name) + '</a><div class="text-base leading-tight">' + (sale ? '<span class="text-sm text-zinc-500 line-through">' + money(p.oldPrice) + '</span> ' : '') + '<b>' + money(p.price) + '</b></div><p class="text-sm" style="color:#666666;"><span class="inline-flex items-center gap-0.5" style="color:#FFD700;">' + stars(p.rating) + '</span> (' + p.reviews + ')</p><button type="button" class="w-max rounded py-2 px-6 text-sm font-bold text-white hover:opacity-90" style="background-color:#4CAF50;" data-act="add-cart" data-pid="' + p.id + '">Adicionar ao carrinho</button></div></div>';
-  }
-  const stars = (n) => [1, 2, 3, 4, 5].map((i) => '<span class="icon-star-fill ' + (i <= Math.round(n) ? 'text-amber-500' : 'text-gray-400') + ' text-lg"></span>').join('');
-  const starsSm = (n) => [1, 2, 3, 4, 5].map((i) => '<span class="' + (i <= Math.round(n) ? 'text-[#facc15]' : 'text-gray-300') + '">★</span>').join('');
+  /* ---------- Estado vazio (mini-carrinho) ---------- */
   const emptyBox = (msg) => '<div class="m-auto grid w-full place-content-center items-center justify-items-center py-32 text-center"><p class="text-xl max-md:text-sm" role="heading">' + msg + '</p></div>';
-  Object.assign(shop, { pcard, stars, emptyBox, starsSm });
+  Object.assign(shop, { emptyBox });
 
   /* ---------- Layout D (cabeçalho, rodapé, gaveta, barra inferior, mini-carrinho) ---------- */
   const SPRITE = '<svg width="0" height="0" style="position:absolute" aria-hidden="true">' +
@@ -464,20 +438,72 @@
   };
   ACT['pick-star'] = (el) => $$('#sp button').forEach((b, i) => b.classList.toggle('on', i < +el.dataset.n));
 
-  /* ---------- Vendedores e CMS ---------- */
+  /* ---------- Fornecedores, loja do fornecedor, páginas de texto, 404 (D) ---------- */
+  const sellerProducts = (s) => liveProducts().filter((p) => p.seller === s.id);
+  const sellerCats = (s) => [...new Set(sellerProducts(s).map((p) => p.cat))].map((id) => D.categories.find((c) => c.id === id));
+  /* diretório de fornecedores: linhas com fotografias dos produtos de cada um (sem avatares de letra) */
+  const SL = { q: '', cat: 0, sort: 'rating' };
+  const DIR_SORTS = [['rating', 'Melhor avaliação'], ['products', 'Mais produtos'], ['since', 'Há mais tempo no Mercado ICA'], ['name', 'Nome (A–Z)']];
   function sellerCards(list) {
-    return '<div class="mt-8 grid grid-cols-3 gap-6 max-lg:grid-cols-2 max-sm:grid-cols-1">' + list.map((s) => '<a class="ica-scope grid gap-3 rounded-lg border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md" href="#/vendedor/' + s.id + '"><div class="flex items-center gap-3"><span class="flex h-14 w-14 items-center justify-center rounded-xl text-lg font-extrabold text-white" style="background:' + s.color + '">' + esc(s.shop[0]) + '</span><div><b class="text-base">' + esc(s.shop) + '</b><p class="text-sm text-zinc-500">' + esc(s.city) + '</p></div></div><div class="flex items-center gap-1 text-sm">' + starsSm(s.rating) + ' <span class="text-zinc-500">' + s.rating.toFixed(1) + '</span></div><p class="text-sm text-zinc-500">' + esc(s.about) + '</p><p class="text-xs font-semibold uppercase tracking-wide" style="color:#16a34a;">' + D.products.filter((p) => p.seller === s.id && p.status === 'approved').length + ' produtos</p></a>').join('') + '</div>';
+    if (!list.length) return '<p class="d-dir-none">Nenhum fornecedor corresponde à pesquisa.</p>';
+    return list.map((s) => {
+      const ps = sellerProducts(s), subs = [...new Set(ps.map((p) => p.sub))];
+      return '<a class="d-dir-row" href="#/vendedor/' + s.id + '"><span class="d-dir-pics">' + ps.slice(0, 3).map((p) => '<span>' + pimg(p) + '</span>').join('') + '</span>' +
+        '<span class="d-dir-info"><b>' + esc(s.shop) + '</b><small>' + esc(s.city) + ' · no Mercado ICA desde ' + s.since + '</small><small class="d-dir-subs">' + esc(subs.join(', ')) + '</small></span>' +
+        '<span class="d-dir-num"><b>' + s.rating.toFixed(1).replace('.', ',') + '</b><small>avaliação</small></span>' +
+        '<span class="d-dir-num"><b>' + ps.length + '</b><small>' + (ps.length === 1 ? 'produto' : 'produtos') + '</small></span>' +
+        '<span class="d-btn d-btn-line d-btn-md">Ver loja</span></a>';
+    }).join('');
   }
-  const pageTitle = (t, crumb) => '<section class="border-b border-gray-100 bg-white"><div class="container max-w-7xl mx-auto px-4 py-6 lg:px-8"><nav class="text-sm text-zinc-500"><a href="#/">Início</a> &gt; <span class="text-gray-800">' + crumb + '</span></nav><h1 class="mt-2 text-2xl font-bold tracking-tight lg:text-3xl">' + t + '</h1></div></section>';
-  const sellers = () => pageTitle('Vendedores verificados', 'Vendedores') + '<div class="container max-w-7xl mx-auto px-4 pb-16 lg:px-8">' + sellerCards(D.sellers.filter((s) => s.status === 'approved')) + '<div class="mt-12 flex flex-wrap items-center justify-between gap-4 rounded-lg border border-gray-200 p-6"><div><h3 class="text-xl font-semibold">Quer vender no Mercado ICA?</h3><p class="text-zinc-500">Abra a sua loja, publique produtos e receba por carteira móvel ou transferência.</p></div><a class="primary-button" href="../cliente/index.html#/registar">Tornar-me vendedor</a></div></div>';
+  const dirList = () => {
+    let L = D.sellers.filter((s) => s.status === 'approved');
+    if (SL.q) L = L.filter((s) => (s.shop + ' ' + s.city).toLowerCase().includes(SL.q.toLowerCase()));
+    if (SL.cat) L = L.filter((s) => sellerProducts(s).some((p) => p.cat === SL.cat));
+    const by = { rating: (a, b) => b.rating - a.rating, products: (a, b) => sellerProducts(b).length - sellerProducts(a).length, since: (a, b) => a.since - b.since, name: (a, b) => a.shop.localeCompare(b.shop) };
+    return L.slice().sort(by[SL.sort]);
+  };
+  const pageHead = (title, crumb, lead = '', extra = '') => '<div class="d-phead"><div class="d-wrap"><nav class="d-crumbs" aria-label="Caminho"><a href="#/">Início</a><span>/</span>' + crumb + '</nav><h1>' + title + '</h1>' + (lead ? '<p>' + lead + '</p>' : '') + extra + '</div></div>';
+  const pageTitle = (t, crumb) => pageHead(t, crumb);
+  const sellers = () => {
+    const L = dirList(), total = D.sellers.filter((s) => s.status === 'approved').length;
+    const sel = (attr, opts, cur) => '<span class="d-scat"><select ' + attr + '>' + opts.map((o) => '<option value="' + o[0] + '"' + (String(cur) === String(o[0]) ? ' selected' : '') + '>' + esc(o[1]) + '</option>').join('') + '</select><svg aria-hidden="true"><use href="#d-chev"/></svg></span>';
+    return pageHead('Fornecedores', 'Fornecedores', 'Empresas registadas no Mercado ICA, com NUIT e documentação conferida.') +
+      '<div class="d-wrap"><div class="d-box d-dir">' +
+        '<div class="d-dir-tools"><label class="d-osearch">' + svg('search', 'width:17px;height:17px') + '<span class="d-sr">Pesquisar fornecedor</span><input type="search" placeholder="Nome ou cidade" value="' + esc(SL.q) + '" data-sq></label>' +
+          '<label class="d-sort"><span>Setor</span>' + sel('data-scat aria-label="Setor"', [[0, 'Todos']].concat(D.categories.map((c) => [c.id, c.name])), SL.cat) + '</label>' +
+          '<label class="d-sort"><span>Ordenar</span>' + sel('data-ssort aria-label="Ordenar"', DIR_SORTS, SL.sort) + '</label>' +
+          '<p class="d-dir-count" id="d-dir-count">' + L.length + ' de ' + total + '</p></div>' +
+        '<div class="d-dir-list" id="d-dir">' + sellerCards(L) + '</div></div>' +
+      '<p class="d-dir-foot">Vende para empresas? <a class="d-link" href="../cliente/index.html#/registar">Registe a sua empresa como fornecedor</a></p></div>';
+  };
+  document.addEventListener('input', (e) => {
+    if (!e.target.dataset || e.target.dataset.sq === undefined) return;
+    SL.q = e.target.value; const L = dirList(), box = $('#d-dir'), c = $('#d-dir-count');
+    if (box) box.innerHTML = sellerCards(L);
+    if (c) c.textContent = L.length + ' de ' + D.sellers.filter((s) => s.status === 'approved').length;
+  });
+  document.addEventListener('change', (e) => { const d = e.target.dataset || {}; if (d.scat !== undefined) { SL.cat = +e.target.value; re(); } if (d.ssort !== undefined) { SL.sort = e.target.value; re(); } });
+  const SP = { sid: 0, cat: 0 };
   function sellerPage({ params }) {
-    const s = byId(D.sellers, params.id), L = liveProducts().filter((p) => p.seller === s.id);
-    return '<section style="background:linear-gradient(110deg,' + s.color + 'cc,#030213)"><div class="container mx-auto px-4 py-10 lg:px-8 text-white"><div class="flex flex-wrap items-center gap-5"><span class="flex h-20 w-20 items-center justify-center rounded-2xl bg-white text-3xl font-extrabold" style="color:' + s.color + '">' + esc(s.shop[0]) + '</span><div><h1 class="text-3xl font-bold">' + esc(s.shop) + '</h1><p class="text-sm text-gray-200">' + esc(s.city) + ' · Vendedor desde ' + s.since + ' · ' + s.rating.toFixed(1) + ' ★</p></div><div class="ml-auto flex gap-2"><button class="primary-button" data-act="contact-seller" data-id="' + s.id + '">Contactar</button><button class="secondary-button" data-act="report-seller">Denunciar</button></div></div></div></section>' +
-      '<div class="container mx-auto px-4 py-10 lg:px-8"><h2 class="mb-4 text-xl font-bold">Produtos (' + L.length + ')</h2><div class="ica-scope"><div class="ica-product-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">' + L.map(pcard).join('') + '</div></div><h2 class="mb-2 mt-12 text-xl font-bold">Sobre</h2><p class="max-w-3xl text-zinc-500">' + esc(s.about) + '</p><p class="mt-2 text-sm">' + esc(s.owner) + ' · ' + esc(s.email) + ' · ' + esc(s.phone) + '</p></div>';
+    const s = byId(D.sellers, params.id);
+    if (!s || s.status !== 'approved') return notFound();
+    if (SP.sid !== s.id) Object.assign(SP, { sid: s.id, cat: 0 });
+    const all = sellerProducts(s), cats = sellerCats(s), L = all.filter((p) => !SP.cat || p.cat === SP.cat);
+    const head = '<div class="d-phead d-shead"><div class="d-wrap"><nav class="d-crumbs" aria-label="Caminho"><a href="#/">Início</a><span>/</span><a href="#/vendedores">Fornecedores</a><span>/</span>' + esc(s.shop) + '</nav>' +
+      '<div class="d-shead-row"><span class="d-av d-av-xl" style="background:' + s.color + '">' + esc(s.shop[0]) + '</span><div class="d-shead-info"><span class="d-ver d-ver-lime">' + svg('check') + 'Fornecedor verificado</span><h1>' + esc(s.shop) + '</h1><div class="d-sstats d-sstats-dark"><span><b>★ ' + s.rating.toFixed(1).replace('.', ',') + '</b>avaliação</span><span><b>' + all.length + '</b>produtos</span><span><b>' + esc(s.city) + '</b>sede</span><span><b>' + s.since + '</b>no Mercado ICA desde</span></div></div>' +
+      '<div class="d-shead-acts"><button type="button" class="d-btn d-btn-lime d-btn-md" data-act="contact-seller" data-id="' + s.id + '">Contactar</button><button type="button" class="d-btn d-btn-o d-btn-md" data-act="report-seller">Denunciar</button></div></div></div></div>';
+    return head + '<div class="d-wrap"><section class="d-sec" style="padding-top:24px"><div class="d-sh"><div><h2>Produtos</h2></div>' +
+      (cats.length > 1 ? '<div class="d-tabs"><button type="button" class="' + (SP.cat ? '' : 'on') + '" data-act="sp-cat" data-cat="0">Todos <small>' + all.length + '</small></button>' + cats.map((c) => '<button type="button" class="' + (SP.cat === c.id ? 'on' : '') + '" data-act="sp-cat" data-cat="' + c.id + '">' + esc(c.name) + ' <small>' + all.filter((p) => p.cat === c.id).length + '</small></button>').join('') + '</div>' : '') + '</div>' +
+      '<div class="d-pgrid">' + L.map(dcard).join('') + '</div></section>' +
+      '<section class="d-sec"><div class="d-acc-grid d-acc-grid-2"><div class="d-box"><h2>Sobre</h2><p>' + esc(s.about) + '</p></div><div class="d-box"><h2>Contactos</h2><dl class="d-specs d-specs-1"><div><dt>Responsável</dt><dd>' + esc(s.owner) + '</dd></div><div><dt>Email</dt><dd>' + esc(s.email) + '</dd></div><div><dt>Telefone</dt><dd>' + esc(s.phone) + '</dd></div><div><dt>Cidade</dt><dd>' + esc(s.city) + '</dd></div></dl></div></div></section></div>';
   }
-  ACT['report-seller'] = () => openModal({ title: 'Denunciar vendedor', body: mform('Denúncia registada. A nossa equipa irá analisar.', f('Motivo', 'reason', { type: 'select', options: ['Produto falsificado', 'Preços enganosos', 'Comportamento abusivo', 'Outro'], span: 2 }) + f('Detalhes', 'msg', { type: 'textarea', span: 2 }), 'Denunciar', true) });
-  const cmsPage = ({ params }) => { const pg = D.cmsPages.find((x) => x.slug === params.slug); return pg ? pageTitle(esc(pg.title), esc(pg.title)) + '<div class="container mx-auto px-4 py-10 lg:px-8"><div class="prose max-w-3xl text-lg leading-8 text-zinc-600"><p>' + esc(pg.body) + '</p></div></div>' : notFound(); };
-  const notFound = () => '<div class="container px-[60px] py-24 text-center"><h1 class="text-7xl font-dmserif" style="color:#16a34a">404</h1><p class="mt-2 text-xl">Página não encontrada</p><a class="primary-button mt-6 inline-block" href="#/">Voltar ao início</a></div>';
+  ACT['sp-cat'] = (el) => { SP.cat = +el.dataset.cat; re(); };
+  ACT['report-seller'] = () => openModal({ title: 'Denunciar fornecedor', body: mform('Denúncia registada. A nossa equipa irá analisar.', f('Motivo', 'reason', { type: 'select', options: ['Produto falsificado', 'Preços enganosos', 'Comportamento abusivo', 'Outro'], span: 2 }) + f('Detalhes', 'msg', { type: 'textarea', span: 2 }), 'Denunciar', true) });
+  const cmsPage = ({ params }) => { const pg = D.cmsPages.find((x) => x.slug === params.slug); if (!pg) return notFound();
+    return pageHead(esc(pg.title), esc(pg.title), '', '<nav class="d-pills" aria-label="Informação">' + D.cmsPages.map((x) => '<a href="#/pagina/' + x.slug + '" class="' + (x.slug === pg.slug ? 'on' : '') + '">' + esc(x.title) + '</a>').join('') + '</nav>') +
+      '<div class="d-wrap"><div class="d-acc-grid" style="margin-top:24px"><article class="d-box d-prose"><p>' + esc(pg.body) + '</p></article>' +
+      '<aside class="d-box d-quick"><h2>Precisa de ajuda?</h2><a href="#/pagina/contactos">Falar connosco<span>›</span></a><a href="#/conta/devolucoes">Devoluções<span>›</span></a><a href="#/conta/pedidos">Os meus pedidos<span>›</span></a></aside></div></div>'; };
+  const notFound = () => '<div class="d-wrap"><div class="d-nf"><b>404</b><h1>Página não encontrada</h1><p>A página que procura pode ter mudado de endereço ou já não existir.</p><div class="d-okacts"><a class="d-btn d-btn-dark" href="#/">Ir para o início</a><a class="d-btn d-btn-line" href="#/categoria/todos">Ver o catálogo</a></div></div></div>';
 
-  Object.assign(shop, { layout, updateHeader, markTab, syncCookie, home, listing, product, sellers, sellerPage, cmsPage, notFound, sellerCards, pcardList, pageTitle, f });
+  Object.assign(shop, { layout, updateHeader, markTab, syncCookie, home, listing, product, sellers, sellerPage, cmsPage, notFound, sellerCards, pageTitle, f });
 })();

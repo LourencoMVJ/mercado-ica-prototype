@@ -297,10 +297,22 @@
 
   /* ---------- Comparação ---------- */
   function compare() {
-    const L = sh.cmp().map(sh.prod).filter(Boolean);
-    if (!L.length) return '<div class="container px-[60px] max-lg:px-8">' + sh.emptyBox('Nada para comparar. Use o ícone de comparar nos produtos.') + '</div>';
-    const row = (label, f) => '<tr><td class="border px-4 py-3 font-medium bg-zinc-100 align-top">' + label + '</td>' + L.map((p) => '<td class="border px-4 py-3 align-top">' + f(p) + '</td>').join('') + '</tr>';
-    return '<div class="container px-[60px] max-lg:px-8 max-md:px-4 py-10"><h1 class="mb-6 text-3xl font-dmserif max-sm:text-xl">Comparar produtos</h1><div class="overflow-x-auto"><table class="w-full border-collapse text-left"><tbody>' + row('Produto', (p) => '<a href="#/produto/' + p.id + '">' + pimg(p, 'mb-2 h-[120px] w-[120px] rounded-xl object-cover') + '<b>' + esc(p.name) + '</b></a>') + row('Preço', (p) => '<b>' + money(p.price) + '</b>') + row('Avaliação', (p) => sh.stars(p.rating) + ' ' + p.rating) + row('Vendedor', (p) => esc(sh.sellerOf(p).shop)) + row('Categoria', (p) => esc(p.catName)) + row('Stock', (p) => p.stock + ' un') + row('Garantia', (p) => esc(p.specs.find((s) => s[0] === 'Garantia')[1])) + row('', (p) => '<button class="primary-button px-4 py-2 text-sm" data-act="add-cart" data-pid="' + p.id + '">Adicionar</button> <button class="secondary-button px-4 py-2 text-sm" data-act="cmp" data-pid="' + p.id + '">Remover</button>') + '</tbody></table></div></div>';
+    const L = sh.cmp().map(sh.prod).filter((p) => p && p.status === 'approved');
+    const head = '<div class="d-phead"><div class="d-wrap"><nav class="d-crumbs" aria-label="Caminho"><a href="#/">Início</a><span>/</span>Comparar</nav><h1>Comparar produtos</h1><p>' + (L.length ? L.length + ' de 4 produtos · lado a lado' : 'Até 4 produtos lado a lado.') + '</p></div></div>';
+    if (!L.length) return head + '<div class="d-wrap"><div class="d-empty" style="margin-top:24px"><b>Nada para comparar</b><p>Na página de um produto, use o botão de comparar para o juntar aqui.</p><a class="d-btn d-btn-dark" href="#/categoria/todos">Explorar o catálogo</a></div></div>';
+    const minPrice = Math.min(...L.map((p) => p.price)), bestRating = Math.max(...L.map((p) => p.rating));
+    const specKeys = [...new Set(L.flatMap((p) => p.specs.map((s) => s[0])))];
+    const row = (label, f) => '<tr><th scope="row">' + label + '</th>' + L.map((p) => '<td>' + f(p) + '</td>').join('') + '</tr>';
+    const table = '<div class="d-box d-cmp-wrap"><table class="d-cmp"><thead><tr><th></th>' + L.map((p) => '<td><div class="d-cmp-p"><button type="button" class="d-cmp-x" data-act="cmp" data-pid="' + p.id + '" aria-label="Remover ' + esc(p.name) + ' da comparação">✕</button><a class="d-cimg" href="#/produto/' + p.id + '">' + pimg(p) + '</a><a href="#/produto/' + p.id + '"><b>' + esc(p.name) + '</b></a></div></td>').join('') + '</tr></thead><tbody>' +
+      row('Preço / un', (p) => '<b class="d-cmp-price">' + money(p.price) + '</b>' + (p.price === minPrice && L.length > 1 ? '<span class="d-tag">Mais barato</span>' : '')) +
+      row('10+ un', (p) => money(sh.unitPrice(p, 10))) + row('50+ un', (p) => money(sh.unitPrice(p, 50))) +
+      row('Avaliação', (p) => '★ ' + String(p.rating).replace('.', ',') + ' <small class="d-mut">(' + p.reviews + ')</small>' + (p.rating === bestRating && L.length > 1 ? '<span class="d-tag">Melhor avaliado</span>' : '')) +
+      row('Fornecedor', (p) => '<a class="d-link" href="#/vendedor/' + p.seller + '">' + esc(sh.sellerOf(p).shop) + '</a>') +
+      row('Setor', (p) => esc(p.catName + ' › ' + p.sub)) +
+      row('Stock', (p) => p.stock > 10 ? p.stock + ' un' : '<span style="color:#B54708;font-weight:700">' + p.stock + ' un</span>') +
+      specKeys.map((k) => row(esc(k), (p) => esc((p.specs.find((s) => s[0] === k) || ['', '—'])[1]))).join('') +
+      '<tr class="d-cmp-acts"><th scope="row"></th>' + L.map((p) => '<td><button type="button" class="d-btn d-btn-dark d-btn-md" data-act="d-add" data-pid="' + p.id + '">' + svg('cart', 'width:16px;height:16px') + 'Adicionar</button></td>').join('') + '</tr></tbody></table></div>';
+    return head + '<div class="d-wrap" style="margin-top:24px">' + table + '</div>';
   }
 
   Object.assign(sh, { cartPage, checkout, waiting, orderSuccess, loginPage, registerPage, recoverPage, accHome, ordersPage, orderView, profile, addresses, wishlist, reviewsPage, rmaList, rmaNew, downloads, gdpr, compare, loginAs });

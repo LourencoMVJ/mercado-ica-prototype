@@ -16,5 +16,5 @@
     ['/relatorios/vendas', sl.repSales], ['/relatorios/clientes', sl.repCust], ['/relatorios/produtos', sl.repProd],
     ['/perfil', sl.profile], ['/notificacoes', sl.notifications],
     ['/definicoes', sl.settings], ['/definicoes/armazens', sl.warehouses], ['/definicoes/utilizadores', sl.users], ['/definicoes/funcoes', sl.roles], ['/definicoes/importar', sl.importPage],
-  ].map(([p, f]) => [p, wrap(f)]), { before: (path) => sl.ensureShell(path), after: (path) => { const c = document.getElementById('imali-auth'); if (c) c.disabled = !['/entrar', '/registar', '/recuperar'].includes(path); ICA.markNav(path); } });
+  ].map(([p, f]) => [p, wrap(f)]), { before: (path) => sl.ensureShell(path), after: (path) => { document.body.classList.toggle('d-auth', ['/entrar', '/registar', '/recuperar'].includes(path)); ICA.markNav(path); } });
 })();
